@@ -1,0 +1,12 @@
+#!/bin/bash
+# A Mac OS utility for viewing graphviz .dot files in Safari (as svg files)
+# usage: cat test.dot | dot2safari
+
+# Make temporary file
+SVGFILE=$(mktemp $TMPDIR/$(uuidgen).svg)
+
+# Generate SVG using Graphviz (dot) from stdin
+cat | dot -Tsvg > "$SVGFILE";
+
+# Open temporary file with Safari
+open -a /Applications/Safari.app "$SVGFILE"
