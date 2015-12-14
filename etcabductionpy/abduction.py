@@ -76,15 +76,14 @@ def crunch(conjunction): # returns a list of all possible ways to unify conjunct
     return res
 
 def mergethetas(thetaset):
-    '''Merge all substitutions into a single dictionary, or none if not consistent'''
-    merged = {}
+    '''Merge all substitutions into a single dictionary, or None if not consistent'''
+    x = []
+    y = []
     for theta in thetaset:
         for var in theta:
-            merged = unify.unify_var(var, theta[var], merged)
-            if merged == None:
-                return None
-    return merged
-            
+            x.append(var)
+            y.append(theta[var])
+    return unify.unify(x,y)
 
 def powerset(iterable):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"

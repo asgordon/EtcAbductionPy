@@ -120,7 +120,7 @@ if __name__ == "__main__":
     argparser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
     argparser.add_argument('-t', '--tricopa', nargs='?', type=argparse.FileType('r'), default="TriCOPA.txt")
     argparser.add_argument('-a', '--answers', nargs='?', type=argparse.FileType('r'), default="TriCOPA-answers.txt")
-    argparser.add_argument('-k', '--kb', nargs='?', type=argparse.FileType('r'), default="TriCOPA-kb.lisp")
+    argparser.add_argument('-k', '--kb', nargs='?', type=argparse.FileType('r'), default="tricopa-kb.lisp")
     argparser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
     argparser.add_argument('-q', '--question', type=int)
     argparser.add_argument('-d', '--depth', type=int, default=3)
