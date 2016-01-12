@@ -1,7 +1,8 @@
 # parse.py
 # A simple parser for definite clauses in first order logic
 # Andrew S. Gordon
-# Fall 2015
+
+# Todo: need to handle conjunctions of observables: (and ...
 
 from __future__ import print_function
 import argparse
@@ -150,8 +151,11 @@ def variablize(sexp):
                 res.append(sexp[i])
         return res
 
-
-
+def display(sexp):
+    if isinstance(sexp, list):
+        return "(" + " ".join([display(s) for s in sexp]) + ")"
+    else:
+        return str(sexp)
 
 
 if __name__ == "__main__":

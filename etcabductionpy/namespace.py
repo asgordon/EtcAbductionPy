@@ -1,9 +1,7 @@
 # namespace.py
 # Dealing with namespace issues for variables in s-expressions
 # Andrew S. Gordon
-# Fall 2015
 
-from __future__ import print_function
 import unify
 
 # namespace

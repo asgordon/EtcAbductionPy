@@ -1,14 +1,8 @@
 # etcetera.py
 # Etcetera Abduction: Probability-ordered logical abduction for kb of definite clauses 
 # Andrew S. Gordon
-# Fall 2015
 
-from __future__ import print_function
-import argparse
-import sys
-import parse
 import namespace
-import forward
 import abduction
 import bisect
 
@@ -60,29 +54,3 @@ def nbest(obs, kb, maxdepth, n, skolemize = True):
     else:
         return nbest
 
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description='Etcetera abduction for kb of definite clauses')
-    argparser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
-    argparser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
-    argparser.add_argument('-g', '--graph', action="store_true", help='Output graph in .dot format')
-    argparser.add_argument('-s', '--solution', type=int, default=1, help='Graph solution number s')
-    argparser.add_argument('-d', '--depth', type=int, default=5, help='Backchain to depth d')
-    argparser.add_argument('-n', '--nbest', type=int, default=10, help='Generate n-best proofs')
-    argparser.add_argument('-a', '--all', action="store_true", help='Generate all proofs')
-    args = argparser.parse_args()
-
-    lines = args.infile.readlines()
-    intext = "".join(lines)
-    kb, obs = parse.definite_clauses(parse.parse(intext))
-
-    if args.all:
-        solutions = etcAbduction(obs, kb, args.depth)
-    else:
-        solutions = nbest(obs, kb, args.depth, args.nbest)
-
-    if args.graph:
-        solution = solutions[args.solution - 1]
-        print(forward.graph(solution, forward.forward(solution, kb), targets=obs), file=args.outfile)
-    else:
-        for solution in solutions:
-            print(solution, file=args.outfile)

@@ -1,13 +1,9 @@
 # forward.py
 # An exhaustive forward chaining algorithm with graph file output (.dot)
 # Andrew S. Gordon
-# Fall 2015
 
 # todo: namespace variables?
 
-from __future__ import print_function
-import argparse
-import sys
 import parse
 import unify
 
@@ -73,32 +69,7 @@ def nodelabel(expression):
     else:
         return str(expression)
                                            
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description='An exhaustive forward chaining algorithm with graph file output (.dot)')
-    argparser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
-    argparser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
-    argparser.add_argument('-g', '--graph', action="store_true", help='Output graph in .dot format')
-    args = argparser.parse_args()
 
-    lines = args.infile.readlines()
-    intext = "".join(lines)
-    kb, facts = parse.definite_clauses(parse.parse(intext))
-    entailed = forward(facts, kb)
-
-    if args.graph:
-        print(graph(facts, forward(facts, kb)), file=args.outfile)
-    else:
-        for e in entailed:
-            print(e, file=args.outfile)
-
-                                           
-
-    
-
-                    
-                        
-                        
-                    
                 
                 
         

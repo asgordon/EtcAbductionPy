@@ -1,21 +1,15 @@
 # abduction.py
 # Logical abduction for kb of definite clauses
 # Andrew S. Gordon
-# Fall 2015
 
-from __future__ import print_function
-import argparse
-import sys
 import parse
 import unify
 import namespace
-import forward
 import itertools
 
 def abduction(obs, kb, maxdepth, skolemize = True):
     '''Logical abduction: returns a list of all sets of assumptions that entail the observations given the kb'''
     indexed_kb = index_by_consequent_predicate(kb)
-    #print(indexed_kb)
     res = []
     for leaflist in and_or_leaflists(obs, indexed_kb, maxdepth):
         res.extend(crunch(leaflist))
@@ -90,31 +84,3 @@ def powerset(iterable):
     s = list(iterable)
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
 
-
-   
-
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description='Logical abduction for kb of definite clauses')
-    argparser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
-    argparser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
-    argparser.add_argument('-g', '--graph', action="store_true", help='Output graph in .dot format')
-    argparser.add_argument('-u', '--universals', action="store_true")
-    argparser.add_argument('-s', '--solution', type=int, default=1)
-    argparser.add_argument('-d', '--depth', type=int, default=5)
-    args = argparser.parse_args()
-
-    lines = args.infile.readlines()
-    intext = "".join(lines)
-    kb, obs = parse.definite_clauses(parse.parse(intext))
-
-    if args.universals:
-        solutions = abduction(obs, kb, maxdepth = args.depth, skolemize = False)
-    else:
-        solutions = abduction(obs, kb, maxdepth = args.depth, skolemize = True)
-
-    if args.graph:
-        solution = solutions[args.solution - 1]
-        print(forward.graph(solution, forward.forward(solution, kb), targets=obs), file=args.outfile)
-    else:
-        for solution in solutions:
-            print(solution, file=args.outfile)
