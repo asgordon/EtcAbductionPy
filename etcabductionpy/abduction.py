@@ -57,18 +57,6 @@ def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions
                                       namespace.namespace_subst(theta, assumptions)]) # new assumptions with namespace substitutions
             return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
 
-def crunch0(conjunction): # returns a list of all possible ways to unify conjunction literals
-    res = [conjunction] # start with one solution
-    pairs = itertools.combinations(conjunction, 2)
-    thetas = [theta for theta in [unify.unify(p[0], p[1]) for p in pairs] if theta is not None]
-    ps = powerset(thetas)
-    for thetaset in ps: 
-        if len(thetaset) > 0:
-            consistent = mergethetas(thetaset)
-            if consistent:
-                res.append([k for k,v in itertools.groupby(sorted(unify.subst(consistent, conjunction)))])
-    return res
-
 def crunch(conjunction): # returns a list of all possible ways to unify conjunction literals
     res = [conjunction] # start with one solution
     pairs = itertools.combinations(conjunction, 2)
