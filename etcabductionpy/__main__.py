@@ -57,6 +57,10 @@ argparser.add_argument('-f', '--forward',
                        action='store_true',
                        help='Forward chain from INFILE with KB')
 
+argparser.add_argument('-b', '--btest',
+                       action='store_true',
+                       help='Try the b version for speed test')
+
 args = argparser.parse_args()
 
 
@@ -86,9 +90,15 @@ if args.forward:
 # Handle abduction
 
 if args.all:
-    solutions = etcetera.etcAbduction(obs, kb, args.depth)
+    if args.btest:
+        solutions = etcetera.etcAbduction2(obs, kb, args.depth)
+    else: 
+        solutions = etcetera.etcAbduction(obs, kb, args.depth)
 else:
-    solutions = etcetera.nbest(obs, kb, args.depth, args.nbest)
+    if args.btest:
+        solutions = etcetera.nbest2(obs, kb, args.depth, args.nbest)
+    else:
+        solutions = etcetera.nbest(obs, kb, args.depth, args.nbest)
 
 if args.graph:
     solution = solutions[args.solution - 1]
@@ -97,4 +107,5 @@ if args.graph:
 else:
     for solution in solutions:
         print(parse.display(solution), file=args.outfile)
+    print(str(len(solutions)) + " solutions.")
 
