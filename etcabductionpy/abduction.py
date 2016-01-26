@@ -4,17 +4,18 @@
 
 import parse
 import unify
-import namespace
 import itertools
 
 def abduction(obs, kb, maxdepth, skolemize = True):
     '''Logical abduction: returns a list of all sets of assumptions that entail the observations given the kb'''
     indexed_kb = index_by_consequent_predicate(kb)
     res = []
-    for leaflist in and_or_leaflists(obs, indexed_kb, maxdepth):
-        res.extend(crunch(leaflist))
+    listoflists = [and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
+    for u in itertools.product(*listoflists):
+        u = list(itertools.chain.from_iterable(u))
+        res.extend(crunch(u))
     if skolemize:
-        return [namespace.skolemize(r) for r in res]
+        return [unify.skolemize(r) for r in res]
     else:
         return res
 
@@ -49,12 +50,12 @@ def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions
                 if theta != None:
                     if depth == 0: # no depth for revision
                         return [] # (empty) list of lists
-                    revisions.append([namespace.namespace_subst(theta, remaining[1:]), # new remaining with namespace substitutions
+                    revisions.append([unify.subst(theta, remaining[1:]), # new remaining with substitutions
                                       indexed_kb,
                                       depth,
-                                      namespace.namespace(unify.subst(theta, parse.antecedent(rule))) +
-                                      namespace.namespace_subst(theta, antecedents),  # new antecedents with namespace substitutions
-                                      namespace.namespace_subst(theta, assumptions)]) # new assumptions with namespace substitutions
+                                      unify.standardize(unify.subst(theta, parse.antecedent(rule))) +
+                                      unify.subst(theta, antecedents),  # new antecedents with substitutions
+                                      unify.subst(theta, assumptions)]) # new assumptions with substitutions
             return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
 
 def crunch(conjunction): # returns a list of all possible ways to unify conjunction literals
@@ -86,3 +87,6 @@ def powerset(iterable):
     s = list(iterable)
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
 
+# To do: First check for universals in observations
+# To do: We can handle universals in the observations if we get andorleaflists for
+#  sets of observations literals with overlapping variables.

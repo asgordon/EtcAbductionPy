@@ -99,3 +99,5 @@ else:
         print(parse.display(solution), file=args.outfile)
     print(str(len(solutions)) + " solutions.")
 
+
+# To do: enable skolemize as an option

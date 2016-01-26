@@ -42,15 +42,6 @@ def namespace(sexp):
         aliases[f] = namespace_universals.next()
     return unify.subst(aliases, sexp)
 
-def namespace_subst(theta, x):
-    '''Only subsitute the namespace variables in theta'''
-    if isinstance(x, list):
-        return [namespace_subst(theta, z) for z in x]
-    elif x in theta and namespace_variablep(x):
-        return namespace_subst(theta, theta[x])
-    else:
-        return x
-
 def skolemize(sexp):
     skolem_constants = countup('$') # use skolem_constants.next() to get the next one
     all_vars = all_variables(sexp)
@@ -58,3 +49,11 @@ def skolemize(sexp):
     for var in all_vars:
         instances[var] = skolem_constants.next()
     return unify.subst(instances, sexp)
+
+# Todo
+# Refactor: standardize(sexp), standardized_variablep(item), unstandardized_variables(sexp),
+#           subst_only_standardized_variables(theta, x), subst_and_standardize(theta, x),
+#           standardized_universals,
+# Move to unify.py
+
+

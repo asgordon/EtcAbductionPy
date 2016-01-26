@@ -9,6 +9,58 @@ def unify(x, y, theta = {}, functions = False):
     else:
         return nofunctions(x, y, {})
 
+# Support functions
+
+def subst(theta, x):
+    if listp(x):
+        return [subst(theta, z) for z in x]
+    elif x in theta and variablep(x): # redundant?
+        return subst(theta, theta[x])
+    else:
+        return x
+    
+def listp(item): # includes both literals and functions
+    return isinstance(item, list)
+
+def variablep(item): # a string that starts with a question mark
+    return isinstance(item, str) and len(item) > 1 and item[0] == "?"
+
+def countup(prefix = "_"):
+    '''Unique symbol name generator'''
+    n = 1
+    while True:
+        yield prefix + str(n)
+        n += 1
+
+standardized_universals = countup('?#') # use standardized_universals.next() to get the next one
+
+def all_variables(sexp):
+    '''returns the set of all ?variables'''
+    #if isinstance(sexp, str) and sexp[0] == '?':
+    if variablep(sexp):
+        return set([sexp])
+    elif isinstance(sexp, list):
+        return set().union(*[all_variables(item) for item in sexp])
+    else:
+        return set()
+
+def standardize(sexp):
+    '''Ensures that all variable ?names in an s-expression are standardized variables, e.g. ?#42'''
+    foreigners = [x for x in all_variables(sexp) if not x[0:2] == "?#"]
+    aliases = {}
+    for f in foreigners:
+        aliases[f] = standardized_universals.next()
+    return subst(aliases, sexp)
+
+def skolemize(sexp):
+    skolem_constants = countup('$') # use skolem_constants.next() to get the next one
+    all_vars = all_variables(sexp)
+    instances = {}
+    for var in all_vars:
+        instances[var] = skolem_constants.next()
+    return subst(instances, sexp)
+
+
 # Version 1 : Classic style of old LISP programmers
     
 def unify1(x, y, theta = {}):
@@ -47,19 +99,7 @@ def occur_check(var, x):
             if occur_check(var, i): return True
     return False
 
-def subst(theta, x):
-    if listp(x):
-        return [subst(theta, z) for z in x]
-    elif x in theta and variablep(x):
-        return subst(theta, theta[x])
-    else:
-        return x
-    
-def listp(item): # includes both literals and functions
-    return isinstance(item, list)
 
-def variablep(item): # a string that starts with a question mark
-    return isinstance(item, str) and len(item) > 1 and item[0] == "?"
 
 # Version 2: Robinson's 1965 Unification Algorithm
 
@@ -77,7 +117,7 @@ def robinson(x, y, theta = {}):
             if variablep(s):
                 if variablep(t):
                     #theta[s] = t
-                    if s < t: # deal with namespace var ordering
+                    if s < t: # deal with standardized/non-standardized var ordering
                         theta[t] = s
                     else:
                         theta[s] = t
@@ -139,7 +179,7 @@ def nofunctions(x, y, theta = {}):
             t = theta[t]
         if s != t:
             if s[0] == "?": # cheaper var test
-                if t[0] == "?" and s < t: # deal with namespace var ordering
+                if t[0] == "?" and s < t: # deal with standardized/non-standardized var ordering
                     theta[t] = s
                 else:
                     theta[s] = t
@@ -151,3 +191,4 @@ def nofunctions(x, y, theta = {}):
                 
         
                 
+# Todo: standardize and subst in single function (optimization)

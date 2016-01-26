@@ -2,7 +2,7 @@
 # Etcetera Abduction: Probability-ordered logical abduction for kb of definite clauses 
 # Andrew S. Gordon
 
-import namespace
+import unify
 import abduction
 import bisect
 import itertools
@@ -17,7 +17,7 @@ def etcAbduction(obs, kb, maxdepth, skolemize = True):
         res.extend(abduction.crunch(u))
     res.sort(key=lambda item: jointProbability(item), reverse=True)
     if skolemize:
-        return [namespace.skolemize(r) for r in res]
+        return [unify.skolemize(r) for r in res]
     else:
         return res
 
@@ -55,6 +55,6 @@ def nbest(obs, kb, maxdepth, n, skolemize = True):
                         pr2beat = nbestPr[0] # only if full
     nbest.reverse() # [0] is now highest
     if skolemize:
-        return [namespace.skolemize(r) for r in nbest]
+        return [unify.skolemize(r) for r in nbest]
     else:
         return nbest

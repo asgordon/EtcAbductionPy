@@ -2,8 +2,6 @@
 # An exhaustive forward chaining algorithm with graph file output (.dot)
 # Andrew S. Gordon
 
-# todo: namespace variables?
-
 import parse
 import unify
 
@@ -69,12 +67,4 @@ def nodelabel(expression):
     else:
         return str(expression)
                                            
-
-                
-                
-        
-    
-
-
-
-
+# todo: When do we need to standardize variables?
