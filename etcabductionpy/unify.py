@@ -144,7 +144,7 @@ def robOccursCheck(var, target, theta):
     stack = [target]
     while stack:
         t = stack.pop()
-        for z in allvars(target):
+        for z in allvars(t):
             if var == z:
                 return false
             if z in theta:
