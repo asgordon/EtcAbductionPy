@@ -58,36 +58,25 @@ def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions
                                       unify.subst(theta, assumptions)]) # new assumptions with substitutions
             return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
 
-def crunch(conjunction): # returns a list of all possible ways to unify conjunction literals
-    conjunction = [k for k,v in itertools.groupby(sorted(conjunction))] # remove duplicates
-    res = [conjunction] # start with one solution
-    pairs = itertools.combinations(conjunction, 2)
-    thetas = [theta for theta in [unify.unify(p[0], p[1]) for p in pairs] if theta is not None]
-    ps = powerset(thetas)
-    for thetaset in ps: 
-        if len(thetaset) > 0:
-            consistent = mergethetas(thetaset)
-            if consistent:
-                rewrite = [k for k,v in itertools.groupby(sorted(unify.subst(consistent, conjunction)))]
-                if rewrite not in res: # expensive!
-                    res.append(rewrite)
-    return res
+def crunch(conjunction): #faster, simpler
+    conjunction = [k for k,v in itertools.groupby(sorted(conjunction))] # remove duplicate literals
+    if len(conjunction) < 2:
+        return [conjunction]
+    else:
+        return [k for k,v in itertools.groupby(sorted(cruncher(conjunction, 0)))]
 
-def mergethetas(thetaset):
-    '''Merge all substitutions into a single dictionary, or None if not consistent'''
-    x = []
-    y = []
-    for theta in thetaset:
-        for var in theta:
-            x.append(var)
-            y.append(theta[var])
-    return unify.unify(x,y)
+def cruncher(conjunction, idx):
+    if idx == len(conjunction) - 1: # last one
+        return [sorted(conjunction)] # sorted to help remove duplicates
+    else:
+        res = []
+        for subsequent in xrange(idx + 1,len(conjunction)):
+            theta = unify.unify(conjunction[idx], conjunction[subsequent])
+            if theta: 
+                new_conjunction = unify.subst(theta,
+                                              conjunction[0:subsequent] +
+                                              conjunction[(subsequent + 1):len(conjunction)])
+                res.extend(cruncher(new_conjunction, idx))
+        res.extend(cruncher(conjunction, idx + 1))
+        return res
 
-def powerset(iterable):
-    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
-    s = list(iterable)
-    return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
-
-# To do: First check for universals in observations
-# To do: We can handle universals in the observations if we get andorleaflists for
-#  sets of observations literals with overlapping variables.
