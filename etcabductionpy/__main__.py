@@ -10,6 +10,7 @@ import sys
 import parse
 import etcetera
 import forward
+import incremental
 
 argparser = argparse.ArgumentParser(description='Etcetera Abduction in Python')
 
@@ -56,7 +57,17 @@ argparser.add_argument('-a', '--all',
 argparser.add_argument('-f', '--forward',
                        action='store_true',
                        help='Forward chain from INFILE with KB')
-
+argparser.add_argument('-c', '--incremental',
+                       action='store_true',
+                       help='Use incremental abduction')
+argparser.add_argument('-w', '--window',
+                       type=int,
+                       default=4,
+                       help='Incremental abduction window-size, defaults to 4')
+argparser.add_argument('-b', '--beam',
+                       type=int,
+                       default=10,
+                       help='Incremental abduction beam-size, defaults to 10')
 args = argparser.parse_args()
 
 
@@ -88,7 +99,11 @@ if args.forward:
 if args.all:
     solutions = etcetera.etcAbduction(obs, kb, args.depth)
 else:
-    solutions = etcetera.nbest(obs, kb, args.depth, args.nbest)
+    if args.incremental:
+        solutions = incremental.incremental(obs, kb, args.depth, args.nbest,
+                                            args.window, args.beam)
+    else:
+        solutions = etcetera.nbest(obs, kb, args.depth, args.nbest)
 
 if args.graph:
     solution = solutions[args.solution - 1]

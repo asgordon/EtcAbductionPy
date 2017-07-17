@@ -70,7 +70,7 @@ def cruncher(conjunction, idx):
         return [sorted(conjunction)] # sorted to help remove duplicates
     else:
         res = []
-        for subsequent in xrange(idx + 1,len(conjunction)):
+        for subsequent in range(idx + 1,len(conjunction)): # was xrange
             theta = unify.unify(conjunction[idx], conjunction[subsequent])
             if theta: 
                 new_conjunction = unify.subst(theta,

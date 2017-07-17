@@ -49,7 +49,8 @@ def standardize(sexp):
     foreigners = [x for x in all_variables(sexp) if not x[0:2] == "?#"]
     aliases = {}
     for f in foreigners:
-        aliases[f] = standardized_universals.next()
+        #aliases[f] = standardized_universals.next()
+        aliases[f] = next(standardized_universals)
     return subst(aliases, sexp)
 
 def skolemize(sexp):
@@ -57,7 +58,8 @@ def skolemize(sexp):
     all_vars = all_variables(sexp)
     instances = {}
     for var in all_vars:
-        instances[var] = skolem_constants.next()
+        # instances[var] = skolem_constants.next()
+        instances[var] = next(skolem_constants)
     return subst(instances, sexp)
 
 
@@ -170,7 +172,7 @@ def nofunctions(x, y, theta = {}):
     lx = len(x)
     if lx != len(y):
         return None
-    for i in xrange(lx):
+    for i in range(lx): # was xrange
         s = x[i]
         t = y[i]
         while s in theta:

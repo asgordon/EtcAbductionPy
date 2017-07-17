@@ -6,6 +6,7 @@ import unify
 import abduction
 import bisect
 import itertools
+import functools
 
 def etcAbduction(obs, kb, maxdepth, skolemize = True):
     '''Trying something faster'''
@@ -22,7 +23,7 @@ def etcAbduction(obs, kb, maxdepth, skolemize = True):
         return res
 
 def jointProbability(etcs):
-    return reduce(lambda x, y: x*y, [l[1] for l in etcs])
+    return functools.reduce(lambda x, y: x*y, [l[1] for l in etcs])
 
 def bestCaseProbability(etcs):
     '''If we were wildly successful at unifing all literals, what would the joint probability be?'''
