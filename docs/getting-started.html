@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <h1>Getting Started</h1>
+      <span class="date">July 21, 2017</span>
+
+      <p>Welcome to the world of abductive reasoning! In this tutorial, you will learn how to use software called <u>Etcetera Abduction</u>, a form of logical abduction that finds assumptions that logically entail a given set of observations, and orders them by their probability.</p>
+      <p>This technology has lots of potential applications, including:</p>
+      <ul>
+	<li>interpretting the intended meaning of natural language text</li>
+	<li>explaining people's observable behavior in terms of their beliefs, plans, and goals</li>
+	<li>weighing competing theories in light of the available evidence</li>
+	<li>inferring the situational context that explains the presence of objects in a visual scene</li>
+	<li>generating creative narratives from novel combinations of characters, objects, and actions</li>
+      </ul>
+      
+      <p>All of these tasks can be described as <u>interpretation problems</u>. They all involve the disambiguation of ambiguous inputs, the combination of associations to establish coherence, and are subject to the biases and beliefs of the reasoner. Interpretation problems don't have a single right answer: the best solution is, by definition, open to interpretation.</p>
+
+      <p>Etcetera Abduction solves interpretation problems by combining a little bit of logical reasoning and a little bit of probability theory. You don't need to be an expert in either in order to use this technology. I recommend that you just dive in, and figure out what you need to learn along the way.</p>
+
+      <h2>Installing Etcetera Abduction</h2>
+
+      <p>Unlike other programs on your computer, Etcetera Abduction does not have a graphical user interface; you have to use via a command-line interface. On an Apple Macintosh, you can use the <u>Terminal.app</u> program in the Utilities subdirectory of your Applications directory.</p>
+
+      <p>If you've never used a command-line interface before, you should start by reading an online tutorial, such as <a href="http://www.ee.surrey.ac.uk/Teaching/Unix/">this one</a>, or <a href="http://www.pgbovine.net/command-line-tutorial.htm">this one</a>, or <a href="https://learnpythonthehardway.org/book/appendixa.html">this one</a>. </p>
+
+      <p>There are several different implementations of Etcetera Abduction available, but for this tutorial we are going to be using EtcAbductionPy, a reference implementation of Etcetera Abduction written in Python. To use it, you'll need Python installed on your machine. Either Python 2.7 or Python 3.4 should work fine - and one of these is likely already installed on your computer. The code is available online here:</p>
+      <ul>
+	<li><a href="https://github.com/asgordon/EtcAbductionPy">https://github.com/asgordon/EtcAbductionPy</a></li>
+      </ul>
+
+      <p>If you're a GitHub expert, then just clone this repository to get started. If you're a novice, then find the "Clone or download" button on this EtcAbductionPy webpage, and then click it to see the "Download ZIP" option. Clicking this will download a .zip file with all of the code, which you can double-click to unpack, creating a folder called "EtcAbductionPy-master" that you can put on your desktop or wherever you like to keep your files.</p>
+
+      <p>Next, open up your Terminal window and navigate to the <code>EtcAbductionPy-master/</code> directory. From inside this directory, you can run the Python code directly:</p>
+
+      <pre>
+$ cd EtcAbductionPy-master/
+$ python etcabductionpy/ -h
+usage:  [-h] [-i [INFILE]] [-o [OUTFILE]] [-k [KB]] [-n NBEST] [-g]
+        [-s SOLUTION] [-d DEPTH] [-a] [-f]
+
+Etcetera Abduction in Python
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i [INFILE], --infile [INFILE]
+                        Input file of observed literals as lisp s-expressions,
+                        defaults to STDIN
+  -o [OUTFILE], --outfile [OUTFILE]
+                        Output file, defaults to STDOUT
+  -k [KB], --kb [KB]    Knowledge base of definite clauses as lisp
+                        s-expressions
+  -n NBEST, --nbest NBEST
+                        Generate NBEST-best proofs, defaults to 10
+  -g, --graph           Output graph of solution in .dot format
+  -s SOLUTION, --solution SOLUTION
+                        Graph the SOLUTION-best solution, defaults to 1
+  -d DEPTH, --depth DEPTH
+                        Backchain to depth DEPTH, defaults to 5
+  -a, --all             Generate all solutions
+  -f, --forward         Forward chain from INFILE with KB       
+</pre>
+
+      <p>Did this work? Congratulations! You've now got everything you need to start using Etcetera Abduction.</p>
+      
+      <h2>Authoring an input file</h2>
+
+      <p>The EtcAbductionPy software takes as input some knowledge and some observations, and spits out as output a list of sets of assumptions that logically entail the observations, ordered by their probability.</p>
+      <p>When working through the examples in this tutorial, you should encode the knowledge and observations together in a single text file, and provide that text file as input to the <code>etcabductionpy/</code> script.</p>
+      <p>To author these input files, you'll need to use a plain text editor, like Emacs, or Vim, or Sublime Text, or Notepadd++. On an Apple Macintosh, you could even use the "TextEdit.app" utility, but if you do, please make sure that you save as a "Plain Text" file rather than a "Rich Text" file. There is an option under the "Format" menu to "Make Plain Text" if you find that you are editing the wrong type.</p>
+      <p>Let's create a minimal input file, with the following contents, and save it inside the <code>EtcAbductionPy-master/</code> directory with the name "minimal.txt". </p>
+      <pre>
+;; minimal.txt
+
+;; Observable:
+(explosion E)
+
+;; Prior probability:
+(if (etc 0.001 x) (explosion x))
+</pre>
+      <p>All blank lines and lines that begin with a semicolon are ignored by the software, so this file only contains two items of interest: an observation and a piece of knowledge.</p>
+      <p>This file has enough information in it to serve as an input to Etcetera Abduction. We can see the results by specifying it as the input using the "--input" (or just "-i") flag, as follows:</p>
+<pre>$ python etcabductionpy/ -i minimal.txt
+((etc 0.001 E))
+1 solutions.
+</pre>
+      <p>Did it work? Congratulations! You have just used Etcetera Abduction to do probability-ordered logical abduction.</p>
+
+      <h2>Creating graphs of solutions</h2>
+      <p>In the minimal example, above, Etcetera Abduction has told us that there is only one set of assumptions that logically entail the observations, and that this set has only one assumption in it, namely <code>(etc 0.001 E)</code>.</p>
+      <p>Would you like to see exactly how this assumption entails the observation? EtcAbductionPy includes a nice utility that will present the proof of this entailment as a directed graph. To produce this graph, just add the "--graph" (or just "-g") flag to the command.</p>
+      <pre>$ python etcabductionpy/ -i minimal.txt -g
+digraph proof {
+ graph [rankdir="TB"]
+ n0 [label="etc 0.001"];
+ n1 [shape=box peripheries=2 label="(explosion E)"];
+ n0 -> n1
+ {rank=same n1}
+}
+</pre>      
+      <p>The output is encoded in a special format called "DOT", which you can read about <a href="https://en.wikipedia.org/wiki/DOT_(graph_description_language)">here</a>. This encoding describes a graphical layout, which various other programs can use to generate the corresponding visual images.</p>
+      <p>If you want to keep things simple, and you don't want to install any more software on your computer, then you can use an online tool to convert DOT descriptions into graphical images. Here is one that I like to use:</p>
+      <ul>
+	<li><a href="http://www.webgraphviz.com">http://www.webgraphviz.com</a></li>
+      </ul>
+      <p>See the graph, copy and paste the output directly into the input box on this webpage, and press the "Generate Graph!" button. You'll see the following result:</p>
+      
+<svg width="108pt" height="124pt"
+ viewBox="0.00 0.00 107.82 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-120 103.817,-120 103.817,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="49.9087" cy="-98" rx="42.5456" ry="18"/>
+<text text-anchor="middle" x="49.9087" y="-93.8" font-family="Times,serif" font-size="14.00">etc 0.001</text>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<polygon fill="none" stroke="black" points="95.7335,-40 4.08384,-40 4.08384,-4 95.7335,-4 95.7335,-40"/>
+<polygon fill="none" stroke="black" points="99.7262,-44 0.0911418,-44 0.0911418,-0 99.7262,-0 99.7262,-44"/>
+<text text-anchor="middle" x="49.9087" y="-17.8" font-family="Times,serif" font-size="14.00">(explosion E)</text>
+</g>
+<!-- n0&#45;&gt;n1 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n1</title>
+<path fill="none" stroke="black" d="M49.9087,-79.8369C49.9087,-72.165 49.9087,-62.8775 49.9087,-54.0535"/>
+<polygon fill="black" stroke="black" points="53.4088,-54.0322 49.9087,-44.0322 46.4088,-54.0322 53.4088,-54.0322"/>
+</g>
+</g>
+</svg>
+
+      <p>If you'd prefer to generate these graphs locally on your own machine, then you'll need to ensure that some appropriate graph-making software is installed. Personally, I like the standard <code>dot</code> program that is included with the <code>graphviz</code> software package.</p>
+
+      <p>If you are like me, and use an Apple Macintosh, then you can install the whole <code>graphviz</code> package, including the <code>dot</code> utility, using the HomeBrew package manager.</p>
+      <pre>$ brew install graphviz</pre>
+      <p>After that, you can pipe the output of <code>etcabductionpy/</code> to <code>dot</code>, to generate nice scalable vector graphics (svg) files, as follows:</p>
+      <pre>$ python etcabductionpy/ -i minimal.txt -g | dot -Tsvg > minimal.svg</pre>
+      <p>I do this so often that I wrote a handy utility that generates the .svg file in a temp directory, and opens it up in the Safari browser. You can try this utility yourself by piping the graph to ./util/dot2safari as follows:</p>
+      <pre>python etcabductionpy/ -i minimal.txt -g | ./util/dot2safari </pre>
+
+      <h2>Getting help</h2>
+      <p>If you have made it this far, then you are ready to start learning how to use Etcetera Abduction to solve interpretation problems. I have prepared a few examples to work through, by way of a tutorial, which you should take a look at next.</p>
+
+      <p>Etcetera Abduction is a research technology, and it's not without its warts. Some aspects you may find annoying or cumbersome, but I encourage you to stick with it.</p>
+
+      <p>I also want to encourage you to reach out to me directly if you run into problems that you can't figure out for yourself. Also, I'd be happy to hear any suggestions that you have for improving the usability of the software tools, or any corrections that you would like to make to the tutorial examples. You can reach me by email at: <code>gordon@ict.usc.edu</code></p>
+	
+  </body>
+</html>

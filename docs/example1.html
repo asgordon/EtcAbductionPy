@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <h1>Example 1: Chicken and Egg</h1>
+      <span class="date">July 11, 2017</span>
+      <p>Imagine that you see both a chicken and an egg. How should you make sense of this situation? What is the most-probable explanation of what you are seeing?</p>
+      <p>Etcetera Abduction can do a couple of things for you in this problem. First and foremost, it can provide you with the most-probable set of assumptions that logically entail the observations -- the best explanation. Second, it can tell you what is the highest estimate of the joint probability of these two observations, given your knowledgebase.</p>
+      <p>To see this in action, let's write a simple input file.</p>
+      <p>To start with, we'll list the observables as literals in first order logic.</p>
+      <pre>;; The observables
+(chicken C)
+(egg E)</pre>
+      <p>Here we use uppercase "C" and "E" to signify that these arguments are constants, not variables. You can think of "C" here as representing one particular chicken that we're seeing, and "E" as represented one particular egg.</p>
+      <p>In Etcetera Abduction, every predicate in the knowledge base needs a prior probability. Since we've used the predicates "chicken" and "egg", we'll need to provide the prior probabilities associated with both. Here's the format:</p>
+      <pre>;; Prior probabilities of the observables
+(if (etc0_chicken 0.001 x) (chicken x))
+(if (etc0_egg 0.002 x) (egg x))</pre>
+      <p>Here, these prior probabilities are expressed as axioms, or more specifically, as definite clauses. Definite clauses can be written this way, where there is one or more literals that serve as the "antecedents," and exactly one literal that serves as the "consequent." In these two axioms, literals for "chicken" and "egg" are provided as consequents. Importantly, the arguments to these two literals are both "x", which signifies a universally quantified variable. Basically, we're not encoding the specific prior probabilities of the chicken "C" or the egg "E", but rather the prior probabilities of observing any given chicken or egg.</p>
+      <p>The actual probabilities are included as constants (real numbered values) in the first argument position of the antecedent - the "etcetera literal" in these two axioms. Here, the prior probability of observing a chicken is given as 0.001 (p=0.1%), and an egg as 0.002 (p=0.2%). By convention, the predicates used in all etcetera literals in a knowledgebase begin with "etc", followed by an integer, an underscore "_", and then the predicate of the consequent. By further convention, all prior probabilities encoded in etcetera literals use the integer "0". With these conventions, we can readily guess that "etc0_chicken" and "etc0_egg" are encoding the prior probabilities of chickens and eggs.</p>
+      <p>If you'd like to use a different convention for naming your predications, go ahead. Required, however, is that the first argument in an etcetera literal is a real valued number between 0.0 and 1.0 -- the quantified probability. As well, you must include as arguments (in any order) all of the other universally quantified variables that appear anywhere else in the axiom. In these two cases, this is only the "x" variable, which appears in both consequents. If you leave one out by mistake, you can get some extremely hard-to-debug reasoning errors.</p>
+      <p>With just these axioms in place, we can already try to come up with some explanation for the observables. Let's evoke the program on our input file ("chicken-egg.lisp") and see what we get:
+        <pre>$ python etcabductionpy -i chicken-egg.lisp
+((etc0_chicken 0.001 C) (etc0_egg 0.002 E))
+        </pre>
+      <p>The output is exactly one explanation, i.e., one set of assumptions that wholly entails the two observations. The explanation, however, is not very exciting: the best explanation given the knowledge base is to assume the etcetera literals that encode the prior probabilities, with the constants properly unified. And sure enough, if we assert these two literals as true and forward-chain through our knowledge base, we'll deduce the two observations exactly.</p>
+      <p>Our tool provides a nice way to visualize these proofs of the observables as ".dot" files, which can easily be converted to visual graphs using the "graphviz" utility. To output a .dot file for the most-probable solution, just provide the "-g" flag (or "--graph") on the command line.</p>
+      <pre>$ python etcabductionpy -i chicken-egg.lisp -g
+digraph proof {
+graph [rankdir="TB"]
+n0 [label="etc0_chicken 0.001"];
+n1 [label="etc0_egg 0.002"];
+n2 [shape=box peripheries=2 label="(chicken C)"];
+n3 [shape=box peripheries=2 label="(egg E)"];
+n0 -> n2
+n1 -> n3
+{rank=same n2 n3}
+}
+      </pre>
+      <p>If you are on a mac, and you have the graphviz library installed, then you can pipe this output to a utility that opens it up as an .svg file in Safari, like this:</p>
+      <pre>$ python etcabductionpy -i ~/Desktop/chicken-egg.lisp -g | ./util/dot2safari </pre>
+      <svg width="312pt" height="124pt"
+           viewBox="0.00 0.00 312.00 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
+          <title>proof</title>
+          <polygon fill="white" stroke="none" points="-4,4 -4,-120 307.999,-120 307.999,4 -4,4"/>
+          <!-- n0 -->
+          <g id="node1" class="node"><title>n0</title>
+            <ellipse fill="none" stroke="black" cx="78.8639" cy="-98" rx="78.728" ry="18"/>
+            <text text-anchor="middle" x="78.8639" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_chicken 0.001</text>
+          </g>
+          <!-- n2 -->
+          <g id="node3" class="node"><title>n2</title>
+            <polygon fill="none" stroke="black" points="119.571,-40 38.1564,-40 38.1564,-4 119.571,-4 119.571,-40"/>
+            <polygon fill="none" stroke="black" points="123.558,-44 34.17,-44 34.17,-0 123.558,-0 123.558,-44"/>
+            <text text-anchor="middle" x="78.8639" y="-17.8" font-family="Times,serif" font-size="14.00">(chicken C)</text>
+          </g>
+          <!-- n0&#45;&gt;n2 -->
+          <g id="edge1" class="edge"><title>n0&#45;&gt;n2</title>
+            <path fill="none" stroke="black" d="M78.8639,-79.8369C78.8639,-72.165 78.8639,-62.8775 78.8639,-54.0535"/>
+            <polygon fill="black" stroke="black" points="82.364,-54.0322 78.8639,-44.0322 75.364,-54.0322 82.364,-54.0322"/>
+          </g>
+          <!-- n1 -->
+          <g id="node2" class="node"><title>n1</title>
+            <ellipse fill="none" stroke="black" cx="239.864" cy="-98" rx="64.27" ry="18"/>
+            <text text-anchor="middle" x="239.864" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_egg 0.002</text>
+          </g>
+          <!-- n3 -->
+          <g id="node4" class="node"><title>n3</title>
+            <polygon fill="none" stroke="black" points="268.48,-40 211.248,-40 211.248,-4 268.48,-4 268.48,-40"/>
+            <polygon fill="none" stroke="black" points="272.455,-44 207.273,-44 207.273,-0 272.455,-0 272.455,-44"/>
+            <text text-anchor="middle" x="239.864" y="-17.8" font-family="Times,serif" font-size="14.00">(egg E)</text>
+          </g>
+          <!-- n1&#45;&gt;n3 -->
+          <g id="edge2" class="edge"><title>n1&#45;&gt;n3</title>
+            <path fill="none" stroke="black" d="M239.864,-79.8369C239.864,-72.165 239.864,-62.8775 239.864,-54.0535"/>
+            <polygon fill="black" stroke="black" points="243.364,-54.0322 239.864,-44.0322 236.364,-54.0322 243.364,-54.0322"/>
+          </g>
+        </g>
+      </svg>
+      <p>In this visualization, the etcetera literals are the ovals, and the arrows point in to consequents. In these graphs, we've removed the arguments of the etcetera literals after the probabilities, because in real knowlegebases these lists can get pretty long, and that is not conducive to pretty-looking graphs. The important part is the numbers - these are the probabilities of the assumptions, both prior probabilities and conditional probabilities. In etcetera abduction, the highest estimate of the joint probability of the observables, given the knowledge base, is simply the product of these numbers. Here, we're assuming that the probability of etcetera literals are independent from one another, precisely because we cannot or choose not to model the conditions of the universe that they represent. However, we don't consider this a "naive" assumption, at least not in the naive-Bayes sense of the word, because if we knew more about joint and conditional probabilities - and encoded that knowledge in the knowledgebase - then Etcetera Abduction could find a better (higher) estimate. The more you know, the better your joint-probability estimates are going to be. Without this extra knowledge, the only estimate you can come up with is by assuming probabilistic independence of all the observations, which is exactly what is produced in the output above.</p>
+      <p>So now let's see what happens if we add a bit more knowledge to our knowledgebase. Let's add two more axioms. In the first, we'll provide some possible explanation for why we are seeing an egg: maybe it's from a hen! That happens around 10% of the time I see a hen (just a guess). That is, the conditional probability of seeing an egg, given a hen, is 0.1. We encode this conditional probability as follows:</p>
+      <pre>;; Why egg? Maybe a hen
+(if (and (hen x)
+         (etc1_egg 0.1 x y))
+    (egg y))
+</pre>
+      <p>Again, we use lowercase letters to signify universally quantified variables in this definite clause. This time, the antecedent has two literals - one that assumes a hen, and another that encodes the conditional probability (p=0.1). By convention, we're using a unique larger-than-zero integer in the predicate of the etcetera literal, and still using the consequent predicate after the underscore. When I see this predicate "etc1_egg", I think of it as encoding the "first real explanation for why we might be seeing an egg", namely that the conditions of the universe are just right for a hen and an egg to co-occur. Also, this etcetera literal has two additional arguments after the numeric probability, namely the two universally quantified variables that appear elsewhere in the axiom ("x" for the hen, and "y" for the egg).</p>
+
+      <p>Next let's add some knowledge about chickens. About half of the time we have a chicken, it's a hen (or else it's a rooster). That is, the Pr(hen | chicken) = 0.5. BUT, this isn't the sort of probability we need just yet. Instead, we're interested in the conditional probability of a chicken given a hen. Well, I'm pretty sure that is 100% of the time (just a guess, again). We can encode this conditional certainty in the following manner:</p>
+      <pre>;; Why chicken? Maybe it's a hen
+(if (and (hen x)
+         (etc1_chicken 1.0 x))
+    (chicken x))
+</pre>
+      <p>This axiom says that one of the ways we might observe a chicken is if, in fact, it is a hen. And 100% of the time, when we have a hen, it's a chicken.</p>
+      <p>But what about the other 50% of chickens that are roosters? We could make an axiom for roosters as well, if we like, but it's not going to help us in this problem. Still, this 50% number comes to play in another axiom that we absolutely must write, encoding the prior probability of hens. If the prior of a chicken was .1%, then the prior of a hen is going to be half that, or .05%. Here's the axiom for that:
+        <pre>;; The prior probabilities of assumed literals
+(if (etc0_hen 0.0005 x) (hen x))
+        </pre>
+      <p>With these three new axioms inserted into "chicken-egg.lisp", we're ready to run the interpretation again. This time, we end up with 5 solutions, and a new and different one is on top:</p>
+      <pre>$ python etcabductionpy -i chicken-egg.lisp
+((etc0_hen 0.0005 C) (etc1_chicken 1.0 C) (etc1_egg 0.1 C E))
+((etc0_chicken 0.001 C) (etc0_egg 0.002 E))
+((etc0_egg 0.002 E) (etc0_hen 0.0005 C) (etc1_chicken 1.0 C))
+((etc0_chicken 0.001 C) (etc0_hen 0.0005 $1) (etc1_egg 0.1 $1 E))
+((etc0_hen 0.0005 $1) (etc0_hen 0.0005 C) (etc1_chicken 1.0 C) (etc1_egg 0.1 $1 E))
+5 solutions.
+      </pre>
+
+      <p>Let's graph the most-probable solution to see what it looks like.</p>
+      <pre>$ python etcabductionpy -i chicken-egg.lisp -g | ./util/dot2safari </pre>
+
+      <svg width="352pt" height="196pt"
+           viewBox="0.00 0.00 352.31 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+          <title>proof</title>
+          <polygon fill="white" stroke="none" points="-4,4 -4,-192 348.312,-192 348.312,4 -4,4"/>
+          <!-- n0 -->
+          <g id="node1" class="node"><title>n0</title>
+            <ellipse fill="none" stroke="black" cx="187.02" cy="-170" rx="68.6133" ry="18"/>
+            <text text-anchor="middle" x="187.02" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_hen 0.0005</text>
+          </g>
+          <!-- n3 -->
+          <g id="node4" class="node"><title>n3</title>
+            <polygon fill="none" stroke="black" points="216.398,-116 157.643,-116 157.643,-80 216.398,-80 216.398,-116"/>
+            <text text-anchor="middle" x="187.02" y="-93.8" font-family="Times,serif" font-size="14.00">(hen C)</text>
+          </g>
+          <!-- n0&#45;&gt;n3 -->
+          <g id="edge1" class="edge"><title>n0&#45;&gt;n3</title>
+            <path fill="none" stroke="black" d="M187.02,-151.697C187.02,-143.983 187.02,-134.712 187.02,-126.112"/>
+            <polygon fill="black" stroke="black" points="190.521,-126.104 187.02,-116.104 183.521,-126.104 190.521,-126.104"/>
+          </g>
+          <!-- n1 -->
+          <g id="node2" class="node"><title>n1</title>
+            <ellipse fill="none" stroke="black" cx="70.0204" cy="-98" rx="70.0409" ry="18"/>
+            <text text-anchor="middle" x="70.0204" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_chicken 1.0</text>
+          </g>
+          <!-- n4 -->
+          <g id="node5" class="node"><title>n4</title>
+            <polygon fill="none" stroke="black" points="120.728,-40 39.3129,-40 39.3129,-4 120.728,-4 120.728,-40"/>
+            <polygon fill="none" stroke="black" points="124.714,-44 35.3266,-44 35.3266,-0 124.714,-0 124.714,-44"/>
+            <text text-anchor="middle" x="80.0204" y="-17.8" font-family="Times,serif" font-size="14.00">(chicken C)</text>
+          </g>
+          <!-- n1&#45;&gt;n4 -->
+          <g id="edge2" class="edge"><title>n1&#45;&gt;n4</title>
+            <path fill="none" stroke="black" d="M72.3398,-79.8369C73.3765,-72.165 74.6316,-62.8775 75.824,-54.0535"/>
+            <polygon fill="black" stroke="black" points="79.3075,-54.4109 77.1782,-44.0322 72.3705,-53.4734 79.3075,-54.4109"/>
+          </g>
+          <!-- n2 -->
+          <g id="node3" class="node"><title>n2</title>
+            <ellipse fill="none" stroke="black" cx="289.02" cy="-98" rx="55.0836" ry="18"/>
+            <text text-anchor="middle" x="289.02" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_egg 0.1</text>
+          </g>
+          <!-- n5 -->
+          <g id="node6" class="node"><title>n5</title>
+            <polygon fill="none" stroke="black" points="266.636,-40 209.404,-40 209.404,-4 266.636,-4 266.636,-40"/>
+            <polygon fill="none" stroke="black" points="270.612,-44 205.429,-44 205.429,-0 270.612,-0 270.612,-44"/>
+            <text text-anchor="middle" x="238.02" y="-17.8" font-family="Times,serif" font-size="14.00">(egg E)</text>
+          </g>
+          <!-- n2&#45;&gt;n5 -->
+          <g id="edge4" class="edge"><title>n2&#45;&gt;n5</title>
+            <path fill="none" stroke="black" d="M277.448,-80.2083C271.823,-72.0462 264.893,-61.9915 258.42,-52.6"/>
+            <polygon fill="black" stroke="black" points="261.212,-50.4826 252.655,-44.2349 255.448,-54.455 261.212,-50.4826"/>
+          </g>
+          <!-- n3&#45;&gt;n4 -->
+          <g id="edge3" class="edge"><title>n3&#45;&gt;n4</title>
+            <path fill="none" stroke="black" d="M162.204,-79.8369C149.302,-70.9141 133.24,-59.8061 118.748,-49.7833"/>
+            <polygon fill="black" stroke="black" points="120.647,-46.8417 110.432,-44.0322 116.666,-52.599 120.647,-46.8417"/>
+          </g>
+          <!-- n3&#45;&gt;n5 -->
+          <g id="edge5" class="edge"><title>n3&#45;&gt;n5</title>
+            <path fill="none" stroke="black" d="M198.849,-79.8369C204.481,-71.6646 211.377,-61.6593 217.804,-52.3335"/>
+            <polygon fill="black" stroke="black" points="220.732,-54.2523 223.525,-44.0322 214.969,-50.28 220.732,-54.2523"/>
+          </g>
+        </g>
+      </svg>
+      <p>Great! We found a better explanation for the chicken and the egg: the chicken must actually be a hen, and this hen is responsible for the egg. The joint probability of the observations is estimated to be p=0.00005 (0.0005 * 0.1 * 1.0), which is higher than our previous solution of considering only the priors, p=0.00002 (0.001 * 0.002). We've found an explanation that beats the priors, and a new estimate of the joint probability of seeing both a chicken and an egg.</p>
+      <p>The old best solution, the one with only the prior probabilities, is still in this list of solutions above, but now it is at the 2nd position. There are also three solutions listed in positions 3 through 5 that are actually worse than assuming the priors. The last two of these include a constant "$1", which we haven't seen before. These are called "skolem constants", and are used when a reasoning system needs to refer to specific entity in the domain that hasn't been given a proper name, like "C" or "E". These show up in Etcetera Abduction when a variable appears in an antecedent but not in the consequent. In this specific case, the system is assuming that some other unknown hen, but not the chicken "C", is responsible for the egg. A second chicken certainly would explain the observables, but two chickens are a lot less probable than one.</p>
+    </div>
+  </body>
+</html>

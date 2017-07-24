@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <h1>Example 3: Lemon or Lime</h1>
+      <span class="date">July 20, 2017</span>
+      <p>While grocery stores typically stock green limes in their fresh produce section, a lime will actually turn yellow when fully ripe. When fully ripe, they look very similar to lemons, which turn yellow just as they begin to ripen. People who have both a lemon tree and a lime tree in their backyard need to learn other ways to tell them apart, else they run the risk of stirring up a lemon margarita. The natural approach is to be an empiricist, and learn to classify based on the the conditional probabilities that connect limes and lemons to their features.</p>
+      <p>Here is a table that summarizes the features of 1000 observations of lemons and limes.</p>
+      <table>
+	<tr>
+	  <th>Fruit</th>
+	  <th>Count</th>
+	  <th>Yellow</th>
+	  <th>Not yellow</th>
+	  <th>Round</th>
+	  <th>Not round</th>
+	</tr>
+	<tr>
+	  <td>Lime</td>
+	  <td>600</td>
+	  <td>550</td>
+	  <td>50</td>
+	  <td>300</td>
+	  <td>300</td>
+	</tr>
+	<tr>
+	  <td>lemon</td>
+	  <td>400</td>
+	  <td>350</td>
+	  <td>50</td>
+	  <td>30</td>
+	  <td>370</td>
+	</tr>
+	<tr>
+	  <td>Total</td>
+	  <td>1000</td>
+	  <td>900</td>
+	  <td>100</td>
+	  <td>330</td>
+	  <td>670</td>
+	</tr>
+      </table>
+
+      <p>Given a table of this sort, we should be able to make an educated guess about whether we've got a lemon or a lime in our hand, based on whether it or not it is yellow and if it is round. Let's use Etcetera Abduction to automatically make the classification for us.</p>
+
+      <p>First, we'll establish the prior probabilities of our two class labels, <code>lemon</code> and <code>lime</code>. These numbers are simply the number of fruit in our sample of each type, divided by the total number (1000), encoded as follows:</p>
+
+      <pre>;; Prior probabilities of class labels
+(if (etc0_lime 0.6 x) (lime x)) ;; 600 / 1000
+(if (etc0_lemon 0.4 x) (lemon x)) ;; 400 / 1000
+</pre>
+
+      <p>Second, we'll calculate all of the relevant conditional probabilities. For each of the four features, we calculate a conditional probability of the feature given a class label. This is simply the fraction of class instances that have the feature.</p>
+      <pre>;; conditional probabilities of the features given the class
+(if (and (lime x) (etc1_yellow 0.9166666667 x)) ;; 550 / 600
+    (yellow x))
+(if (and (lime x) (etc1_not_yellow 0.08333333333 x)) ;; 50 / 600
+    (not_yellow x))
+(if (and (lemon x) (etc2_yellow 0.875 x)) ;; 350 / 400
+    (yellow x))
+(if (and (lime x) (etc2_not_yellow 0.125 x)) ;; 50 / 400
+    (not_yellow x))
+(if (and (lime x) (etc1_round 0.5 x)) ;; 300 / 600
+    (round x))
+(if (and (lime x) (etc1_not_round 0.5 x)) ;; 300 / 600
+    (not_round x))
+(if (and (lemon x) (etc2_round 0.075)) ;; 30 / 400
+    (round x))
+(if (and (lemon x) (etc2_not_round 0.925)) ;; 370 / 400
+    (not_round x))
+</pre>
+      <p>Finally, we'll need to specify the observables. Let's imagine that we are staring at four different fruit, each with their own unique combination of features, as follows:</p>
+      <pre>;; Observables: Four different fruit
+
+(yellow FRUIT1)
+(not_round FRUIT1)
+
+(yellow FRUIT2)
+(round FRUIT2)
+
+(not_yellow FRUIT3)
+(not_round FRUIT3)
+
+(not_yellow FRUIT4)
+(round FRUIT4)
+</pre>      
+      <p>Now let's ask Etcetera Abduction to give us an interpretation, and then graph it out.</p>
+      <pre>python etcabductionpy/ -i lemon-lime.lisp -g | ./util/dot2safari</pre>
+
+<svg width="540pt" 
+ viewBox="0.00 0.00 1946.88 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-192 1942.88,-192 1942.88,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="254.72" cy="-170" rx="71.5117" ry="18"/>
+<text text-anchor="middle" x="254.72" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_lemon 0.4</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<polygon fill="none" stroke="black" points="315.876,-116 193.565,-116 193.565,-80 315.876,-80 315.876,-116"/>
+<text text-anchor="middle" x="254.72" y="-93.8" font-family="Times,serif" font-size="14.00">(lemon FRUIT1)</text>
+</g>
+<!-- n0&#45;&gt;n12 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M254.72,-151.697C254.72,-143.983 254.72,-134.712 254.72,-126.112"/>
+<polygon fill="black" stroke="black" points="258.22,-126.104 254.72,-116.104 251.22,-126.104 258.22,-126.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="698.72" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="698.72" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_lime 0.6</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<polygon fill="none" stroke="black" points="749.376,-116 648.065,-116 648.065,-80 749.376,-80 749.376,-116"/>
+<text text-anchor="middle" x="698.72" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT2)</text>
+</g>
+<!-- n1&#45;&gt;n13 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M698.72,-151.697C698.72,-143.983 698.72,-134.712 698.72,-126.112"/>
+<polygon fill="black" stroke="black" points="702.22,-126.104 698.72,-116.104 695.22,-126.104 702.22,-126.104"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="1223.72" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="1223.72" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_lime 0.6</text>
+</g>
+<!-- n14 -->
+<g id="node15" class="node"><title>n14</title>
+<polygon fill="none" stroke="black" points="1274.38,-116 1173.06,-116 1173.06,-80 1274.38,-80 1274.38,-116"/>
+<text text-anchor="middle" x="1223.72" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT3)</text>
+</g>
+<!-- n2&#45;&gt;n14 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M1223.72,-151.697C1223.72,-143.983 1223.72,-134.712 1223.72,-126.112"/>
+<polygon fill="black" stroke="black" points="1227.22,-126.104 1223.72,-116.104 1220.22,-126.104 1227.22,-126.104"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="1687.72" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="1687.72" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_lime 0.6</text>
+</g>
+<!-- n15 -->
+<g id="node16" class="node"><title>n15</title>
+<polygon fill="none" stroke="black" points="1738.38,-116 1637.06,-116 1637.06,-80 1738.38,-80 1738.38,-116"/>
+<text text-anchor="middle" x="1687.72" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT4)</text>
+</g>
+<!-- n3&#45;&gt;n15 -->
+<g id="edge4" class="edge"><title>n3&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M1687.72,-151.697C1687.72,-143.983 1687.72,-134.712 1687.72,-126.112"/>
+<polygon fill="black" stroke="black" points="1691.22,-126.104 1687.72,-116.104 1684.22,-126.104 1691.22,-126.104"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="1076.72" cy="-98" rx="78.7539" ry="18"/>
+<text text-anchor="middle" x="1076.72" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_not_round 0.5</text>
+</g>
+<!-- n20 -->
+<g id="node21" class="node"><title>n20</title>
+<polygon fill="none" stroke="black" points="1179.55,-40 1045.89,-40 1045.89,-4 1179.55,-4 1179.55,-40"/>
+<polygon fill="none" stroke="black" points="1183.54,-44 1041.9,-44 1041.9,-0 1183.54,-0 1183.54,-44"/>
+<text text-anchor="middle" x="1112.72" y="-17.8" font-family="Times,serif" font-size="14.00">(not_round FRUIT3)</text>
+</g>
+<!-- n4&#45;&gt;n20 -->
+<g id="edge13" class="edge"><title>n4&#45;&gt;n20</title>
+<path fill="none" stroke="black" d="M1085.07,-79.8369C1088.92,-71.9148 1093.62,-62.2701 1098.03,-53.1918"/>
+<polygon fill="black" stroke="black" points="1101.26,-54.5557 1102.49,-44.0322 1094.97,-51.4934 1101.26,-54.5557"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="566.72" cy="-98" rx="63.3097" ry="18"/>
+<text text-anchor="middle" x="566.72" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_round 0.5</text>
+</g>
+<!-- n18 -->
+<g id="node19" class="node"><title>n18</title>
+<polygon fill="none" stroke="black" points="663.157,-40 554.284,-40 554.284,-4 663.157,-4 663.157,-40"/>
+<polygon fill="none" stroke="black" points="667.155,-44 550.286,-44 550.286,-0 667.155,-0 667.155,-44"/>
+<text text-anchor="middle" x="608.72" y="-17.8" font-family="Times,serif" font-size="14.00">(round FRUIT2)</text>
+</g>
+<!-- n5&#45;&gt;n18 -->
+<g id="edge9" class="edge"><title>n5&#45;&gt;n18</title>
+<path fill="none" stroke="black" d="M576.462,-79.8369C581.005,-71.8314 586.547,-62.0669 591.747,-52.9053"/>
+<polygon fill="black" stroke="black" points="594.891,-54.4567 596.783,-44.0322 588.803,-51.0014 594.891,-54.4567"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="1555.72" cy="-98" rx="63.3097" ry="18"/>
+<text text-anchor="middle" x="1555.72" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_round 0.5</text>
+</g>
+<!-- n22 -->
+<g id="node23" class="node"><title>n22</title>
+<polygon fill="none" stroke="black" points="1645.16,-40 1536.28,-40 1536.28,-4 1645.16,-4 1645.16,-40"/>
+<polygon fill="none" stroke="black" points="1649.15,-44 1532.29,-44 1532.29,-0 1649.15,-0 1649.15,-44"/>
+<text text-anchor="middle" x="1590.72" y="-17.8" font-family="Times,serif" font-size="14.00">(round FRUIT4)</text>
+</g>
+<!-- n6&#45;&gt;n22 -->
+<g id="edge17" class="edge"><title>n6&#45;&gt;n22</title>
+<path fill="none" stroke="black" d="M1563.84,-79.8369C1567.58,-71.9148 1572.15,-62.2701 1576.44,-53.1918"/>
+<polygon fill="black" stroke="black" points="1579.66,-54.5686 1580.77,-44.0322 1573.33,-51.5756 1579.66,-54.5686"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<ellipse fill="none" stroke="black" cx="873.72" cy="-98" rx="106.275" ry="18"/>
+<text text-anchor="middle" x="873.72" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_yellow 0.9166666667</text>
+</g>
+<!-- n19 -->
+<g id="node20" class="node"><title>n19</title>
+<polygon fill="none" stroke="black" points="888.085,-40 773.356,-40 773.356,-4 888.085,-4 888.085,-40"/>
+<polygon fill="none" stroke="black" points="892.097,-44 769.344,-44 769.344,-0 892.097,-0 892.097,-44"/>
+<text text-anchor="middle" x="830.72" y="-17.8" font-family="Times,serif" font-size="14.00">(yellow FRUIT2)</text>
+</g>
+<!-- n7&#45;&gt;n19 -->
+<g id="edge11" class="edge"><title>n7&#45;&gt;n19</title>
+<path fill="none" stroke="black" d="M863.747,-79.8369C859.095,-71.8314 853.421,-62.0669 848.098,-52.9053"/>
+<polygon fill="black" stroke="black" points="850.992,-50.92 842.942,-44.0322 844.94,-54.4369 850.992,-50.92"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<ellipse fill="none" stroke="black" cx="87.7203" cy="-98" rx="87.9412" ry="18"/>
+<text text-anchor="middle" x="87.7203" y="-93.8" font-family="Times,serif" font-size="14.00">etc2_not_round 0.925</text>
+</g>
+<!-- n16 -->
+<g id="node17" class="node"><title>n16</title>
+<polygon fill="none" stroke="black" points="162.55,-40 28.891,-40 28.891,-4 162.55,-4 162.55,-40"/>
+<polygon fill="none" stroke="black" points="166.545,-44 24.896,-44 24.896,-0 166.545,-0 166.545,-44"/>
+<text text-anchor="middle" x="95.7203" y="-17.8" font-family="Times,serif" font-size="14.00">(not_round FRUIT1)</text>
+</g>
+<!-- n8&#45;&gt;n16 -->
+<g id="edge5" class="edge"><title>n8&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M89.5758,-79.8369C90.4052,-72.165 91.4092,-62.8775 92.3632,-54.0535"/>
+<polygon fill="black" stroke="black" points="95.8514,-54.3505 93.4466,-44.0322 88.8919,-53.5981 95.8514,-54.3505"/>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<ellipse fill="none" stroke="black" cx="1383.72" cy="-98" rx="91.3153" ry="18"/>
+<text text-anchor="middle" x="1383.72" y="-93.8" font-family="Times,serif" font-size="14.00">etc2_not_yellow 0.125</text>
+</g>
+<!-- n21 -->
+<g id="node22" class="node"><title>n21</title>
+<polygon fill="none" stroke="black" points="1417.48,-40 1277.96,-40 1277.96,-4 1417.48,-4 1417.48,-40"/>
+<polygon fill="none" stroke="black" points="1421.49,-44 1273.95,-44 1273.95,-0 1421.49,-0 1421.49,-44"/>
+<text text-anchor="middle" x="1347.72" y="-17.8" font-family="Times,serif" font-size="14.00">(not_yellow FRUIT3)</text>
+</g>
+<!-- n9&#45;&gt;n21 -->
+<g id="edge15" class="edge"><title>n9&#45;&gt;n21</title>
+<path fill="none" stroke="black" d="M1375.37,-79.8369C1371.52,-71.9148 1366.82,-62.2701 1362.41,-53.1918"/>
+<polygon fill="black" stroke="black" points="1365.47,-51.4934 1357.95,-44.0322 1359.18,-54.5557 1365.47,-51.4934"/>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<ellipse fill="none" stroke="black" cx="1847.72" cy="-98" rx="91.3153" ry="18"/>
+<text text-anchor="middle" x="1847.72" y="-93.8" font-family="Times,serif" font-size="14.00">etc2_not_yellow 0.125</text>
+</g>
+<!-- n23 -->
+<g id="node24" class="node"><title>n23</title>
+<polygon fill="none" stroke="black" points="1881.48,-40 1741.96,-40 1741.96,-4 1881.48,-4 1881.48,-40"/>
+<polygon fill="none" stroke="black" points="1885.49,-44 1737.95,-44 1737.95,-0 1885.49,-0 1885.49,-44"/>
+<text text-anchor="middle" x="1811.72" y="-17.8" font-family="Times,serif" font-size="14.00">(not_yellow FRUIT4)</text>
+</g>
+<!-- n10&#45;&gt;n23 -->
+<g id="edge19" class="edge"><title>n10&#45;&gt;n23</title>
+<path fill="none" stroke="black" d="M1839.37,-79.8369C1835.52,-71.9148 1830.82,-62.2701 1826.41,-53.1918"/>
+<polygon fill="black" stroke="black" points="1829.47,-51.4934 1821.95,-44.0322 1823.18,-54.5557 1829.47,-51.4934"/>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<ellipse fill="none" stroke="black" cx="409.72" cy="-98" rx="75.3707" ry="18"/>
+<text text-anchor="middle" x="409.72" y="-93.8" font-family="Times,serif" font-size="14.00">etc2_yellow 0.875</text>
+</g>
+<!-- n17 -->
+<g id="node18" class="node"><title>n17</title>
+<polygon fill="none" stroke="black" points="389.085,-40 274.356,-40 274.356,-4 389.085,-4 389.085,-40"/>
+<polygon fill="none" stroke="black" points="393.097,-44 270.344,-44 270.344,-0 393.097,-0 393.097,-44"/>
+<text text-anchor="middle" x="331.72" y="-17.8" font-family="Times,serif" font-size="14.00">(yellow FRUIT1)</text>
+</g>
+<!-- n11&#45;&gt;n17 -->
+<g id="edge7" class="edge"><title>n11&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M392.021,-80.2083C382.979,-71.6297 371.733,-60.9606 361.411,-51.168"/>
+<polygon fill="black" stroke="black" points="363.767,-48.5784 354.103,-44.2349 358.949,-53.6566 363.767,-48.5784"/>
+</g>
+<!-- n12&#45;&gt;n16 -->
+<g id="edge6" class="edge"><title>n12&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M217.843,-79.8369C197.775,-70.4972 172.563,-58.7632 150.265,-48.3857"/>
+<polygon fill="black" stroke="black" points="151.454,-45.0786 140.911,-44.0322 148.501,-51.4249 151.454,-45.0786"/>
+</g>
+<!-- n12&#45;&gt;n17 -->
+<g id="edge8" class="edge"><title>n12&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M272.579,-79.8369C281.43,-71.3311 292.347,-60.8395 302.382,-51.1952"/>
+<polygon fill="black" stroke="black" points="305.051,-53.485 309.835,-44.0322 300.2,-48.4379 305.051,-53.485"/>
+</g>
+<!-- n13&#45;&gt;n18 -->
+<g id="edge10" class="edge"><title>n13&#45;&gt;n18</title>
+<path fill="none" stroke="black" d="M677.846,-79.8369C667.299,-71.1643 654.24,-60.4273 642.323,-50.6289"/>
+<polygon fill="black" stroke="black" points="644.247,-47.6798 634.3,-44.0322 639.801,-53.0868 644.247,-47.6798"/>
+</g>
+<!-- n13&#45;&gt;n19 -->
+<g id="edge12" class="edge"><title>n13&#45;&gt;n19</title>
+<path fill="none" stroke="black" d="M729.336,-79.8369C745.698,-70.6639 766.18,-59.1815 784.444,-48.9429"/>
+<polygon fill="black" stroke="black" points="786.192,-51.9753 793.203,-44.0322 782.769,-45.8693 786.192,-51.9753"/>
+</g>
+<!-- n14&#45;&gt;n20 -->
+<g id="edge14" class="edge"><title>n14&#45;&gt;n20</title>
+<path fill="none" stroke="black" d="M1197.98,-79.8369C1184.59,-70.9141 1167.93,-59.8061 1152.9,-49.7833"/>
+<polygon fill="black" stroke="black" points="1154.53,-46.6671 1144.27,-44.0322 1150.65,-52.4914 1154.53,-46.6671"/>
+</g>
+<!-- n14&#45;&gt;n21 -->
+<g id="edge16" class="edge"><title>n14&#45;&gt;n21</title>
+<path fill="none" stroke="black" d="M1252.48,-79.8369C1267.71,-70.7473 1286.74,-59.3901 1303.78,-49.2225"/>
+<polygon fill="black" stroke="black" points="1305.68,-52.1623 1312.48,-44.0322 1302.1,-46.1513 1305.68,-52.1623"/>
+</g>
+<!-- n15&#45;&gt;n22 -->
+<g id="edge18" class="edge"><title>n15&#45;&gt;n22</title>
+<path fill="none" stroke="black" d="M1665.22,-79.8369C1653.75,-71.0809 1639.51,-60.2206 1626.57,-50.3465"/>
+<polygon fill="black" stroke="black" points="1628.36,-47.3149 1618.29,-44.0322 1624.12,-52.8803 1628.36,-47.3149"/>
+</g>
+<!-- n15&#45;&gt;n23 -->
+<g id="edge20" class="edge"><title>n15&#45;&gt;n23</title>
+<path fill="none" stroke="black" d="M1716.48,-79.8369C1731.71,-70.7473 1750.74,-59.3901 1767.78,-49.2225"/>
+<polygon fill="black" stroke="black" points="1769.68,-52.1623 1776.48,-44.0322 1766.1,-46.1513 1769.68,-52.1623"/>
+</g>
+</g>
+</svg>
+
+      <p>The result? The best interpretation of the observables is that we have one lemon and three limes.</p>
+
+      <p>For those of you who have taken an introductory Artificial Intelligence course in your life, some of this may seem strangely familiar. Indeed, we have just used Etcetera Abduction to model a <u>Naive Bayes Classifier</u>. In general, a true Bayesian classifier tries to find the maximum joint probability of the observable features along with some number of possible class labels. In the Naive Bayes variant, the observation of any given feature given a class label is assumed to be probabilistically independent from that of any other feature. This is a wildly inappropriate assumption in many domains, even when talking about the yellowness and roundness of fruit. Still, Naive Bayes classification tends to perform quite well in practice for many problems, and is a standard baseline for comparison when considering fancier machine learning approaches.</p>
+
+      <p>The important thing to note is that we're not doing something analogous to Naive Bayes, but rather computing our answer in exactly the same way as it is done in every Naive Bayes implementation, at least mathematically speaking. Naive Bayes algorithms typically iterate through each of the possible class labels, taking the product of the prior probability of the class and all of the conditional probabilities of the observable features given the class. For each of the four fruit in the graphic above, this is exactly what is computed by multiplying the numbers in the three ovals above each pair of observations (three assumptions per fruit). The oval in the top center is the prior probability of the class (<code>lemon</code> or <code>lime</code>), and the ovals on either side are the conditional probabilities of the observable feature given the class. If you multiply these three numbers, you'll get exactly the same number computed in implementations of naive Bayes for a candidate class. If in addition we knew the true joint probability of the observables (the ignored denominator in Naive Bayes), we could divide our product by this joint probability to compute the (Naive) probability of the class. In classification tasks, this denominator is ignored because it is both unknown (typically) and constant across possible class labels. Accordingly, Naive Bayes implementations are just looking for the <u>maximum</u> product in order to make its class label prediction. Etcetera Abduction ranks all possible interpretations by probability, so the interpretation with the most likely class labels (for all four fruit at once!) shows up as the top result.</p>
+
+      <p>So, is Etcetera Abduction just a complicated way of doing Naive Bayes classifications? No, but you can certainly use Etcetera Abduction in this manner when you need to weigh between mutually exclusive classes.</p>
+
+      <p>You will need to take some care when you are preparing your knowledge base for use in a classification task. Specifically, you need to adhere to these rules:</p>
+      <ol>
+	<li>The only prior probabilities encoded in the knowledge base should be for the mutually-exclusive class labels. In the example, these are encoded in the <code>etc0_lime</code> and <code>etc0_lemon</code> literals.</li>
+	<li>The conditional probabilities of a feature for a given class must be encoded for all features and all classes. In the example, these are encoded in literals such as <code>etc2_yellow</code> and <code>etc1_not_round</code>.</li>
+      </ol>
+
+      <p>One interesting thing you can do, while still following these rules, is to explore "hierarchical Naive Bayes" classification. This is where your classification task goes more than one layer deep, i.e., where the class labels themselves are only intermediate steps in some higher-order classification task.</p>
+      <p>We can see this in action by creating a second-level classification task on top of the "four-fruit" example above. Suppose that the real question of interest is what sort of tree did all four of these fruit come from? Maybe there is only one tree in our backyard, and we're trying to surmise if is really a lemon tree or a lime tree.</p>
+      <p>To execute this classification, we need to modify our knowledge base to add some new information about lime and lemon trees, and to ensure that only these two new entites are assigned prior probabilities, as follows:</p>
+      <pre>;; Previously specified prior probabilities are commented out
+
+;; (if (etc0_lime 0.6 x) (lime x)) ;; commented out
+;; (if (etc0_lemon 0.4 x) (lemon x)) ;; commented out
+
+;; Prior probabilities of new class labels
+(if (etc0_lime_tree 0.1 x) (lime_tree x))
+(if (etc0_lemon_tree 0.1 x) (lemon_tree x))
+
+;; Most lime trees produce limes (90%)
+(if (and (lime_tree y)
+	 (etc1_lime 0.9 x y))
+    (lime x))
+
+;; Most lemon trees produce lemons (90%)
+(if (and (lemon_tree y)
+	 (etc1_lemon 0.9 x y))
+    (lemon x))
+</pre>
+
+      <p>Modifying our input file in this manner creates a much harder search problem, as Etcetera Abduction tries to find some combination of assumptions that can explain the eight observations that are all rooted in these two prior probabilities. If you let it spin for long enough, Etcetera Abduction finally returns your answer: there must be a lime tree in the backyard. Etcetera Abduction even assigns a nice name to this imagined tree: "$1".</p>
+
+<svg width="540pt"
+ viewBox="0.00 0.00 1969.03 268.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 264)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-264 1965.03,-264 1965.03,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="982.877" cy="-242" rx="75.8294" ry="18"/>
+<text text-anchor="middle" x="982.877" y="-237.8" font-family="Times,serif" font-size="14.00">etc0_lime_tree 0.1</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<polygon fill="none" stroke="black" points="1030.56,-188 935.19,-188 935.19,-152 1030.56,-152 1030.56,-188"/>
+<text text-anchor="middle" x="982.877" y="-165.8" font-family="Times,serif" font-size="14.00">(lime_tree $1)</text>
+</g>
+<!-- n0&#45;&gt;n13 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M982.877,-223.697C982.877,-215.983 982.877,-206.712 982.877,-198.112"/>
+<polygon fill="black" stroke="black" points="986.377,-198.104 982.877,-188.104 979.377,-198.104 986.377,-198.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="225.877" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="225.877" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_lime 0.9</text>
+</g>
+<!-- n14 -->
+<g id="node15" class="node"><title>n14</title>
+<polygon fill="none" stroke="black" points="276.532,-116 175.221,-116 175.221,-80 276.532,-80 276.532,-116"/>
+<text text-anchor="middle" x="225.877" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT1)</text>
+</g>
+<!-- n1&#45;&gt;n14 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M225.877,-151.697C225.877,-143.983 225.877,-134.712 225.877,-126.112"/>
+<polygon fill="black" stroke="black" points="229.377,-126.104 225.877,-116.104 222.377,-126.104 229.377,-126.104"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="720.877" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="720.877" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_lime 0.9</text>
+</g>
+<!-- n15 -->
+<g id="node16" class="node"><title>n15</title>
+<polygon fill="none" stroke="black" points="771.532,-116 670.221,-116 670.221,-80 771.532,-80 771.532,-116"/>
+<text text-anchor="middle" x="720.877" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT2)</text>
+</g>
+<!-- n2&#45;&gt;n15 -->
+<g id="edge4" class="edge"><title>n2&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M720.877,-151.697C720.877,-143.983 720.877,-134.712 720.877,-126.112"/>
+<polygon fill="black" stroke="black" points="724.377,-126.104 720.877,-116.104 717.377,-126.104 724.377,-126.104"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="1245.88" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="1245.88" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_lime 0.9</text>
+</g>
+<!-- n16 -->
+<g id="node17" class="node"><title>n16</title>
+<polygon fill="none" stroke="black" points="1296.53,-116 1195.22,-116 1195.22,-80 1296.53,-80 1296.53,-116"/>
+<text text-anchor="middle" x="1245.88" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT3)</text>
+</g>
+<!-- n3&#45;&gt;n16 -->
+<g id="edge6" class="edge"><title>n3&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M1245.88,-151.697C1245.88,-143.983 1245.88,-134.712 1245.88,-126.112"/>
+<polygon fill="black" stroke="black" points="1249.38,-126.104 1245.88,-116.104 1242.38,-126.104 1249.38,-126.104"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="1709.88" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="1709.88" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_lime 0.9</text>
+</g>
+<!-- n17 -->
+<g id="node18" class="node"><title>n17</title>
+<polygon fill="none" stroke="black" points="1760.53,-116 1659.22,-116 1659.22,-80 1760.53,-80 1760.53,-116"/>
+<text text-anchor="middle" x="1709.88" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT4)</text>
+</g>
+<!-- n4&#45;&gt;n17 -->
+<g id="edge8" class="edge"><title>n4&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M1709.88,-151.697C1709.88,-143.983 1709.88,-134.712 1709.88,-126.112"/>
+<polygon fill="black" stroke="black" points="1713.38,-126.104 1709.88,-116.104 1706.38,-126.104 1713.38,-126.104"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="78.8769" cy="-98" rx="78.7539" ry="18"/>
+<text text-anchor="middle" x="78.8769" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_not_round 0.5</text>
+</g>
+<!-- n18 -->
+<g id="node19" class="node"><title>n18</title>
+<polygon fill="none" stroke="black" points="219.706,-40 86.0476,-40 86.0476,-4 219.706,-4 219.706,-40"/>
+<polygon fill="none" stroke="black" points="223.701,-44 82.0525,-44 82.0525,-0 223.701,-0 223.701,-44"/>
+<text text-anchor="middle" x="152.877" y="-17.8" font-family="Times,serif" font-size="14.00">(not_round FRUIT1)</text>
+</g>
+<!-- n5&#45;&gt;n18 -->
+<g id="edge10" class="edge"><title>n5&#45;&gt;n18</title>
+<path fill="none" stroke="black" d="M95.6686,-80.2083C104.164,-71.713 114.709,-61.1675 124.423,-51.4535"/>
+<polygon fill="black" stroke="black" points="127.046,-53.7808 131.642,-44.2349 122.096,-48.8311 127.046,-53.7808"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="1098.88" cy="-98" rx="78.7539" ry="18"/>
+<text text-anchor="middle" x="1098.88" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_not_round 0.5</text>
+</g>
+<!-- n22 -->
+<g id="node23" class="node"><title>n22</title>
+<polygon fill="none" stroke="black" points="1201.71,-40 1068.05,-40 1068.05,-4 1201.71,-4 1201.71,-40"/>
+<polygon fill="none" stroke="black" points="1205.7,-44 1064.05,-44 1064.05,-0 1205.7,-0 1205.7,-44"/>
+<text text-anchor="middle" x="1134.88" y="-17.8" font-family="Times,serif" font-size="14.00">(not_round FRUIT3)</text>
+</g>
+<!-- n6&#45;&gt;n22 -->
+<g id="edge18" class="edge"><title>n6&#45;&gt;n22</title>
+<path fill="none" stroke="black" d="M1107.23,-79.8369C1111.08,-71.9148 1115.77,-62.2701 1120.19,-53.1918"/>
+<polygon fill="black" stroke="black" points="1123.42,-54.5557 1124.64,-44.0322 1117.12,-51.4934 1123.42,-54.5557"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<ellipse fill="none" stroke="black" cx="588.877" cy="-98" rx="63.3097" ry="18"/>
+<text text-anchor="middle" x="588.877" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_round 0.5</text>
+</g>
+<!-- n20 -->
+<g id="node21" class="node"><title>n20</title>
+<polygon fill="none" stroke="black" points="685.314,-40 576.44,-40 576.44,-4 685.314,-4 685.314,-40"/>
+<polygon fill="none" stroke="black" points="689.311,-44 572.442,-44 572.442,-0 689.311,-0 689.311,-44"/>
+<text text-anchor="middle" x="630.877" y="-17.8" font-family="Times,serif" font-size="14.00">(round FRUIT2)</text>
+</g>
+<!-- n7&#45;&gt;n20 -->
+<g id="edge14" class="edge"><title>n7&#45;&gt;n20</title>
+<path fill="none" stroke="black" d="M598.618,-79.8369C603.162,-71.8314 608.704,-62.0669 613.904,-52.9053"/>
+<polygon fill="black" stroke="black" points="617.047,-54.4567 618.94,-44.0322 610.96,-51.0014 617.047,-54.4567"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<ellipse fill="none" stroke="black" cx="1577.88" cy="-98" rx="63.3097" ry="18"/>
+<text text-anchor="middle" x="1577.88" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_round 0.5</text>
+</g>
+<!-- n24 -->
+<g id="node25" class="node"><title>n24</title>
+<polygon fill="none" stroke="black" points="1667.31,-40 1558.44,-40 1558.44,-4 1667.31,-4 1667.31,-40"/>
+<polygon fill="none" stroke="black" points="1671.31,-44 1554.44,-44 1554.44,-0 1671.31,-0 1671.31,-44"/>
+<text text-anchor="middle" x="1612.88" y="-17.8" font-family="Times,serif" font-size="14.00">(round FRUIT4)</text>
+</g>
+<!-- n8&#45;&gt;n24 -->
+<g id="edge22" class="edge"><title>n8&#45;&gt;n24</title>
+<path fill="none" stroke="black" d="M1585.99,-79.8369C1589.74,-71.9148 1594.3,-62.2701 1598.6,-53.1918"/>
+<polygon fill="black" stroke="black" points="1601.82,-54.5686 1602.93,-44.0322 1595.49,-51.5756 1601.82,-54.5686"/>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<ellipse fill="none" stroke="black" cx="400.877" cy="-98" rx="106.275" ry="18"/>
+<text text-anchor="middle" x="400.877" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_yellow 0.9166666667</text>
+</g>
+<!-- n19 -->
+<g id="node20" class="node"><title>n19</title>
+<polygon fill="none" stroke="black" points="409.241,-40 294.513,-40 294.513,-4 409.241,-4 409.241,-40"/>
+<polygon fill="none" stroke="black" points="413.253,-44 290.5,-44 290.5,-0 413.253,-0 413.253,-44"/>
+<text text-anchor="middle" x="351.877" y="-17.8" font-family="Times,serif" font-size="14.00">(yellow FRUIT1)</text>
+</g>
+<!-- n9&#45;&gt;n19 -->
+<g id="edge12" class="edge"><title>n9&#45;&gt;n19</title>
+<path fill="none" stroke="black" d="M389.512,-79.8369C384.156,-71.748 377.611,-61.8633 371.49,-52.6192"/>
+<polygon fill="black" stroke="black" points="374.243,-50.4377 365.804,-44.0322 368.406,-54.3024 374.243,-50.4377"/>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<ellipse fill="none" stroke="black" cx="895.877" cy="-98" rx="106.275" ry="18"/>
+<text text-anchor="middle" x="895.877" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_yellow 0.9166666667</text>
+</g>
+<!-- n21 -->
+<g id="node22" class="node"><title>n21</title>
+<polygon fill="none" stroke="black" points="869.241,-40 754.513,-40 754.513,-4 869.241,-4 869.241,-40"/>
+<polygon fill="none" stroke="black" points="873.253,-44 750.5,-44 750.5,-0 873.253,-0 873.253,-44"/>
+<text text-anchor="middle" x="811.877" y="-17.8" font-family="Times,serif" font-size="14.00">(yellow FRUIT2)</text>
+</g>
+<!-- n10&#45;&gt;n21 -->
+<g id="edge16" class="edge"><title>n10&#45;&gt;n21</title>
+<path fill="none" stroke="black" d="M876.816,-80.2083C866.984,-71.5464 854.732,-60.7532 843.528,-50.883"/>
+<polygon fill="black" stroke="black" points="845.799,-48.2189 835.981,-44.2349 841.171,-53.4715 845.799,-48.2189"/>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<ellipse fill="none" stroke="black" cx="1405.88" cy="-98" rx="91.3153" ry="18"/>
+<text text-anchor="middle" x="1405.88" y="-93.8" font-family="Times,serif" font-size="14.00">etc2_not_yellow 0.125</text>
+</g>
+<!-- n23 -->
+<g id="node24" class="node"><title>n23</title>
+<polygon fill="none" stroke="black" points="1403.64,-40 1264.12,-40 1264.12,-4 1403.64,-4 1403.64,-40"/>
+<polygon fill="none" stroke="black" points="1407.64,-44 1260.11,-44 1260.11,-0 1407.64,-0 1407.64,-44"/>
+<text text-anchor="middle" x="1333.88" y="-17.8" font-family="Times,serif" font-size="14.00">(not_yellow FRUIT3)</text>
+</g>
+<!-- n11&#45;&gt;n23 -->
+<g id="edge20" class="edge"><title>n11&#45;&gt;n23</title>
+<path fill="none" stroke="black" d="M1389.54,-80.2083C1381.27,-71.713 1371.01,-61.1675 1361.56,-51.4535"/>
+<polygon fill="black" stroke="black" points="1364.02,-48.9614 1354.54,-44.2349 1359,-53.8429 1364.02,-48.9614"/>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<ellipse fill="none" stroke="black" cx="1869.88" cy="-98" rx="91.3153" ry="18"/>
+<text text-anchor="middle" x="1869.88" y="-93.8" font-family="Times,serif" font-size="14.00">etc2_not_yellow 0.125</text>
+</g>
+<!-- n25 -->
+<g id="node26" class="node"><title>n25</title>
+<polygon fill="none" stroke="black" points="1903.64,-40 1764.12,-40 1764.12,-4 1903.64,-4 1903.64,-40"/>
+<polygon fill="none" stroke="black" points="1907.64,-44 1760.11,-44 1760.11,-0 1907.64,-0 1907.64,-44"/>
+<text text-anchor="middle" x="1833.88" y="-17.8" font-family="Times,serif" font-size="14.00">(not_yellow FRUIT4)</text>
+</g>
+<!-- n12&#45;&gt;n25 -->
+<g id="edge24" class="edge"><title>n12&#45;&gt;n25</title>
+<path fill="none" stroke="black" d="M1861.53,-79.8369C1857.67,-71.9148 1852.98,-62.2701 1848.56,-53.1918"/>
+<polygon fill="black" stroke="black" points="1851.63,-51.4934 1844.11,-44.0322 1845.34,-54.5557 1851.63,-51.4934"/>
+</g>
+<!-- n13&#45;&gt;n14 -->
+<g id="edge3" class="edge"><title>n13&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M934.812,-164.603C895.354,-161.042 838.013,-155.983 787.877,-152 568.162,-134.545 507.945,-154.101 286.748,-115.928"/>
+<polygon fill="black" stroke="black" points="287.228,-112.459 276.775,-114.187 286.025,-119.354 287.228,-112.459"/>
+</g>
+<!-- n13&#45;&gt;n15 -->
+<g id="edge5" class="edge"><title>n13&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M935.055,-156.733C896.24,-146.713 839.852,-132.013 781.379,-116.112"/>
+<polygon fill="black" stroke="black" points="782.165,-112.699 771.597,-113.446 780.324,-119.452 782.165,-112.699"/>
+</g>
+<!-- n13&#45;&gt;n16 -->
+<g id="edge7" class="edge"><title>n13&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M1030.79,-156.933C1070,-146.969 1127.17,-132.251 1185.33,-116.395"/>
+<polygon fill="black" stroke="black" points="1186.33,-119.75 1195.05,-113.736 1184.48,-112.998 1186.33,-119.75"/>
+</g>
+<!-- n13&#45;&gt;n17 -->
+<g id="edge9" class="edge"><title>n13&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M1030.79,-164.706C1070.47,-161.184 1128.32,-156.124 1178.88,-152 1384.86,-135.196 1441.43,-152.249 1648.98,-115.94"/>
+<polygon fill="black" stroke="black" points="1649.74,-119.359 1658.98,-114.17 1648.52,-112.466 1649.74,-119.359"/>
+</g>
+<!-- n14&#45;&gt;n18 -->
+<g id="edge11" class="edge"><title>n14&#45;&gt;n18</title>
+<path fill="none" stroke="black" d="M208.946,-79.8369C200.555,-71.3311 190.205,-60.8395 180.691,-51.1952"/>
+<polygon fill="black" stroke="black" points="183.139,-48.6932 173.625,-44.0322 178.156,-53.6092 183.139,-48.6932"/>
+</g>
+<!-- n14&#45;&gt;n19 -->
+<g id="edge13" class="edge"><title>n14&#45;&gt;n19</title>
+<path fill="none" stroke="black" d="M255.1,-79.8369C270.577,-70.7473 289.915,-59.3901 307.228,-49.2225"/>
+<polygon fill="black" stroke="black" points="309.215,-52.1145 316.065,-44.0322 305.67,-46.0785 309.215,-52.1145"/>
+</g>
+<!-- n15&#45;&gt;n20 -->
+<g id="edge15" class="edge"><title>n15&#45;&gt;n20</title>
+<path fill="none" stroke="black" d="M700.003,-79.8369C689.455,-71.1643 676.396,-60.4273 664.48,-50.6289"/>
+<polygon fill="black" stroke="black" points="666.404,-47.6798 656.457,-44.0322 661.958,-53.0868 666.404,-47.6798"/>
+</g>
+<!-- n15&#45;&gt;n21 -->
+<g id="edge17" class="edge"><title>n15&#45;&gt;n21</title>
+<path fill="none" stroke="black" d="M741.983,-79.8369C752.75,-71.0809 766.106,-60.2206 778.248,-50.3465"/>
+<polygon fill="black" stroke="black" points="780.463,-53.0569 786.013,-44.0322 776.046,-47.6259 780.463,-53.0569"/>
+</g>
+<!-- n16&#45;&gt;n22 -->
+<g id="edge19" class="edge"><title>n16&#45;&gt;n22</title>
+<path fill="none" stroke="black" d="M1220.13,-79.8369C1206.75,-70.9141 1190.09,-59.8061 1175.05,-49.7833"/>
+<polygon fill="black" stroke="black" points="1176.69,-46.6671 1166.43,-44.0322 1172.8,-52.4914 1176.69,-46.6671"/>
+</g>
+<!-- n16&#45;&gt;n23 -->
+<g id="edge21" class="edge"><title>n16&#45;&gt;n23</title>
+<path fill="none" stroke="black" d="M1266.29,-79.8369C1276.6,-71.1643 1289.37,-60.4273 1301.02,-50.6289"/>
+<polygon fill="black" stroke="black" points="1303.46,-53.147 1308.87,-44.0322 1298.96,-47.7895 1303.46,-53.147"/>
+</g>
+<!-- n17&#45;&gt;n24 -->
+<g id="edge23" class="edge"><title>n17&#45;&gt;n24</title>
+<path fill="none" stroke="black" d="M1687.38,-79.8369C1675.9,-71.0809 1661.67,-60.2206 1648.72,-50.3465"/>
+<polygon fill="black" stroke="black" points="1650.52,-47.3149 1640.45,-44.0322 1646.27,-52.8803 1650.52,-47.3149"/>
+</g>
+<!-- n17&#45;&gt;n25 -->
+<g id="edge25" class="edge"><title>n17&#45;&gt;n25</title>
+<path fill="none" stroke="black" d="M1738.64,-79.8369C1753.87,-70.7473 1772.9,-59.3901 1789.94,-49.2225"/>
+<polygon fill="black" stroke="black" points="1791.84,-52.1623 1798.63,-44.0322 1788.25,-46.1513 1791.84,-52.1623"/>
+</g>
+</g>
+</svg>
+
+
+
+      <p>The last important thing to reiterate is that when you use Etcetera Abduction as a classification algorithm in this manner, you are no longer doing interpretation. The top solution in your list is <u>not</u> the best interpretation of the inputs, and you have <u>not</u> found the highest estimate of the true joint probability of the observables.</p>
+      <p>This point can be easily demonstrated by putting in the prior probabilities for all of the predicates that we use in our knowledge base. To do this, let's add all of the prior probabilities for each of the observable features, using the data from our original table.</p>
+
+      <pre>;; Prior probabilities of features
+
+(if (etc0_yellow 0.9 x) (yellow x))
+(if (etc0_not_yellow 0.1 x) (not_yellow x))
+(if (etc0_round 0.33 x) (round x))
+(if (etc0_not_round 0.67 x) (not_round x))
+</pre>
+
+      <p>With these quick changes, we get a top interpretation that is radically different than before:</p>
+
+<svg width="540pt" 
+ viewBox="0.00 0.00 1461.75 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-192 1457.75,-192 1457.75,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="195.155" cy="-170" rx="58.4823" ry="18"/>
+<text text-anchor="middle" x="195.155" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_lime 0.6</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<polygon fill="none" stroke="black" points="245.81,-116 144.499,-116 144.499,-80 245.81,-80 245.81,-116"/>
+<text text-anchor="middle" x="195.155" y="-93.8" font-family="Times,serif" font-size="14.00">(lime FRUIT4)</text>
+</g>
+<!-- n0&#45;&gt;n9 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M195.155,-151.697C195.155,-143.983 195.155,-134.712 195.155,-126.112"/>
+<polygon fill="black" stroke="black" points="198.655,-126.104 195.155,-116.104 191.655,-126.104 198.655,-126.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="547.155" cy="-98" rx="83.0977" ry="18"/>
+<text text-anchor="middle" x="547.155" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_not_round 0.67</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<polygon fill="none" stroke="black" points="613.984,-40 480.325,-40 480.325,-4 613.984,-4 613.984,-40"/>
+<polygon fill="none" stroke="black" points="617.979,-44 476.33,-44 476.33,-0 617.979,-0 617.979,-44"/>
+<text text-anchor="middle" x="547.155" y="-17.8" font-family="Times,serif" font-size="14.00">(not_round FRUIT1)</text>
+</g>
+<!-- n1&#45;&gt;n10 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M547.155,-79.8369C547.155,-72.165 547.155,-62.8775 547.155,-54.0535"/>
+<polygon fill="black" stroke="black" points="550.655,-54.0322 547.155,-44.0322 543.655,-54.0322 550.655,-54.0322"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="732.155" cy="-98" rx="83.0977" ry="18"/>
+<text text-anchor="middle" x="732.155" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_not_round 0.67</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<polygon fill="none" stroke="black" points="798.984,-40 665.325,-40 665.325,-4 798.984,-4 798.984,-40"/>
+<polygon fill="none" stroke="black" points="802.979,-44 661.33,-44 661.33,-0 802.979,-0 802.979,-44"/>
+<text text-anchor="middle" x="732.155" y="-17.8" font-family="Times,serif" font-size="14.00">(not_round FRUIT3)</text>
+</g>
+<!-- n2&#45;&gt;n11 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M732.155,-79.8369C732.155,-72.165 732.155,-62.8775 732.155,-54.0535"/>
+<polygon fill="black" stroke="black" points="735.655,-54.0322 732.155,-44.0322 728.655,-54.0322 735.655,-54.0322"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="916.155" cy="-98" rx="82.1286" ry="18"/>
+<text text-anchor="middle" x="916.155" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_not_yellow 0.1</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<polygon fill="none" stroke="black" points="985.913,-40 846.396,-40 846.396,-4 985.913,-4 985.913,-40"/>
+<polygon fill="none" stroke="black" points="989.921,-44 842.389,-44 842.389,-0 989.921,-0 989.921,-44"/>
+<text text-anchor="middle" x="916.155" y="-17.8" font-family="Times,serif" font-size="14.00">(not_yellow FRUIT3)</text>
+</g>
+<!-- n3&#45;&gt;n12 -->
+<g id="edge4" class="edge"><title>n3&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M916.155,-79.8369C916.155,-72.165 916.155,-62.8775 916.155,-54.0535"/>
+<polygon fill="black" stroke="black" points="919.655,-54.0322 916.155,-44.0322 912.655,-54.0322 919.655,-54.0322"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="1084.15" cy="-98" rx="67.6529" ry="18"/>
+<text text-anchor="middle" x="1084.15" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_round 0.33</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<polygon fill="none" stroke="black" points="1138.59,-40 1029.72,-40 1029.72,-4 1138.59,-4 1138.59,-40"/>
+<polygon fill="none" stroke="black" points="1142.59,-44 1025.72,-44 1025.72,-0 1142.59,-0 1142.59,-44"/>
+<text text-anchor="middle" x="1084.15" y="-17.8" font-family="Times,serif" font-size="14.00">(round FRUIT2)</text>
+</g>
+<!-- n4&#45;&gt;n13 -->
+<g id="edge5" class="edge"><title>n4&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M1084.15,-79.8369C1084.15,-72.165 1084.15,-62.8775 1084.15,-54.0535"/>
+<polygon fill="black" stroke="black" points="1087.65,-54.0322 1084.15,-44.0322 1080.65,-54.0322 1087.65,-54.0322"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="1236.15" cy="-98" rx="66.6839" ry="18"/>
+<text text-anchor="middle" x="1236.15" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_yellow 0.9</text>
+</g>
+<!-- n14 -->
+<g id="node15" class="node"><title>n14</title>
+<polygon fill="none" stroke="black" points="1293.52,-40 1178.79,-40 1178.79,-4 1293.52,-4 1293.52,-40"/>
+<polygon fill="none" stroke="black" points="1297.53,-44 1174.78,-44 1174.78,-0 1297.53,-0 1297.53,-44"/>
+<text text-anchor="middle" x="1236.15" y="-17.8" font-family="Times,serif" font-size="14.00">(yellow FRUIT1)</text>
+</g>
+<!-- n5&#45;&gt;n14 -->
+<g id="edge6" class="edge"><title>n5&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M1236.15,-79.8369C1236.15,-72.165 1236.15,-62.8775 1236.15,-54.0535"/>
+<polygon fill="black" stroke="black" points="1239.65,-54.0322 1236.15,-44.0322 1232.65,-54.0322 1239.65,-54.0322"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="1387.15" cy="-98" rx="66.6839" ry="18"/>
+<text text-anchor="middle" x="1387.15" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_yellow 0.9</text>
+</g>
+<!-- n15 -->
+<g id="node16" class="node"><title>n15</title>
+<polygon fill="none" stroke="black" points="1444.52,-40 1329.79,-40 1329.79,-4 1444.52,-4 1444.52,-40"/>
+<polygon fill="none" stroke="black" points="1448.53,-44 1325.78,-44 1325.78,-0 1448.53,-0 1448.53,-44"/>
+<text text-anchor="middle" x="1387.15" y="-17.8" font-family="Times,serif" font-size="14.00">(yellow FRUIT2)</text>
+</g>
+<!-- n6&#45;&gt;n15 -->
+<g id="edge7" class="edge"><title>n6&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M1387.15,-79.8369C1387.15,-72.165 1387.15,-62.8775 1387.15,-54.0535"/>
+<polygon fill="black" stroke="black" points="1390.65,-54.0322 1387.15,-44.0322 1383.65,-54.0322 1390.65,-54.0322"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<ellipse fill="none" stroke="black" cx="63.1547" cy="-98" rx="63.3097" ry="18"/>
+<text text-anchor="middle" x="63.1547" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_round 0.5</text>
+</g>
+<!-- n16 -->
+<g id="node17" class="node"><title>n16</title>
+<polygon fill="none" stroke="black" points="152.591,-40 43.7178,-40 43.7178,-4 152.591,-4 152.591,-40"/>
+<polygon fill="none" stroke="black" points="156.589,-44 39.7201,-44 39.7201,-0 156.589,-0 156.589,-44"/>
+<text text-anchor="middle" x="98.1547" y="-17.8" font-family="Times,serif" font-size="14.00">(round FRUIT4)</text>
+</g>
+<!-- n7&#45;&gt;n16 -->
+<g id="edge8" class="edge"><title>n7&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M71.2723,-79.8369C75.0193,-71.9148 79.581,-62.2701 83.8748,-53.1918"/>
+<polygon fill="black" stroke="black" points="87.0953,-54.5686 88.207,-44.0322 80.7674,-51.5756 87.0953,-54.5686"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<ellipse fill="none" stroke="black" cx="355.155" cy="-98" rx="91.3153" ry="18"/>
+<text text-anchor="middle" x="355.155" y="-93.8" font-family="Times,serif" font-size="14.00">etc2_not_yellow 0.125</text>
+</g>
+<!-- n17 -->
+<g id="node18" class="node"><title>n17</title>
+<polygon fill="none" stroke="black" points="388.913,-40 249.396,-40 249.396,-4 388.913,-4 388.913,-40"/>
+<polygon fill="none" stroke="black" points="392.921,-44 245.389,-44 245.389,-0 392.921,-0 392.921,-44"/>
+<text text-anchor="middle" x="319.155" y="-17.8" font-family="Times,serif" font-size="14.00">(not_yellow FRUIT4)</text>
+</g>
+<!-- n8&#45;&gt;n17 -->
+<g id="edge10" class="edge"><title>n8&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M346.805,-79.8369C342.951,-71.9148 338.259,-62.2701 333.843,-53.1918"/>
+<polygon fill="black" stroke="black" points="336.909,-51.4934 329.387,-44.0322 330.614,-54.5557 336.909,-51.4934"/>
+</g>
+<!-- n9&#45;&gt;n16 -->
+<g id="edge9" class="edge"><title>n9&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M172.657,-79.8369C161.18,-71.0809 146.944,-60.2206 134.001,-50.3465"/>
+<polygon fill="black" stroke="black" points="135.797,-47.3149 125.724,-44.0322 131.552,-52.8803 135.797,-47.3149"/>
+</g>
+<!-- n9&#45;&gt;n17 -->
+<g id="edge11" class="edge"><title>n9&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M223.914,-79.8369C239.146,-70.7473 258.177,-59.3901 275.214,-49.2225"/>
+<polygon fill="black" stroke="black" points="277.118,-52.1623 283.912,-44.0322 273.531,-46.1513 277.118,-52.1623"/>
+</g>
+</g>
+</svg>
+
+
+
+      <p>The most probable interpretation of the observables is that <code>FRUIT4</code> is indeed a lime, but that the attributes of the other 3 fruit are better explained by their prior probabilities than by a fruit category. That is, <code>FRUIT1</code> is not round because that often happens with fruit, and <code>FRUIT2</code> is not yellow for the same reason. To imagine that these three mysterious fruits are actually limes or lemons would require making unlikely assumptions, or at least less likely than just assuming the prior probabilities of the features. And we certainly should not prefer an interpretation where we imagine the existence of a tree in the backyard. Yes, those interpretations <u>are</u> in fact present in the long list of possible interpretations of these observations, but just not near the top. In short, interpretation is not the same task as classification.</p>
+      <html>

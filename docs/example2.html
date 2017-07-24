@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <h1>Example 2: Dead Plant</h1>
+      <span class="date">July 13, 2017</span>
+      <p>Imagine that you come home from vacation and you find that your favorite plant is dead, wilted up from lack of moisture. That sucks. But wait, you told your neighbor Mary to water it while you away, right? So who really is to blame? Let's use Etcetera Abduction to solve this problem.</p>
+      <p>There are three events that are indisputable facts in this murder mystery:</p>
+      <ol>
+	<li>You tasked Mary to water your plants while you were away,</li>
+	<li>you went on vacation, and</li>
+	<li>your plant is dead.</li>
+      </ol>
+      <p>These three facts are the observables in this abduction problem. We <u>could</u> represent these three facts as follows:</p>
+      <pre>;; One possible way to represent the observables
+(tasked-to-water-while-away Me Mary Plant)
+(vacation Me)      
+(dead Plant)
+</pre>
+      <p>This is perfectly acceptable as first-order logic, but the first predicate "tasked-to-water-while-away" is pretty unwieldy. Conceptually, there are really two parts to the fact that we're trying to express. First, there is the real event of Me tasking Mary to do something. This really happened in the world of our problem. Second, there is the act of watering my Plant, which may or may not have happened in the world of our problem. The thing we're trying to represent as an observable is that the "something" that Mary was tasked to do was the watering of the plant.</p>
+      <p>Logicians, in the past, have invented all sorts of complicated ways to represent a "second-order" idea such as this, where the watering event is in some special modality defined by the speaking event. There's even a whole logic specially designed for obligations of this sort (deontic logic). Etcetera Abduction, however, is strictly limited to plain old first-order logic. It's actually super-restricted: it does not handle logical negation of literals, and all of the axioms must be written as definite clauses.</p>
+      <p>Fortunately, there is no need to resort to specialized logics to represent the watering task. Instead, we just need to figure out how we can make the "watering" event an actual "thing" in the world of our problem, so that we stick it can be an argument of some "tasking" literal. To do this, we're going to "reify" the watering event. This word "reify" comes from the Latin "res", meaning "thing", so instead we might say we're going to "thing-ify" the watering event.</p>
+      <p>Here's what a reified watering event might look like:</p>
+      <pre>;; Reification of (water Mary Plant)
+(water' W Mary Plant)
+</pre>
+      <p>In this example, we have created a new predicate water', that takes three arguments, where the first one is "W". This "W" is something we've made up to help us represent this problem in first-order logic. It's the "reificiation" of a watering event involving Mary and my Plant. We've created a new "thing" in our problem world, which is the <i>eventuality</i> of Mary watering my Plant. That is, "W" is a constant that is the name of a watering event that may or may not have actually happened.</p>
+      <p>Now that we have reified the event, we can stick this same "W" in as an argument of a tasking literal, as follows:</p>
+      <pre>;; Another possible way to represent the observables
+(task Me Mary W)
+(water' W Mary Plant)
+(vacation Me)      
+(dead Plant)
+</pre>
+      <p>That's better. This business of "reifying" a literal turns out to be pretty useful, and has been explored thoroughly by Jerry Hobbs and Donald Davidson. Some like to call it "Davidsonian" notation, but we will use the term "eventuality notation," and adhere to a set of conventions. When representing an eventuality, we make sure that the predicate and arguments are all the same as the relation it is supposed to be reifying, with two exceptions. First, the predicate gets a new last character, an apostrophe, which distinguishes it from the predicate used in the un-refied version of the literal. Second, one more argument is added, always in the first position, which is mean to represent the reified eventuality of the event.</p>
+      <p>Eventuality notation turns out to be so useful in knowledge representation that we may want to use it in other places, as well. We may need to write axioms that rely on second-order relations between literals.  For example, we may want to say that the <i>eventuality</i> of the death of the plant should have been a concern of Mary, or that the <i>eventuality</i> of me tasking her should have obligated her to actually do the task.</p>
+      <p>For this reason, we might as well represent <u>all</u> of the literals in our problem in eventuality notation, both the observables and in the knowledgebase. That is, every predicate will get the apostrophe at the end, and every first argument reifies an eventuality. Here's what that would look like:</p>
+      <pre>;; The best way to represent the observables
+(task' E1 Me Mary E2)
+(water' E2 Mary Plant)
+(vacation' E3 Me)
+(dead' E4 Plant)
+</pre>
+      <p>Here, each reified eventuality argument gets a unique name, composed from the capital letter "E" for the eventuality (a constant), and an integer. If there are 100 observables, we'd have "E100" as the last one. All of these observables are free to incorporate these eventualities among their own arguments, allowing for the representation of complex relational structures in plain-old first-order logic.</p>
+      <p>Next we need to provide some prior probabilities for each of these observables. In the following four prior-probability axioms, the eventuality arguments are all universally quantified variables, so that they can be matched to the constants in our observables.</p>
+      <pre>;; The priors of the observables
+(if (etc0_task 0.1 e x y z) (task' e x y z))
+(if (etc0_water 0.02 e x y) (water' e x y))
+(if (etc0_vacation 0.01 e x) (vacation' e x))
+(if (etc0_dead 0.01 e x) (dead' e x))
+</pre>	
+      <p>And with that, we can get our first solution to the dead plant problem by invoking the Etcetera Abduction reasoning engine:</p>
+      <pre>$ python etcabductionpy/ -i dead-plant.lisp 
+((etc0_dead 0.01 E4 Plant) (etc0_task 0.1 E1 Me Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant))
+1 solutions.</pre>
+      <svg width="540pt" 
+ viewBox="0.00 0.00 615.68 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-120 611.684,-120 611.684,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="63.6383" cy="-98" rx="63.7769" ry="18"/>
+<text text-anchor="middle" x="63.6383" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_dead 0.01</text>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<polygon fill="none" stroke="black" points="116.258,-40 11.0183,-40 11.0183,-4 116.258,-4 116.258,-40"/>
+<polygon fill="none" stroke="black" points="120.244,-44 7.03214,-44 7.03214,-0 120.244,-0 120.244,-44"/>
+<text text-anchor="middle" x="63.6383" y="-17.8" font-family="Times,serif" font-size="14.00">(dead&#39; E4 Plant)</text>
+</g>
+<!-- n0&#45;&gt;n4 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n4</title>
+<path fill="none" stroke="black" d="M63.6383,-79.8369C63.6383,-72.165 63.6383,-62.8775 63.6383,-54.0535"/>
+<polygon fill="black" stroke="black" points="67.1384,-54.0322 63.6383,-44.0322 60.1384,-54.0322 67.1384,-54.0322"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="214.638" cy="-98" rx="56.5373" ry="18"/>
+<text text-anchor="middle" x="214.638" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_task 0.1</text>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<polygon fill="none" stroke="black" points="287.115,-40 142.162,-40 142.162,-4 287.115,-4 287.115,-40"/>
+<polygon fill="none" stroke="black" points="291.127,-44 138.149,-44 138.149,-0 291.127,-0 291.127,-44"/>
+<text text-anchor="middle" x="214.638" y="-17.8" font-family="Times,serif" font-size="14.00">(task&#39; E1 Me Mary E2)</text>
+</g>
+<!-- n1&#45;&gt;n5 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M214.638,-79.8369C214.638,-72.165 214.638,-62.8775 214.638,-54.0535"/>
+<polygon fill="black" stroke="black" points="218.138,-54.0322 214.638,-44.0322 211.138,-54.0322 218.138,-54.0322"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="370.638" cy="-98" rx="76.7985" ry="18"/>
+<text text-anchor="middle" x="370.638" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_vacation 0.01</text>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<polygon fill="none" stroke="black" points="429.105,-40 312.171,-40 312.171,-4 429.105,-4 429.105,-40"/>
+<polygon fill="none" stroke="black" points="433.121,-44 308.156,-44 308.156,-0 433.121,-0 433.121,-44"/>
+<text text-anchor="middle" x="370.638" y="-17.8" font-family="Times,serif" font-size="14.00">(vacation&#39; E3 Me)</text>
+</g>
+<!-- n2&#45;&gt;n6 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n6</title>
+<path fill="none" stroke="black" d="M370.638,-79.8369C370.638,-72.165 370.638,-62.8775 370.638,-54.0535"/>
+<polygon fill="black" stroke="black" points="374.138,-54.0322 370.638,-44.0322 367.138,-54.0322 374.138,-54.0322"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="531.638" cy="-98" rx="66.6666" ry="18"/>
+<text text-anchor="middle" x="531.638" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_water 0.02</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<polygon fill="none" stroke="black" points="603.728,-40 459.549,-40 459.549,-4 603.728,-4 603.728,-40"/>
+<polygon fill="none" stroke="black" points="607.73,-44 455.546,-44 455.546,-0 607.73,-0 607.73,-44"/>
+<text text-anchor="middle" x="531.638" y="-17.8" font-family="Times,serif" font-size="14.00">(water&#39; E2 Mary Plant)</text>
+</g>
+<!-- n3&#45;&gt;n7 -->
+<g id="edge4" class="edge"><title>n3&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M531.638,-79.8369C531.638,-72.165 531.638,-62.8775 531.638,-54.0535"/>
+<polygon fill="black" stroke="black" points="535.138,-54.0322 531.638,-44.0322 528.138,-54.0322 535.138,-54.0322"/>
+</g>
+</g>
+      </svg>
+      <p>Given only knowledge of prior probabilities, the best that we can come up with is that the cause of the death of the plant is simply random chance. Plants sometimes die. That was its fate. It was possible, and it happened. Bad luck. Or more accurately, the conditions of the universe were just right to cause this plant to be dead. This is what the prior probability is meant to encode.</p>
+      <p>Now let's add some knowledge that can help us come up with a better explanation. Basically, we need to encode the following commonsense intuitions:</p>
+      <ol>
+	<li>Plants are likely to die if nobody waters them.</li>
+	<li>People don't do something when they can't do it.</li>
+	<li>People sometimes forget to do the tasks they are given.</li>
+	<li>People sometimes can't do things because they are on vacation.</li>
+	<li>People often task other people to do something when they can't do it themselves.</li>
+      </ol>
+      <p>There are a lot of different ways that we might encode this knowledge, at various levels of detail. For this problem, I've tried to be as consise as possible:</p>
+      <pre>;; Why dead? Nobody watered
+(if (and (didnt' e1 y e2)
+	 (water' e2 y x)
+	 (etc1_dead 0.9 e e1 e2 x y))
+    (dead' e x))
+
+;; why didnt? couldnt
+(if (and (couldnt' e2 x e)
+	 (etc1_didnt 0.9 e e1 e2 x))
+    (didnt' e x e1))
+
+;; why didnt? forgot
+(if (and (forgot' e2 x e1)
+	 (task' e3 y x e1)
+	 (etc1_didnt 0.9 e e1 e2 e3 x y))
+    (didnt' e x e1))
+
+;; why couldnt? On vacation
+(if (and (vacation' e1 x)
+	 (etc1_couldnt 0.9 e e1 e2 x))
+    (couldnt' e x e2))
+
+;; why task? couldnt oneself
+(if (and (couldnt' e2 x e1)
+	 (etc1_task 0.9 e e1 e2 x y))
+    (task' e x y e1))
+</pre>
+      <p>Lastly, we'll need to provide the prior probabilities of the three new literals that we've introduced in these axioms, namely for "didnt", "couldnt" and "forgot".</p>
+      <pre>;; priors on assumptions
+(if (etc0_didnt 0.01 e1 y e2) (didnt' e1 y e2))
+(if (etc0_couldnt 0.01 e1 y e2) (couldnt' e1 y e2))
+(if (etc0_forgot 0.05 e x e1) (forgot' e x e1))
+</pre>
+      <p>That should do it. Let's see what we get now when we run the Etcetera Abduction engine. We'll use the "--all" (or "-a") flag to say that we want to list all solutions, just to see how many we get -- even if there are a million of them.</p>
+      <pre>$ python etcabductionpy/ -i dead-plant.lisp -a
+((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $2 E3 E2 Me) (etc1_dead 0.9 E4 $3 E2 Plant Mary) (etc1_didnt 0.9 $3 E2 $1 E1 Mary Me) (etc1_task 0.9 E1 E2 $2 Me Mary))
+((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $3 E3 E2 Me) (etc1_dead 0.9 E4 $4 E2 Plant Mary) (etc1_didnt 0.9 $4 E2 $1 $2 Mary Me) (etc1_task 0.9 $2 E2 $3 Me Mary) (etc1_task 0.9 E1 E2 $3 Me Mary))
+((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $4 E3 E2 Me) (etc1_couldnt 0.9 $3 E3 E2 Me) (etc1_dead 0.9 E4 $5 E2 Plant Mary) (etc1_didnt 0.9 $5 E2 $1 $2 Mary Me) (etc1_task 0.9 $2 E2 $3 Me Mary) (etc1_task 0.9 E1 E2 $4 Me Mary))
+((etc0_vacation 0.01 E3 Me) (etc0_water 0.02 $2 Me Plant) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $1 E3 E2 Me) (etc1_dead 0.9 E4 E2 $2 Plant Me) (etc1_didnt 0.9 E2 $2 $1 Me) (etc1_task 0.9 E1 E2 $1 Me Mary))
+((etc0_vacation 0.01 E3 Me) (etc0_water 0.02 $3 Me Plant) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $1 E3 E2 Me) (etc1_couldnt 0.9 $4 E3 $2 Me) (etc1_dead 0.9 E4 $2 $3 Plant Me) (etc1_didnt 0.9 $2 $3 $4 Me) (etc1_task 0.9 E1 E2 $1 Me Mary))
+((etc0_dead 0.01 E4 Plant) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $1 E3 E2 Me) (etc1_task 0.9 E1 E2 $1 Me Mary))
+((etc0_didnt 0.01 $2 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $1 E3 E2 Me) (etc1_dead 0.9 E4 $2 E2 Plant Mary) (etc1_task 0.9 E1 E2 $1 Me Mary))
+((etc0_couldnt 0.01 $3 Mary $2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $1 E3 E2 Me) (etc1_dead 0.9 E4 $2 E2 Plant Mary) (etc1_didnt 0.9 $2 E2 $3 Mary) (etc1_task 0.9 E1 E2 $1 Me Mary))
+((etc0_vacation 0.01 $1 Mary) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $2 E3 E2 Me) (etc1_couldnt 0.9 $4 $1 $3 Mary) (etc1_dead 0.9 E4 $3 E2 Plant Mary) (etc1_didnt 0.9 $3 E2 $4 Mary) (etc1_task 0.9 E1 E2 $2 Me Mary))
+((etc0_forgot 0.05 $1 Mary E2) (etc0_task 0.1 E1 Me Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_dead 0.9 E4 $2 E2 Plant Mary) (etc1_didnt 0.9 $2 E2 $1 E1 Mary Me))
+<...snip...>
+87 solutions.</pre>
+      <p>One million was a bit of an over-estimate: there are only 87 intepretations of the observables given our knowledge base. Let's take a look at the graph of the most probable interpretation:</p>
+      <svg width="540pt" 
+ viewBox="0.00 0.00 846.12 340.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 336)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-336 842.116,-336 842.116,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="709.899" cy="-314" rx="68.3024" ry="18"/>
+<text text-anchor="middle" x="709.899" y="-309.8" font-family="Times,serif" font-size="14.00">etc0_forgot 0.05</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<polygon fill="none" stroke="black" points="776.09,-260 643.709,-260 643.709,-224 776.09,-224 776.09,-260"/>
+<text text-anchor="middle" x="709.899" y="-237.8" font-family="Times,serif" font-size="14.00">(forgot&#39; $1 Mary E2)</text>
+</g>
+<!-- n0&#45;&gt;n7 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M709.899,-295.697C709.899,-287.983 709.899,-278.712 709.899,-270.112"/>
+<polygon fill="black" stroke="black" points="713.399,-270.104 709.899,-260.104 706.399,-270.104 713.399,-270.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="76.8992" cy="-170" rx="76.7985" ry="18"/>
+<text text-anchor="middle" x="76.8992" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_vacation 0.01</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<polygon fill="none" stroke="black" points="135.366,-112 18.4323,-112 18.4323,-76 135.366,-76 135.366,-112"/>
+<polygon fill="none" stroke="black" points="139.382,-116 14.4168,-116 14.4168,-72 139.382,-72 139.382,-116"/>
+<text text-anchor="middle" x="76.8992" y="-89.8" font-family="Times,serif" font-size="14.00">(vacation&#39; E3 Me)</text>
+</g>
+<!-- n1&#45;&gt;n8 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M76.8992,-151.837C76.8992,-144.165 76.8992,-134.878 76.8992,-126.053"/>
+<polygon fill="black" stroke="black" points="80.3993,-126.032 76.8992,-116.032 73.3993,-126.032 80.3993,-126.032"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="489.899" cy="-170" rx="66.6666" ry="18"/>
+<text text-anchor="middle" x="489.899" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_water 0.02</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<polygon fill="none" stroke="black" points="630.989,-112 486.81,-112 486.81,-76 630.989,-76 630.989,-112"/>
+<polygon fill="none" stroke="black" points="634.991,-116 482.807,-116 482.807,-72 634.991,-72 634.991,-116"/>
+<text text-anchor="middle" x="558.899" y="-89.8" font-family="Times,serif" font-size="14.00">(water&#39; E2 Mary Plant)</text>
+</g>
+<!-- n2&#45;&gt;n9 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M505.556,-152.208C513.4,-143.796 523.118,-133.374 532.102,-123.739"/>
+<polygon fill="black" stroke="black" points="534.839,-125.936 539.099,-116.235 529.72,-121.162 534.839,-125.936"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="395.899" cy="-94" rx="69.0978" ry="18"/>
+<text text-anchor="middle" x="395.899" y="-89.8" font-family="Times,serif" font-size="14.00">etc1_couldnt 0.9</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<polygon fill="none" stroke="black" points="296.954,-36 168.845,-36 168.845,-0 296.954,-0 296.954,-36"/>
+<text text-anchor="middle" x="232.899" y="-13.8" font-family="Times,serif" font-size="14.00">(couldnt&#39; $2 Me E2)</text>
+</g>
+<!-- n3&#45;&gt;n10 -->
+<g id="edge4" class="edge"><title>n3&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M362.914,-78.025C338.948,-67.1449 306.183,-52.2697 279.541,-40.1747"/>
+<polygon fill="black" stroke="black" points="280.949,-36.9705 270.397,-36.0235 278.056,-43.3444 280.949,-36.9705"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="778.899" cy="-170" rx="59.4339" ry="18"/>
+<text text-anchor="middle" x="778.899" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_dead 0.9</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<polygon fill="none" stroke="black" points="762.519,-112 657.279,-112 657.279,-76 762.519,-76 762.519,-112"/>
+<polygon fill="none" stroke="black" points="766.505,-116 653.293,-116 653.293,-72 766.505,-72 766.505,-116"/>
+<text text-anchor="middle" x="709.899" y="-89.8" font-family="Times,serif" font-size="14.00">(dead&#39; E4 Plant)</text>
+</g>
+<!-- n4&#45;&gt;n13 -->
+<g id="edge11" class="edge"><title>n4&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M763.586,-152.577C755.613,-144.026 745.636,-133.326 736.453,-123.478"/>
+<polygon fill="black" stroke="black" points="739.011,-121.089 729.631,-116.162 733.891,-125.863 739.011,-121.089"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="564.899" cy="-242" rx="60.9046" ry="18"/>
+<text text-anchor="middle" x="564.899" y="-237.8" font-family="Times,serif" font-size="14.00">etc1_didnt 0.9</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<polygon fill="none" stroke="black" points="701.401,-188 574.397,-188 574.397,-152 701.401,-152 701.401,-188"/>
+<text text-anchor="middle" x="637.899" y="-165.8" font-family="Times,serif" font-size="14.00">(didnt&#39; $3 Mary E2)</text>
+</g>
+<!-- n5&#45;&gt;n12 -->
+<g id="edge8" class="edge"><title>n5&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M582.199,-224.411C591.271,-215.712 602.554,-204.893 612.588,-195.271"/>
+<polygon fill="black" stroke="black" points="615.166,-197.648 619.961,-188.201 610.321,-192.596 615.166,-197.648"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="232.899" cy="-170" rx="56.5373" ry="18"/>
+<text text-anchor="middle" x="232.899" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_task 0.9</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<polygon fill="none" stroke="black" points="305.375,-112 160.423,-112 160.423,-76 305.375,-76 305.375,-112"/>
+<polygon fill="none" stroke="black" points="309.388,-116 156.41,-116 156.41,-72 309.388,-72 309.388,-116"/>
+<text text-anchor="middle" x="232.899" y="-89.8" font-family="Times,serif" font-size="14.00">(task&#39; E1 Me Mary E2)</text>
+</g>
+<!-- n6&#45;&gt;n11 -->
+<g id="edge6" class="edge"><title>n6&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M232.899,-151.837C232.899,-144.165 232.899,-134.878 232.899,-126.053"/>
+<polygon fill="black" stroke="black" points="236.399,-126.032 232.899,-116.032 229.399,-126.032 236.399,-126.032"/>
+</g>
+<!-- n7&#45;&gt;n12 -->
+<g id="edge9" class="edge"><title>n7&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M692.101,-223.697C683.295,-215.135 672.517,-204.656 662.898,-195.304"/>
+<polygon fill="black" stroke="black" points="665.102,-192.566 655.492,-188.104 660.222,-197.585 665.102,-192.566"/>
+</g>
+<!-- n8&#45;&gt;n10 -->
+<g id="edge5" class="edge"><title>n8&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M121.185,-71.9925C141.964,-62.136 166.695,-50.4044 187.6,-40.4881"/>
+<polygon fill="black" stroke="black" points="189.373,-43.5211 196.908,-36.0729 186.373,-37.1966 189.373,-43.5211"/>
+</g>
+<!-- n9&#45;&gt;n13 -->
+<g id="edge12" class="edge"><title>n9&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M634.989,-94C637.635,-94 640.281,-94 642.926,-94"/>
+<polygon fill="black" stroke="black" points="643.131,-97.5001 653.131,-94 643.131,-90.5001 643.131,-97.5001"/>
+</g>
+<!-- n10&#45;&gt;n11 -->
+<g id="edge7" class="edge"><title>n10&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M232.899,-36.3147C232.899,-43.8937 232.899,-53.0274 232.899,-61.7281"/>
+<polygon fill="black" stroke="black" points="229.399,-61.9925 232.899,-71.9925 236.399,-61.9925 229.399,-61.9925"/>
+</g>
+<!-- n11&#45;&gt;n12 -->
+<g id="edge10" class="edge"><title>n11&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M309.276,-114.244C312.183,-114.858 315.065,-115.446 317.899,-116 424.003,-136.756 454.7,-131.523 564.224,-151.774"/>
+<polygon fill="black" stroke="black" points="563.886,-155.272 574.361,-153.679 565.179,-148.392 563.886,-155.272"/>
+</g>
+<!-- n12&#45;&gt;n13 -->
+<g id="edge13" class="edge"><title>n12&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M654.598,-151.837C662.793,-143.414 672.882,-133.045 682.19,-123.479"/>
+<polygon fill="black" stroke="black" points="684.97,-125.64 689.435,-116.032 679.953,-120.759 684.97,-125.64"/>
+</g>
+</g>
+</svg>
+      <p>Let's look at the chain of explanation leading to each of the four observed literals.</p>
+      <ol>
+	<li>My tasking of Mary is because I couldn't do E2, because I was on vacation, for some unknown reason.</li>
+	<li>The eventuality of watering (E2) is for some unknown reason.</li>
+	<li>My going on vacation is because of some unkonwn reason.</li>
+	<li>The plant is dead because Mary didn't do E2, which is the watering of my plant. She didn't do it because she was tasked with doing it (see #1, above), but forgot. She forgot for some unkonwn reason.</li>
+      </ol>
+
+      <p>In this interpretation, Mary is to blame. Her not watering the plant is the direct cause of its death. But if I hadn't tasked her with watering the plant, it would be a different story. We can see this alternative by commenting out the two observables having to do with the tasking of Mary.</p>
+      <pre>;; The observables, but without the tasking of Mary
+;(task' E1 Me Mary E2)
+;(water' E2 Mary Plant)
+(vacation' E3 Me)
+(dead' E4 Plant)
+</pre>      
+      <p>When we graph the most probable interpretation now, a new person is to blame.</p>
+      <svg width="350pt" 
+ viewBox="0.00 0.00 518.48 340.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 336)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-336 514.482,-336 514.482,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="76.8992" cy="-242" rx="76.7985" ry="18"/>
+<text text-anchor="middle" x="76.8992" y="-237.8" font-family="Times,serif" font-size="14.00">etc0_vacation 0.01</text>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<polygon fill="none" stroke="black" points="135.366,-184 18.4323,-184 18.4323,-148 135.366,-148 135.366,-184"/>
+<polygon fill="none" stroke="black" points="139.382,-188 14.4168,-188 14.4168,-144 139.382,-144 139.382,-188"/>
+<text text-anchor="middle" x="76.8992" y="-161.8" font-family="Times,serif" font-size="14.00">(vacation&#39; E3 Me)</text>
+</g>
+<!-- n0&#45;&gt;n5 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M76.8992,-223.837C76.8992,-216.165 76.8992,-206.878 76.8992,-198.053"/>
+<polygon fill="black" stroke="black" points="80.3993,-198.032 76.8992,-188.032 73.3993,-198.032 80.3993,-198.032"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="443.899" cy="-314" rx="66.6666" ry="18"/>
+<text text-anchor="middle" x="443.899" y="-309.8" font-family="Times,serif" font-size="14.00">etc0_water 0.02</text>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<polygon fill="none" stroke="black" points="509.277,-260 378.521,-260 378.521,-224 509.277,-224 509.277,-260"/>
+<text text-anchor="middle" x="443.899" y="-237.8" font-family="Times,serif" font-size="14.00">(water&#39; $2 Me Plant)</text>
+</g>
+<!-- n1&#45;&gt;n6 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n6</title>
+<path fill="none" stroke="black" d="M443.899,-295.697C443.899,-287.983 443.899,-278.712 443.899,-270.112"/>
+<polygon fill="black" stroke="black" points="447.399,-270.104 443.899,-260.104 440.399,-270.104 447.399,-270.104"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="225.899" cy="-166" rx="69.0978" ry="18"/>
+<text text-anchor="middle" x="225.899" y="-161.8" font-family="Times,serif" font-size="14.00">etc1_couldnt 0.9</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<polygon fill="none" stroke="black" points="204.401,-108 77.3972,-108 77.3972,-72 204.401,-72 204.401,-108"/>
+<text text-anchor="middle" x="140.899" y="-85.8" font-family="Times,serif" font-size="14.00">(couldnt&#39; $3 Me $1)</text>
+</g>
+<!-- n2&#45;&gt;n7 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M207.035,-148.577C195.613,-138.633 180.852,-125.782 168.173,-114.744"/>
+<polygon fill="black" stroke="black" points="170.437,-112.075 160.597,-108.149 165.841,-117.355 170.437,-112.075"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="300.899" cy="-242" rx="59.4339" ry="18"/>
+<text text-anchor="middle" x="300.899" y="-237.8" font-family="Times,serif" font-size="14.00">etc1_dead 0.9</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<polygon fill="none" stroke="black" points="424.519,-184 319.279,-184 319.279,-148 424.519,-148 424.519,-184"/>
+<polygon fill="none" stroke="black" points="428.505,-188 315.293,-188 315.293,-144 428.505,-144 428.505,-188"/>
+<text text-anchor="middle" x="371.899" y="-161.8" font-family="Times,serif" font-size="14.00">(dead&#39; E4 Plant)</text>
+</g>
+<!-- n3&#45;&gt;n9 -->
+<g id="edge7" class="edge"><title>n3&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M316.656,-224.577C324.86,-216.026 335.127,-205.326 344.576,-195.478"/>
+<polygon fill="black" stroke="black" points="347.197,-197.801 351.595,-188.162 342.146,-192.955 347.197,-197.801"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="282.899" cy="-90" rx="60.9046" ry="18"/>
+<text text-anchor="middle" x="282.899" y="-85.8" font-family="Times,serif" font-size="14.00">etc1_didnt 0.9</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<polygon fill="none" stroke="black" points="339.687,-36 226.111,-36 226.111,-0 339.687,-0 339.687,-36"/>
+<text text-anchor="middle" x="282.899" y="-13.8" font-family="Times,serif" font-size="14.00">(didnt&#39; $1 Me $2)</text>
+</g>
+<!-- n4&#45;&gt;n8 -->
+<g id="edge5" class="edge"><title>n4&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M282.899,-71.6966C282.899,-63.9827 282.899,-54.7125 282.899,-46.1124"/>
+<polygon fill="black" stroke="black" points="286.399,-46.1043 282.899,-36.1043 279.399,-46.1044 286.399,-46.1043"/>
+</g>
+<!-- n5&#45;&gt;n7 -->
+<g id="edge4" class="edge"><title>n5&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M95.0678,-143.993C102.614,-135.268 111.43,-125.074 119.304,-115.97"/>
+<polygon fill="black" stroke="black" points="122.03,-118.168 125.924,-108.315 116.735,-113.589 122.03,-118.168"/>
+</g>
+<!-- n6&#45;&gt;n9 -->
+<g id="edge8" class="edge"><title>n6&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M427.2,-223.837C419.005,-215.414 408.916,-205.045 399.609,-195.479"/>
+<polygon fill="black" stroke="black" points="401.845,-192.759 392.363,-188.032 396.828,-197.64 401.845,-192.759"/>
+</g>
+<!-- n7&#45;&gt;n8 -->
+<g id="edge6" class="edge"><title>n7&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M175.636,-71.8761C194.719,-62.4693 218.578,-50.7077 238.946,-40.6672"/>
+<polygon fill="black" stroke="black" points="240.607,-43.7506 248.029,-36.1898 237.512,-37.472 240.607,-43.7506"/>
+</g>
+<!-- n8&#45;&gt;n9 -->
+<g id="edge9" class="edge"><title>n8&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M314.71,-36.0247C328.481,-44.9661 343.556,-57.1678 352.899,-72 364.534,-90.4708 369.216,-114.728 371.024,-133.837"/>
+<polygon fill="black" stroke="black" points="367.537,-134.137 371.759,-143.854 374.518,-133.625 367.537,-134.137"/>
+</g>
+</g>
+</svg>
+      <p>Now we have the following explanations for the observations:</p>
+      <ol>
+	<li>I went on vacation for some unknown reason.</li>
+	<li>The plant is dead because I didn't water it, because I couldn't water it, because I was on vacation for some unknown reason.</li>
+      </ol>
+
+      <p>In this example we can see that adding information to the situation can radically change its interpretation. In AI, this is called <i>nonmonotonic reasoning</i>, in that the pool of conclusions does not exclusively grow with each additional input. With abductive reasoning, the more you observe, the better your overall intepretation of the whole situation and the better your explanation for any of its component observations.</p>
+      <p>This example also highlights the importance of choosing appropriate representations for your observations and axioms. In particular, the reification of watering plants (using eventuality notation) was super-important in figuring out who was to blame for the death of the plant. When Mary is specifically asked to do so, her watering the plant can be connected to its explanation. Without this tasking, it's my not-doing-something (because of vacation) that is connected into the explantion. Both of these explanations beat the prior probabilities of the observables; its more likely that one of us is to blame, given the evidence, than attributing the death to bad luck or random chance.</p>
+  </body>
+</html>
