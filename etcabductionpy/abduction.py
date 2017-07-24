@@ -58,25 +58,21 @@ def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions
                                       unify.subst(theta, assumptions)]) # new assumptions with substitutions
             return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
 
-def crunch(conjunction): #faster, simpler
-    conjunction = [k for k,v in itertools.groupby(sorted(conjunction))] # remove duplicate literals
-    if len(conjunction) < 2:
-        return [conjunction]
-    else:
-        return [k for k,v in itertools.groupby(sorted(cruncher(conjunction, 0)))]
+def crunch(conjunction): 
+    return [k for k,v in itertools.groupby(sorted(cruncher(conjunction, 0)))] # dedupe solutions
 
-def cruncher(conjunction, idx):
+def cruncher(conjunction, idx = 0):
     if idx == len(conjunction) - 1: # last one
-        return [sorted(conjunction)] # sorted to help remove duplicates
+        return [[k for k,v in itertools.groupby(sorted(conjunction))]] # dedupe literals in solution
     else:
         res = []
-        for subsequent in range(idx + 1,len(conjunction)): # was xrange
+        for subsequent in range(idx + 1,len(conjunction)): 
             theta = unify.unify(conjunction[idx], conjunction[subsequent])
-            if theta: 
+            if theta:
+
                 new_conjunction = unify.subst(theta,
                                               conjunction[0:subsequent] +
                                               conjunction[(subsequent + 1):len(conjunction)])
                 res.extend(cruncher(new_conjunction, idx))
         res.extend(cruncher(conjunction, idx + 1))
         return res
-
