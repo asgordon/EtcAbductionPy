@@ -11,6 +11,7 @@ import parse
 import etcetera
 import forward
 import incremental
+import unify
 
 argparser = argparse.ArgumentParser(description='Etcetera Abduction in Python')
 
@@ -76,6 +77,7 @@ args = argparser.parse_args()
 inlines = args.infile.readlines()
 intext = "".join(inlines)
 kb, obs = parse.definite_clauses(parse.parse(intext))
+obs = unify.standardize(obs)
 
 if args.kb:
     kblines = args.kb.readlines()
