@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <h1>Example 4: For Want of a Nail</h1>
+      <span class="date">July 28, 2017</span>
+      <p>Sometimes small details can have big consequences. There is a famous proverb that makes this point, that goes something like this:</p>
+      <blockquote><i>
+	For want of a nail the shoe was lost.<br />
+For want of a shoe the horse was lost.<br />
+For want of a horse the rider was lost.<br />
+For want of a rider the message was lost.<br />
+For want of a message the battle was lost.<br />
+For want of a battle the kingdom was lost.<br />
+	And all for the want of a horseshoe nail.
+      </i></blockquote>
+      <p>But suppose you are an unfortuante farrier (specialist who nails horseshoes to hooves) that did, indeed, attach a horseshoe recently with one fewer nails than is propper. And yes, indeed, the kingdom has subsequently collapsed. You might be wondering if you might be the one to blame. Given the observables of a missing nail and the collapse of the kingdom, you'd like to know the likelihood that the first is the cause of the second. Let's use Etcetera Abduction to answer this question.</p>
+      <p>Let's start with what we observe. The kingdom, which you know by its name "K" has definitely collapsed. There is was some nail, which you don't know the name of, that you failed to set on a particular shoe, which you are happy to call "S" (for shoe). </p>
+      <pre>;; The observables
+
+(collapse K)
+(missing_nail n S)
+</pre>
+      <p>Notice that the nail is represented by the lowercase letter "n". The other arguments are all logical constants represented with uppercase letters: "K" is a particular known kingdom, and "S" is a particular known shoe. By representing "n" as a lowercase letter, we are signifying that "n" is a variable. Specifically, "n" is an <u>existentially quantified</u> variable. What we are saying here is that there exists some nail that is missing in the shoe "S", but we don't know its name.</p>
+      <p>This is in contrast to all of the variables that we've seen previously in our axioms. In those axioms, all of the variables are <u>universally quantified</u> variables. They indicate that they can take on <u>any</u> value, and the axiom will still be true.</p>
+      <p>For example, the axioms that encode the prior probabilities of our observables both have universally quantified variables in them.</p>
+      <pre>;; Priors of the observables
+
+(if (etc0_collapse 0.001 x) (collapse x))
+(if (etc0_missing_nail 0.001 x y) (missing_nail x y))
+</pre>
+      <p>Because "x" and "y" in these axioms are <u>universally quantified</u> variables, these axioms state that anytime these <code>etc0</code> predicates are true for <u>any</u> entity in the domain, be it a kingdom "K" or a pepperoni pizza "P", then the consequent is true as well, e.g. the pepperioni pizza has collapsed. While it may be a bit disconcerting to be writing an axiom that might apply to a pepperioni pizza in this manner, remember that we're doing abductive reasoning here. These <code>etc0</code> literals are never going to be observed directly - they can only be assumed as antecedents when trying to explain a consequent. As long as we don't observe collapsing pizzas in the world, the <code>etc0_collapse</code> literal will never be considered as its explanation.</p>
+      <p>If we execute our abduction program with these obserables and these prior probability axioms, we get something interesting:</p>
+      <pre>$ python etcabductionpy/ -i docs/nail-collapse.lisp 
+((etc0_collapse 0.001 K) (etc0_missing_nail 0.001 $1 S))
+1 solutions.
+</pre>
+      <p>There is only one solution to this intepretation problem so far, which is simply to assume the prior probabilities. But notice that "$1" appears in the "missing_nail" assumption. Etcetera Abduction has invented a name for the nail that was missing in shoe "S". Technically, this is called a "<u>Skolem constant</u>" after the Norwegian mathemetician Thoralf Skolem. You can think of it this way: our abductive reasoning engine needed some way to refer to a specific entity in the world that didn't have a name, so it made up one by joining a dollar-sign "$" with a unique integer "1". If the engine had the occasion to refer to this entity elsewhere, it would have called it "$1" again. If instead it needed to talk about some other entity that was distinct but also unnammed, it might call it "$2" or "$3". </p>
+      <p>When we graph the best solution, another interesting thing happens:</p>
+
+<svg width="380pt" height="124pt"
+ viewBox="0.00 0.00 379.91 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-120 375.909,-120 375.909,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="80.3407" cy="-98" rx="80.1817" ry="18"/>
+<text text-anchor="middle" x="80.3407" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_collapse 0.001</text>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<polygon fill="none" stroke="black" points="122.653,-40 38.0283,-40 38.0283,-4 122.653,-4 122.653,-40"/>
+<polygon fill="none" stroke="black" points="126.645,-44 34.0368,-44 34.0368,-0 126.645,-0 126.645,-44"/>
+<text text-anchor="middle" x="80.3407" y="-17.8" font-family="Times,serif" font-size="14.00">(collapse K)</text>
+</g>
+<!-- n0&#45;&gt;n2 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n2</title>
+<path fill="none" stroke="black" d="M80.3407,-79.8369C80.3407,-72.165 80.3407,-62.8775 80.3407,-54.0535"/>
+<polygon fill="black" stroke="black" points="83.8408,-54.0322 80.3407,-44.0322 76.8408,-54.0322 83.8408,-54.0322"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="275.341" cy="-98" rx="96.6363" ry="18"/>
+<text text-anchor="middle" x="275.341" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_missing_nail 0.001</text>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<polygon fill="none" stroke="black" points="338.01,-40 212.671,-40 212.671,-4 338.01,-4 338.01,-40"/>
+<text text-anchor="middle" x="275.341" y="-17.8" font-family="Times,serif" font-size="14.00">(missing_nail $1 S)</text>
+</g>
+<!-- n1&#45;&gt;n3 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n3</title>
+<path fill="none" stroke="black" d="M275.341,-79.8369C275.341,-71.0575 275.341,-60.1626 275.341,-50.2675"/>
+<polygon fill="black" stroke="black" points="278.841,-50.07 275.341,-40.07 271.841,-50.07 278.841,-50.07"/>
+</g>
+</g>
+</svg>
+ 
+
+      <p>Notice how only 1 of our 2 observables are plotted with a double line around the literal. Why is that? </p>
+      <p>The reason is that the literals that are are entailed by our solution are not <u>exactly</u> the same as our observations. We said that we observed an "n", but the assumptions entail a "$1" instead. What's up with that?</p>
+      <p>This is because Etcetera Abduction doesn't keep track of the names of existential variables that you've provided in the observables, e.g. "n" in the example above. When its finished its search for entailing assumptions, it changes all variables into Skolem constants - effectively giving a name to any entity whose name wasn't previously known, including those entities that originally appeared in the observables. Technically speaking, however, all sets of assumptions <u>do</u> actually entail the given observations, but it requires a bit of extra reasoning to recognize that the existential in the observable is the same as the named Skolem constant. The graphing algorithm doesn't do this extra reasoning step, so it doesn't recognize that <code>(missing_nail $1 S)</code> entails <code>(exists (n) (missing_nail n S))</code>. Thus, no double line around the inference. </p>
+      <p>Confused? Don't worry about it. Just know that any time your observables have existential variables in them (lowercase letters), your graphs will be drawn without double lines around them, and those lowercase letters will be replaced with dollar-signs and numbers.</p>
+
+      <p>With that behind us, let's get down to this business of the collapse of the kingdom. It's true that kingdoms can be lost when a battle is lost. I guess that this happens about half the time when you have battling kingdoms.</p>
+
+      <pre>;; For want of a battle the kingdom was lost
+(if (and (battle_lost_to x y)
+	 (etc1_collapse 0.5 x))
+    (collapse x))
+
+(if (etc0_battle_lost_to 0.001 x y) (battle_lost_to x y))
+</pre>
+
+      <p>This additional knowledge doesn't change our top interpretation, but now we have a second-best interpretation. Here, we've got to imagine some "$2" exists, which is the name given to the kingdom that defeated "K" in battle.</p>
+
+<svg width="512pt" height="196pt"
+ viewBox="0.00 0.00 512.08 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-192 508.077,-192 508.077,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="99.5087" cy="-170" rx="99.5175" ry="18"/>
+<text text-anchor="middle" x="99.5087" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_battle_lost_to 0.001</text>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<polygon fill="none" stroke="black" points="165.658,-116 33.3598,-116 33.3598,-80 165.658,-80 165.658,-116"/>
+<text text-anchor="middle" x="99.5087" y="-93.8" font-family="Times,serif" font-size="14.00">(battle_lost_to K $2)</text>
+</g>
+<!-- n0&#45;&gt;n3 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n3</title>
+<path fill="none" stroke="black" d="M99.5087,-151.697C99.5087,-143.983 99.5087,-134.712 99.5087,-126.112"/>
+<polygon fill="black" stroke="black" points="103.009,-126.104 99.5087,-116.104 96.0088,-126.104 103.009,-126.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="407.509" cy="-170" rx="96.6363" ry="18"/>
+<text text-anchor="middle" x="407.509" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_missing_nail 0.001</text>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<polygon fill="none" stroke="black" points="470.178,-116 344.839,-116 344.839,-80 470.178,-80 470.178,-116"/>
+<text text-anchor="middle" x="407.509" y="-93.8" font-family="Times,serif" font-size="14.00">(missing_nail $1 S)</text>
+</g>
+<!-- n1&#45;&gt;n4 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n4</title>
+<path fill="none" stroke="black" d="M407.509,-151.697C407.509,-143.983 407.509,-134.712 407.509,-126.112"/>
+<polygon fill="black" stroke="black" points="411.009,-126.104 407.509,-116.104 404.009,-126.104 411.009,-126.104"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="255.509" cy="-98" rx="71.4945" ry="18"/>
+<text text-anchor="middle" x="255.509" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_collapse 0.5</text>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<polygon fill="none" stroke="black" points="219.821,-40 135.196,-40 135.196,-4 219.821,-4 219.821,-40"/>
+<polygon fill="none" stroke="black" points="223.813,-44 131.205,-44 131.205,-0 223.813,-0 223.813,-44"/>
+<text text-anchor="middle" x="177.509" y="-17.8" font-family="Times,serif" font-size="14.00">(collapse K)</text>
+</g>
+<!-- n2&#45;&gt;n5 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M237.809,-80.2083C228.767,-71.6297 217.521,-60.9606 207.199,-51.168"/>
+<polygon fill="black" stroke="black" points="209.555,-48.5784 199.891,-44.2349 204.737,-53.6566 209.555,-48.5784"/>
+</g>
+<!-- n3&#45;&gt;n5 -->
+<g id="edge4" class="edge"><title>n3&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M117.6,-79.8369C126.565,-71.3311 137.624,-60.8395 147.79,-51.1952"/>
+<polygon fill="black" stroke="black" points="150.494,-53.454 155.34,-44.0322 145.676,-48.3757 150.494,-53.454"/>
+</g>
+</g>
+</svg>
+
+      <p>Let's keep going. I estimate that missing battle messages lead to lost battles about half the time. Missing riders lead to missing messages about half the time. Missing horses lead to missing riders about half the time. Missing shoes lead to missing horses about half the time. And finally, missing nails lead to missing shoes about half the time. Let's encode these conditional probabilities and see what happens.</p>
+
+      <pre>;; For want of a message the battle was lost
+(if (and (missing_message_about m y)
+	 (etc1_battle_lost_to 0.5 x y m))
+    (battle_lost_to x y))
+
+(if (etc0_missing_message_about 0.001 m y) (missing_message_about m y))
+
+;; for want of a rider the message was lost
+(if (and (missing_rider r m)
+	 (etc1_missing_message_about 0.5 r m y))
+    (missing_message_about m y))
+
+(if (etc0_missing_rider 0.001 r m) (missing_rider r m))
+
+;; For want of a horse the rider was lost
+(if (and (missing_horse h r)
+	 (etc1_missing_rider 0.5 h r m))
+    (missing_rider r m))
+
+(if (etc0_missing_horse 0.001 h r) (missing_horse h r))
+
+;; For want of a shoe the horse was lost
+(if (and (missing_shoe s h)
+	 (etc1_missing_horse 0.5 h s r))
+    (missing_horse h r))
+
+(if (etc0_missing_shoe 0.001 s h) (missing_shoe s h))
+
+;; For want of a nail the shoe was lost
+(if (and (missing_nail n s)
+	 (etc1_missing_shoe 0.5 n s h))
+    (missing_shoe s h))
+</pre>
+
+      <p>Ok, now its time for the moment of truth. Is your sloppy horseshoeing the cause of the collapse of the kingdom? Let's graph the top interpretation:</p>
+
+      <pre>$ python etcabductionpy/ -i docs/nail-collapse.lisp -g | util/dot2safari </pre>
+
+
+
+      <svg width="380pt" height="124pt"
+ viewBox="0.00 0.00 379.91 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-120 375.909,-120 375.909,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="80.3407" cy="-98" rx="80.1817" ry="18"/>
+<text text-anchor="middle" x="80.3407" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_collapse 0.001</text>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<polygon fill="none" stroke="black" points="122.653,-40 38.0283,-40 38.0283,-4 122.653,-4 122.653,-40"/>
+<polygon fill="none" stroke="black" points="126.645,-44 34.0368,-44 34.0368,-0 126.645,-0 126.645,-44"/>
+<text text-anchor="middle" x="80.3407" y="-17.8" font-family="Times,serif" font-size="14.00">(collapse K)</text>
+</g>
+<!-- n0&#45;&gt;n2 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n2</title>
+<path fill="none" stroke="black" d="M80.3407,-79.8369C80.3407,-72.165 80.3407,-62.8775 80.3407,-54.0535"/>
+<polygon fill="black" stroke="black" points="83.8408,-54.0322 80.3407,-44.0322 76.8408,-54.0322 83.8408,-54.0322"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="275.341" cy="-98" rx="96.6363" ry="18"/>
+<text text-anchor="middle" x="275.341" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_missing_nail 0.001</text>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<polygon fill="none" stroke="black" points="338.01,-40 212.671,-40 212.671,-4 338.01,-4 338.01,-40"/>
+<text text-anchor="middle" x="275.341" y="-17.8" font-family="Times,serif" font-size="14.00">(missing_nail $1 S)</text>
+</g>
+<!-- n1&#45;&gt;n3 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n3</title>
+<path fill="none" stroke="black" d="M275.341,-79.8369C275.341,-71.0575 275.341,-60.1626 275.341,-50.2675"/>
+<polygon fill="black" stroke="black" points="278.841,-50.07 275.341,-40.07 271.841,-50.07 278.841,-50.07"/>
+</g>
+</g>
+</svg>
+
+      <p>Phew! The best interpretation is still the priors. Hopefully that will help you sleep better at night.</p>
+      <p>Let's use the "grep" command to find interpretations further down the list where the missing nail plays a role in the collapse of the kingdom.</p>
+      <pre>$ python etcabductionpy/ -i docs/nail-collapse.lisp -a | grep "etc1_missing_shoe"
+$
+</pre>
+      <p>Uh oh. That is not good. There are no interpretations that involve the missing nail. Did we mess up the axioms in some way? No, they are all syntactically correct. What is the problem?</p>
+      
+      <p>The problem is the length of the causal chain that links missing nails to the collapse of the kingdom. Beginning from the collapse, we need to backchain on 6 successive axioms to get to a missing nail, and one more to get to the prior probability of that missing nail. That is <u>seven</u> steps of backchaining, but the Etcetera Abduction engine has a default depth of only <u>five</u> steps. Given the default setting, the engine never considers explanations deeper than a missing horse, and therefore never makes the connection to the missing nail.</p>
+      <p>What happens if we set the depth to seven, using the "--depth" (or "-d") flag, and graph the top result.</p>
+      <pre>$ python etcabductionpy/ -d 7 -i docs/nail-collapse.lisp -g | util/dot2safari</pre>
+      
+<svg width="540pt"
+ viewBox="0.00 0.00 806.07 556.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 552)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-552 802.065,-552 802.065,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="96.5681" cy="-530" rx="96.6363" ry="18"/>
+<text text-anchor="middle" x="96.5681" y="-525.8" font-family="Times,serif" font-size="14.00">etc0_missing_nail 0.001</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<polygon fill="none" stroke="black" points="159.237,-476 33.8987,-476 33.8987,-440 159.237,-440 159.237,-476"/>
+<text text-anchor="middle" x="96.5681" y="-453.8" font-family="Times,serif" font-size="14.00">(missing_nail $1 S)</text>
+</g>
+<!-- n0&#45;&gt;n7 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M96.5681,-511.697C96.5681,-503.983 96.5681,-494.712 96.5681,-486.112"/>
+<polygon fill="black" stroke="black" points="100.068,-486.104 96.5681,-476.104 93.0682,-486.104 100.068,-486.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="674.568" cy="-170" rx="90.8308" ry="18"/>
+<text text-anchor="middle" x="674.568" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_battle_lost_to 0.5</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<polygon fill="none" stroke="black" points="636.717,-116 504.419,-116 504.419,-80 636.717,-80 636.717,-116"/>
+<text text-anchor="middle" x="570.568" y="-93.8" font-family="Times,serif" font-size="14.00">(battle_lost_to K $3)</text>
+</g>
+<!-- n1&#45;&gt;n12 -->
+<g id="edge10" class="edge"><title>n1&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M650.185,-152.588C636.534,-143.4 619.305,-131.804 604.37,-121.751"/>
+<polygon fill="black" stroke="black" points="606.135,-118.72 595.885,-116.04 602.226,-124.527 606.135,-118.72"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="726.568" cy="-98" rx="71.4945" ry="18"/>
+<text text-anchor="middle" x="726.568" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_collapse 0.5</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<polygon fill="none" stroke="black" points="690.88,-40 606.256,-40 606.256,-4 690.88,-4 690.88,-40"/>
+<polygon fill="none" stroke="black" points="694.872,-44 602.264,-44 602.264,-0 694.872,-0 694.872,-44"/>
+<text text-anchor="middle" x="648.568" y="-17.8" font-family="Times,serif" font-size="14.00">(collapse K)</text>
+</g>
+<!-- n2&#45;&gt;n13 -->
+<g id="edge12" class="edge"><title>n2&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M708.869,-80.2083C699.826,-71.6297 688.581,-60.9606 678.259,-51.168"/>
+<polygon fill="black" stroke="black" points="680.614,-48.5784 670.951,-44.2349 675.797,-53.6566 680.614,-48.5784"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="359.568" cy="-386" rx="93.7378" ry="18"/>
+<text text-anchor="middle" x="359.568" y="-381.8" font-family="Times,serif" font-size="14.00">etc1_missing_horse 0.5</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<polygon fill="none" stroke="black" points="341.282,-332 199.854,-332 199.854,-296 341.282,-296 341.282,-332"/>
+<text text-anchor="middle" x="270.568" y="-309.8" font-family="Times,serif" font-size="14.00">(missing_horse $4 $5)</text>
+</g>
+<!-- n3&#45;&gt;n9 -->
+<g id="edge4" class="edge"><title>n3&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M338.476,-368.411C327.091,-359.456 312.849,-348.254 300.351,-338.425"/>
+<polygon fill="black" stroke="black" points="302.462,-335.632 292.438,-332.201 298.134,-341.134 302.462,-335.632"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="575.568" cy="-242" rx="128.484" ry="18"/>
+<text text-anchor="middle" x="575.568" y="-237.8" font-family="Times,serif" font-size="14.00">etc1_missing_message_about 0.5</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<polygon fill="none" stroke="black" points="565.989,-188 369.147,-188 369.147,-152 565.989,-152 565.989,-188"/>
+<text text-anchor="middle" x="467.568" y="-165.8" font-family="Times,serif" font-size="14.00">(missing_message_about $2 $3)</text>
+</g>
+<!-- n4&#45;&gt;n11 -->
+<g id="edge8" class="edge"><title>n4&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M549.699,-224.233C535.615,-215.104 517.987,-203.679 502.678,-193.756"/>
+<polygon fill="black" stroke="black" points="504.271,-190.618 493.976,-188.116 500.464,-196.492 504.271,-190.618"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="450.568" cy="-314" rx="91.3153" ry="18"/>
+<text text-anchor="middle" x="450.568" y="-309.8" font-family="Times,serif" font-size="14.00">etc1_missing_rider 0.5</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<polygon fill="none" stroke="black" points="429.386,-260 291.75,-260 291.75,-224 429.386,-224 429.386,-260"/>
+<text text-anchor="middle" x="360.568" y="-237.8" font-family="Times,serif" font-size="14.00">(missing_rider $5 $2)</text>
+</g>
+<!-- n5&#45;&gt;n10 -->
+<g id="edge6" class="edge"><title>n5&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M429.239,-296.411C417.726,-287.456 403.324,-276.254 390.686,-266.425"/>
+<polygon fill="black" stroke="black" points="392.726,-263.578 382.684,-260.201 388.428,-269.103 392.726,-263.578"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="268.568" cy="-458" rx="90.8481" ry="18"/>
+<text text-anchor="middle" x="268.568" y="-453.8" font-family="Times,serif" font-size="14.00">etc1_missing_shoe 0.5</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<polygon fill="none" stroke="black" points="247.906,-404 117.23,-404 117.23,-368 247.906,-368 247.906,-404"/>
+<text text-anchor="middle" x="182.568" y="-381.8" font-family="Times,serif" font-size="14.00">(missing_shoe S $4)</text>
+</g>
+<!-- n6&#45;&gt;n8 -->
+<g id="edge2" class="edge"><title>n6&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M248.187,-440.411C237.291,-431.542 223.685,-420.467 211.693,-410.706"/>
+<polygon fill="black" stroke="black" points="213.666,-407.799 203.701,-404.201 209.247,-413.228 213.666,-407.799"/>
+</g>
+<!-- n7&#45;&gt;n8 -->
+<g id="edge3" class="edge"><title>n7&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M117.827,-439.697C128.658,-430.881 141.986,-420.032 153.728,-410.474"/>
+<polygon fill="black" stroke="black" points="156.008,-413.132 161.554,-404.104 151.589,-407.703 156.008,-413.132"/>
+</g>
+<!-- n8&#45;&gt;n9 -->
+<g id="edge5" class="edge"><title>n8&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M204.321,-367.697C215.404,-358.881 229.042,-348.032 241.058,-338.474"/>
+<polygon fill="black" stroke="black" points="243.418,-341.069 249.066,-332.104 239.061,-335.59 243.418,-341.069"/>
+</g>
+<!-- n9&#45;&gt;n10 -->
+<g id="edge7" class="edge"><title>n9&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M292.815,-295.697C304.15,-286.881 318.098,-276.032 330.387,-266.474"/>
+<polygon fill="black" stroke="black" points="332.832,-269.007 338.577,-260.104 328.534,-263.481 332.832,-269.007"/>
+</g>
+<!-- n10&#45;&gt;n11 -->
+<g id="edge9" class="edge"><title>n10&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M386.743,-223.876C400.604,-214.808 417.81,-203.552 432.779,-193.759"/>
+<polygon fill="black" stroke="black" points="434.84,-196.593 441.292,-188.19 431.008,-190.735 434.84,-196.593"/>
+</g>
+<!-- n11&#45;&gt;n12 -->
+<g id="edge11" class="edge"><title>n11&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M492.765,-151.876C505.983,-142.893 522.36,-131.763 536.675,-122.034"/>
+<polygon fill="black" stroke="black" points="538.971,-124.705 545.275,-116.19 535.037,-118.916 538.971,-124.705"/>
+</g>
+<!-- n12&#45;&gt;n13 -->
+<g id="edge13" class="edge"><title>n12&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M588.659,-79.8369C597.625,-71.3311 608.683,-60.8395 618.849,-51.1952"/>
+<polygon fill="black" stroke="black" points="621.553,-53.454 626.399,-44.0322 616.735,-48.3757 621.553,-53.454"/>
+</g>
+</g>
+</svg>
+
+      <p>Oh no! The collapse of the kingdom really was your fault! The best interpretation indicates that the missing nail, some horse "$4", some rider "$5", some message "$2" about rival kingdom "$3" all led to the collapse of kingdom "K". </p>
+
+      <p>Now, before you wander off in self-pity about your failings as a farrier, you might want to consider whether our probability estimates are actually reasonable. In this example, we set all of the prior probabilities to 0.001 (very unlikely), but set all of the conditional probabilities to 0.5 (coin-toss likely). As it stands now, we have the conditional probability of the collapse of the kingdom given a missing nail at around 0.015625 (0.5 ^ 6), or 1/64. That actually seems really high, when you think about all of the other crummy farriers in the kingdom, and how sloppy they are with their nails. If skipping a nail would really lead to the collapse of the kingdom 1 in 64 times, the kingdom would not have ever lasted more than a single day. Something must be wrong with our numbers.</p>
+
+      <p>Indeed, the conditional probabilities in our axioms are way, way too high. The reasons are subtle, though, and require us to think very carefully about the <u>universally quantified</u> variables in our axioms. Let's take a look at one of our axioms, and consider exactly what it is that we've said about its conditional probability:</p>
+
+      <pre>;; For want of a nail the shoe was lost
+(if (and (missing_nail n s)
+	 (etc1_missing_shoe 0.5 n s h))
+    (missing_shoe s h))</pre>
+
+      <p>On the surface, this looks fine. We're trying to say that if your horse is missing a nail in its horseshoe, its going to fall off about half of the time. But actually, that is not precisely what this axiom is saying. Remember, all of the variables in these axioms are <u>universally quantified</u> variables. That means, the axiom is true for any assignment of these variables to any entities in the world of our problem.</p>
+      <p>A good technique for thinking about this axiom is to substitute the variables for imagined constants, and seeing if the numbers still make sense. Here's what it would look like if we are talking about a specific nail "NAIL9", a specific shoe "SHOE14", and a specific horse "HORSE93":</p>
+            <pre>;; For want of NAIL9, SHOE14 was lost on HORSE93
+(if (and (missing_nail NAIL9 SHOE14)
+	 (etc1_missing_shoe 0.5 NAIL9 SHOE14 HORSE93))
+    (missing_shoe SHOE14 HORSE93))</pre>
+
+      <p>Now, let's consider whether our conditional probabilty estimate is still reasonable. What is the conditional probability of "HORSE93" missing "SHOE14", given that "SHOE14" is missing "NAIL9"? Sure, shoes without nails fail half the time, but what is the chance that this particular shoe ended up on this particular horse? </p>
+      <p>Let's further estimate there are at least 1,000 horses in this kingdom, and each one of them has four hooves, and each hoof takes a shoe with eight nails. The conditional probability that we're looking for is this one, for the conditional probability of seeing a particular shoe missing from a particular horse given that a particular nail is missing from that very shoe:</p>
+
+      <blockquote>Pr[(missing_shoe SHOE14 HORSE93) | (missing_nail NAIL9 SHOE14)]</blockquote>
+      
+      <p>Put this way, we can see that we must factor in the likelihood that this particular cummy shoe-job was applied to this particular horse, out of all 1,000 of the horses in the kingdom (1/1000), and multiply that by the likelihood of loosing the shoe due to the missing nail (1/2). The likelihood of this particular horse missing this particular shoe, given that the shoe is missing a nail, is closer to 1/2000, or 0.0005. And because this conditional probability is the same regardless of which particular nail, shoe, and horse we're concerned with, we should change or original axiom to reflect the more accurate estimate:
+
+	<pre>;; For want of a nail the shoe was lost
+(if (and (missing_nail n s)
+	 (etc1_missing_shoe 0.0005 n s h))
+    (missing_shoe s h))
+</pre>	  
+
+      <p>We should really fix the numbers in the other axioms via a similar analysis, but even with this change we have a new order in our interpretations:</p>
+
+      <pre>$ python etcabductionpy/ -d 7 -i docs/nail-collapse.lisp -a
+((etc0_collapse 0.001 K) (etc0_missing_nail 0.001 $1 S))
+((etc0_battle_lost_to 0.001 K $2) (etc0_missing_nail 0.001 $1 S) (etc1_collapse 0.5 K))
+((etc0_missing_message_about 0.001 $2 $3) (etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K))
+((etc0_missing_nail 0.001 $1 S) (etc0_missing_rider 0.001 $4 $2) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_message_about 0.5 $4 $2 $3))
+((etc0_missing_horse 0.001 $4 $5) (etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2))
+((etc0_missing_nail 0.001 $1 S) (etc0_missing_shoe 0.001 $6 $4) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_horse 0.5 $4 $6 $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2))
+((etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_horse 0.5 $4 S $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2) (etc1_missing_shoe 0.0005 $1 S $4))
+((etc0_missing_nail 0.001 $1 S) (etc0_missing_nail 0.001 $6 $7) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_horse 0.5 $4 $7 $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2) (etc1_missing_shoe 0.0005 $6 $7 $4))
+8 solutions.
+</pre>	
+      <p>And here is the graph of the most likely interpretation.</p>
+      
+<svg width="380pt" height="124pt"
+ viewBox="0.00 0.00 379.91 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-120 375.909,-120 375.909,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="80.3407" cy="-98" rx="80.1817" ry="18"/>
+<text text-anchor="middle" x="80.3407" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_collapse 0.001</text>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<polygon fill="none" stroke="black" points="122.653,-40 38.0283,-40 38.0283,-4 122.653,-4 122.653,-40"/>
+<polygon fill="none" stroke="black" points="126.645,-44 34.0368,-44 34.0368,-0 126.645,-0 126.645,-44"/>
+<text text-anchor="middle" x="80.3407" y="-17.8" font-family="Times,serif" font-size="14.00">(collapse K)</text>
+</g>
+<!-- n0&#45;&gt;n2 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n2</title>
+<path fill="none" stroke="black" d="M80.3407,-79.8369C80.3407,-72.165 80.3407,-62.8775 80.3407,-54.0535"/>
+<polygon fill="black" stroke="black" points="83.8408,-54.0322 80.3407,-44.0322 76.8408,-54.0322 83.8408,-54.0322"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="275.341" cy="-98" rx="96.6363" ry="18"/>
+<text text-anchor="middle" x="275.341" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_missing_nail 0.001</text>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<polygon fill="none" stroke="black" points="338.01,-40 212.671,-40 212.671,-4 338.01,-4 338.01,-40"/>
+<text text-anchor="middle" x="275.341" y="-17.8" font-family="Times,serif" font-size="14.00">(missing_nail $1 S)</text>
+</g>
+<!-- n1&#45;&gt;n3 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n3</title>
+<path fill="none" stroke="black" d="M275.341,-79.8369C275.341,-71.0575 275.341,-60.1626 275.341,-50.2675"/>
+<polygon fill="black" stroke="black" points="278.841,-50.07 275.341,-40.07 271.841,-50.07 278.841,-50.07"/>
+</g>
+</g>
+</svg>
+
+      <p>Congratulations! It likely wasn't your cummy job as a farrier that led to the kingdom's collapse. Kingdoms collapse for unknown reasons, and nails fail to be set into horseshoes for unknown reasons. A causal connection between the two is rather unlikely. In fact, its nearly the least likely interpretation that you can imagine, given the knowledge that you have. The only thing less likely that you can imagine is that it was some other missing nail altogether that is to blame, other than the one you observed yourself.</p>
+
+      <p>The point of this example is to encourage you to be careful with your conditional probabilities, <u>especially</u> in the case where you are working with variables that only appear in the etcetera literal and the consequent. You are much better off avoiding these axioms altogether.</p>
+
+      <p>Fortunately, Etcetera Abdcution is perfectly capable of helping you represent the uncertain about whether the horseshoe with the missing nail ended up on a particular horse. All we need to do is add this assumption to the antecedents of our axiom, and make this probability explicit as a prior probability:</p>
+
+      <pre>;; Alternative formulation of missing shoe axiom
+
+(if (and (missing_nail n s)
+	 (shoe_on_horse s h)
+	 (etc2_missing_shoe 0.5 n s h))
+    (missing_shoe s h))
+
+(if (etc0_shoe_on_horse 0.001 s h) (shoe_on_horse s h))
+</pre>
+
+<p>Represented this way, the shoe-on-horse assumption is made explicit, as illustrated the following (low-probability) interpretation.</p>
+      
+<svg width="540pt"
+ viewBox="0.00 0.00 892.07 556.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 552)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-552 888.065,-552 888.065,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="96.5681" cy="-530" rx="96.6363" ry="18"/>
+<text text-anchor="middle" x="96.5681" y="-525.8" font-family="Times,serif" font-size="14.00">etc0_missing_nail 0.001</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<polygon fill="none" stroke="black" points="159.237,-476 33.8987,-476 33.8987,-440 159.237,-440 159.237,-476"/>
+<text text-anchor="middle" x="96.5681" y="-453.8" font-family="Times,serif" font-size="14.00">(missing_nail $1 S)</text>
+</g>
+<!-- n0&#45;&gt;n8 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M96.5681,-511.697C96.5681,-503.983 96.5681,-494.712 96.5681,-486.112"/>
+<polygon fill="black" stroke="black" points="100.068,-486.104 96.5681,-476.104 93.0682,-486.104 100.068,-486.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="446.568" cy="-530" rx="104.337" ry="18"/>
+<text text-anchor="middle" x="446.568" y="-525.8" font-family="Times,serif" font-size="14.00">etc0_shoe_on_horse 0.001</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<polygon fill="none" stroke="black" points="515.665,-476 377.471,-476 377.471,-440 515.665,-440 515.665,-476"/>
+<text text-anchor="middle" x="446.568" y="-453.8" font-family="Times,serif" font-size="14.00">(shoe_on_horse S $4)</text>
+</g>
+<!-- n1&#45;&gt;n9 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M446.568,-511.697C446.568,-503.983 446.568,-494.712 446.568,-486.112"/>
+<polygon fill="black" stroke="black" points="450.068,-486.104 446.568,-476.104 443.068,-486.104 450.068,-486.104"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="760.568" cy="-170" rx="90.8308" ry="18"/>
+<text text-anchor="middle" x="760.568" y="-165.8" font-family="Times,serif" font-size="14.00">etc1_battle_lost_to 0.5</text>
+</g>
+<!-- n14 -->
+<g id="node15" class="node"><title>n14</title>
+<polygon fill="none" stroke="black" points="722.717,-116 590.419,-116 590.419,-80 722.717,-80 722.717,-116"/>
+<text text-anchor="middle" x="656.568" y="-93.8" font-family="Times,serif" font-size="14.00">(battle_lost_to K $3)</text>
+</g>
+<!-- n2&#45;&gt;n14 -->
+<g id="edge12" class="edge"><title>n2&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M736.185,-152.588C722.534,-143.4 705.305,-131.804 690.37,-121.751"/>
+<polygon fill="black" stroke="black" points="692.135,-118.72 681.885,-116.04 688.226,-124.527 692.135,-118.72"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="812.568" cy="-98" rx="71.4945" ry="18"/>
+<text text-anchor="middle" x="812.568" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_collapse 0.5</text>
+</g>
+<!-- n15 -->
+<g id="node16" class="node"><title>n15</title>
+<polygon fill="none" stroke="black" points="776.88,-40 692.256,-40 692.256,-4 776.88,-4 776.88,-40"/>
+<polygon fill="none" stroke="black" points="780.872,-44 688.264,-44 688.264,-0 780.872,-0 780.872,-44"/>
+<text text-anchor="middle" x="734.568" y="-17.8" font-family="Times,serif" font-size="14.00">(collapse K)</text>
+</g>
+<!-- n3&#45;&gt;n15 -->
+<g id="edge14" class="edge"><title>n3&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M794.869,-80.2083C785.826,-71.6297 774.581,-60.9606 764.259,-51.168"/>
+<polygon fill="black" stroke="black" points="766.614,-48.5784 756.951,-44.2349 761.797,-53.6566 766.614,-48.5784"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="445.568" cy="-386" rx="93.7378" ry="18"/>
+<text text-anchor="middle" x="445.568" y="-381.8" font-family="Times,serif" font-size="14.00">etc1_missing_horse 0.5</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<polygon fill="none" stroke="black" points="427.282,-332 285.854,-332 285.854,-296 427.282,-296 427.282,-332"/>
+<text text-anchor="middle" x="356.568" y="-309.8" font-family="Times,serif" font-size="14.00">(missing_horse $4 $5)</text>
+</g>
+<!-- n4&#45;&gt;n11 -->
+<g id="edge6" class="edge"><title>n4&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M424.476,-368.411C413.091,-359.456 398.849,-348.254 386.351,-338.425"/>
+<polygon fill="black" stroke="black" points="388.462,-335.632 378.438,-332.201 384.134,-341.134 388.462,-335.632"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="661.568" cy="-242" rx="128.484" ry="18"/>
+<text text-anchor="middle" x="661.568" y="-237.8" font-family="Times,serif" font-size="14.00">etc1_missing_message_about 0.5</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<polygon fill="none" stroke="black" points="651.989,-188 455.147,-188 455.147,-152 651.989,-152 651.989,-188"/>
+<text text-anchor="middle" x="553.568" y="-165.8" font-family="Times,serif" font-size="14.00">(missing_message_about $2 $3)</text>
+</g>
+<!-- n5&#45;&gt;n13 -->
+<g id="edge10" class="edge"><title>n5&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M635.699,-224.233C621.615,-215.104 603.987,-203.679 588.678,-193.756"/>
+<polygon fill="black" stroke="black" points="590.271,-190.618 579.976,-188.116 586.464,-196.492 590.271,-190.618"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="536.568" cy="-314" rx="91.3153" ry="18"/>
+<text text-anchor="middle" x="536.568" y="-309.8" font-family="Times,serif" font-size="14.00">etc1_missing_rider 0.5</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<polygon fill="none" stroke="black" points="515.386,-260 377.75,-260 377.75,-224 515.386,-224 515.386,-260"/>
+<text text-anchor="middle" x="446.568" y="-237.8" font-family="Times,serif" font-size="14.00">(missing_rider $5 $2)</text>
+</g>
+<!-- n6&#45;&gt;n12 -->
+<g id="edge8" class="edge"><title>n6&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M515.239,-296.411C503.726,-287.456 489.324,-276.254 476.686,-266.425"/>
+<polygon fill="black" stroke="black" points="478.726,-263.578 468.684,-260.201 474.428,-269.103 478.726,-263.578"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<ellipse fill="none" stroke="black" cx="268.568" cy="-458" rx="90.8481" ry="18"/>
+<text text-anchor="middle" x="268.568" y="-453.8" font-family="Times,serif" font-size="14.00">etc2_missing_shoe 0.5</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<polygon fill="none" stroke="black" points="333.906,-404 203.23,-404 203.23,-368 333.906,-368 333.906,-404"/>
+<text text-anchor="middle" x="268.568" y="-381.8" font-family="Times,serif" font-size="14.00">(missing_shoe S $4)</text>
+</g>
+<!-- n7&#45;&gt;n10 -->
+<g id="edge3" class="edge"><title>n7&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M268.568,-439.697C268.568,-431.983 268.568,-422.712 268.568,-414.112"/>
+<polygon fill="black" stroke="black" points="272.068,-414.104 268.568,-404.104 265.068,-414.104 272.068,-414.104"/>
+</g>
+<!-- n8&#45;&gt;n10 -->
+<g id="edge4" class="edge"><title>n8&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M138.644,-439.876C162.367,-430.222 192.184,-418.087 217.269,-407.878"/>
+<polygon fill="black" stroke="black" points="218.686,-411.08 226.629,-404.068 216.047,-404.596 218.686,-411.08"/>
+</g>
+<!-- n9&#45;&gt;n10 -->
+<g id="edge5" class="edge"><title>n9&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M403.024,-439.876C378.366,-430.179 347.345,-417.98 321.314,-407.743"/>
+<polygon fill="black" stroke="black" points="322.558,-404.471 311.97,-404.068 319.996,-410.985 322.558,-404.471"/>
+</g>
+<!-- n10&#45;&gt;n11 -->
+<g id="edge7" class="edge"><title>n10&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M290.321,-367.697C301.404,-358.881 315.042,-348.032 327.058,-338.474"/>
+<polygon fill="black" stroke="black" points="329.418,-341.069 335.066,-332.104 325.061,-335.59 329.418,-341.069"/>
+</g>
+<!-- n11&#45;&gt;n12 -->
+<g id="edge9" class="edge"><title>n11&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M378.815,-295.697C390.15,-286.881 404.098,-276.032 416.387,-266.474"/>
+<polygon fill="black" stroke="black" points="418.832,-269.007 424.577,-260.104 414.534,-263.481 418.832,-269.007"/>
+</g>
+<!-- n12&#45;&gt;n13 -->
+<g id="edge11" class="edge"><title>n12&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M472.743,-223.876C486.604,-214.808 503.81,-203.552 518.779,-193.759"/>
+<polygon fill="black" stroke="black" points="520.84,-196.593 527.292,-188.19 517.008,-190.735 520.84,-196.593"/>
+</g>
+<!-- n13&#45;&gt;n14 -->
+<g id="edge13" class="edge"><title>n13&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M578.765,-151.876C591.983,-142.893 608.36,-131.763 622.675,-122.034"/>
+<polygon fill="black" stroke="black" points="624.971,-124.705 631.275,-116.19 621.037,-118.916 624.971,-124.705"/>
+</g>
+<!-- n14&#45;&gt;n15 -->
+<g id="edge15" class="edge"><title>n14&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M674.659,-79.8369C683.625,-71.3311 694.683,-60.8395 704.849,-51.1952"/>
+<polygon fill="black" stroke="black" points="707.553,-53.454 712.399,-44.0322 702.735,-48.3757 707.553,-53.454"/>
+</g>
+</g>
+</svg>
+      
+      <p>It might be a good exercise for you to rewrite all of the axioms in this manner. This way, you can make explicit the liklihoods that a given rider was on the horse with the missing shoe, that a given message about the enemy was being delivered by that rider, and so forth. Good luck!</p>
+
+
+  </body>
+</html>
