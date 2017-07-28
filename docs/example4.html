@@ -17,7 +17,7 @@ For want of a message the battle was lost.<br />
 For want of a battle the kingdom was lost.<br />
 	And all for the want of a horseshoe nail.
       </i></blockquote>
-      <p>But suppose you are an unfortuante farrier (specialist who nails horseshoes to hooves) that did, indeed, attach a horseshoe recently with one fewer nails than is propper. And yes, indeed, the kingdom has subsequently collapsed. You might be wondering if you might be the one to blame. Given the observables of a missing nail and the collapse of the kingdom, you'd like to know the likelihood that the first is the cause of the second. Let's use Etcetera Abduction to answer this question.</p>
+      <p>But suppose you are an unfortunate farrier (specialist who nails horseshoes to hooves) that did, indeed, attach a horseshoe recently with one fewer nails than is proper. And yes, indeed, the kingdom has subsequently collapsed. You might be wondering if you might be the one to blame. Given the observables of a missing nail and the collapse of the kingdom, you'd like to know the likelihood that the first is the cause of the second. Let's use Etcetera Abduction to answer this question.</p>
       <p>Let's start with what we observe. The kingdom, which you know by its name "K" has definitely collapsed. There is was some nail, which you don't know the name of, that you failed to set on a particular shoe, which you are happy to call "S" (for shoe). </p>
       <pre>;; The observables
 
@@ -32,13 +32,13 @@ For want of a battle the kingdom was lost.<br />
 (if (etc0_collapse 0.001 x) (collapse x))
 (if (etc0_missing_nail 0.001 x y) (missing_nail x y))
 </pre>
-      <p>Because "x" and "y" in these axioms are <u>universally quantified</u> variables, these axioms state that anytime these <code>etc0</code> predicates are true for <u>any</u> entity in the domain, be it a kingdom "K" or a pepperoni pizza "P", then the consequent is true as well, e.g. the pepperioni pizza has collapsed. While it may be a bit disconcerting to be writing an axiom that might apply to a pepperioni pizza in this manner, remember that we're doing abductive reasoning here. These <code>etc0</code> literals are never going to be observed directly - they can only be assumed as antecedents when trying to explain a consequent. As long as we don't observe collapsing pizzas in the world, the <code>etc0_collapse</code> literal will never be considered as its explanation.</p>
-      <p>If we execute our abduction program with these obserables and these prior probability axioms, we get something interesting:</p>
+      <p>Because "x" and "y" in these axioms are <u>universally quantified</u> variables, these axioms state that anytime these <code>etc0</code> predicates are true for <u>any</u> entity in the domain, be it a kingdom "K" or a pepperoni pizza "P", then the consequent is true as well, e.g. the pepperoni pizza has collapsed. While it may be a bit disconcerting to be writing an axiom that might apply to a pepperoni pizza in this manner, remember that we're doing abductive reasoning here. These <code>etc0</code> literals are never going to be observed directly - they can only be assumed as antecedents when trying to explain a consequent. As long as we don't observe collapsing pizzas in the world, the <code>etc0_collapse</code> literal will never be considered as its explanation.</p>
+      <p>If we execute our abduction program with these observables and these prior probability axioms, we get something interesting:</p>
       <pre>$ python etcabductionpy/ -i docs/nail-collapse.lisp 
 ((etc0_collapse 0.001 K) (etc0_missing_nail 0.001 $1 S))
 1 solutions.
 </pre>
-      <p>There is only one solution to this intepretation problem so far, which is simply to assume the prior probabilities. But notice that "$1" appears in the "missing_nail" assumption. Etcetera Abduction has invented a name for the nail that was missing in shoe "S". Technically, this is called a "<u>Skolem constant</u>" after the Norwegian mathemetician Thoralf Skolem. You can think of it this way: our abductive reasoning engine needed some way to refer to a specific entity in the world that didn't have a name, so it made up one by joining a dollar-sign "$" with a unique integer "1". If the engine had the occasion to refer to this entity elsewhere, it would have called it "$1" again. If instead it needed to talk about some other entity that was distinct but also unnammed, it might call it "$2" or "$3". </p>
+      <p>There is only one solution to this interpretation problem so far, which is simply to assume the prior probabilities. But notice that "$1" appears in the "missing_nail" assumption. Etcetera Abduction has invented a name for the nail that was missing in shoe "S". Technically, this is called a "<u>Skolem constant</u>" after the Norwegian mathematician Thoralf Skolem. You can think of it this way: our abductive reasoning engine needed some way to refer to a specific entity in the world that didn't have a name, so it made up one by joining a dollar-sign "$" with a unique integer "1". If the engine had the occasion to refer to this entity elsewhere, it would have called it "$1" again. If instead it needed to talk about some other entity that was distinct but also unnamed, it might call it "$2" or "$3". </p>
       <p>When we graph the best solution, another interesting thing happens:</p>
 
 <svg width="380pt" height="124pt"
@@ -411,12 +411,12 @@ $
 	 (etc1_missing_shoe 0.5 NAIL9 SHOE14 HORSE93))
     (missing_shoe SHOE14 HORSE93))</pre>
 
-      <p>Now, let's consider whether our conditional probabilty estimate is still reasonable. What is the conditional probability of "HORSE93" missing "SHOE14", given that "SHOE14" is missing "NAIL9"? Sure, shoes without nails fail half the time, but what is the chance that this particular shoe ended up on this particular horse? </p>
+      <p>Now, let's consider whether our conditional probability estimate is still reasonable. What is the conditional probability of "HORSE93" missing "SHOE14", given that "SHOE14" is missing "NAIL9"? Sure, shoes without nails fail half the time, but what is the chance that this particular shoe ended up on this particular horse? </p>
       <p>Let's further estimate there are at least 1,000 horses in this kingdom, and each one of them has four hooves, and each hoof takes a shoe with eight nails. The conditional probability that we're looking for is this one, for the conditional probability of seeing a particular shoe missing from a particular horse given that a particular nail is missing from that very shoe:</p>
 
       <blockquote>Pr[(missing_shoe SHOE14 HORSE93) | (missing_nail NAIL9 SHOE14)]</blockquote>
       
-      <p>Put this way, we can see that we must factor in the likelihood that this particular cummy shoe-job was applied to this particular horse, out of all 1,000 of the horses in the kingdom (1/1000), and multiply that by the likelihood of loosing the shoe due to the missing nail (1/2). The likelihood of this particular horse missing this particular shoe, given that the shoe is missing a nail, is closer to 1/2000, or 0.0005. And because this conditional probability is the same regardless of which particular nail, shoe, and horse we're concerned with, we should change or original axiom to reflect the more accurate estimate:
+      <p>Put this way, we can see that we must factor in the likelihood that this particular crummy shoe-job was applied to this particular horse, out of all 1,000 of the horses in the kingdom (1/1000), and multiply that by the likelihood of loosing the shoe due to the missing nail (1/2). The likelihood of this particular horse missing this particular shoe, given that the shoe is missing a nail, is closer to 1/2000, or 0.0005. And because this conditional probability is the same regardless of which particular nail, shoe, and horse we're concerned with, we should change or original axiom to reflect the more accurate estimate:
 
 	<pre>;; For want of a nail the shoe was lost
 (if (and (missing_nail n s)
@@ -478,11 +478,11 @@ $
 </g>
 </svg>
 
-      <p>Congratulations! It likely wasn't your cummy job as a farrier that led to the kingdom's collapse. Kingdoms collapse for unknown reasons, and nails fail to be set into horseshoes for unknown reasons. A causal connection between the two is rather unlikely. In fact, its nearly the least likely interpretation that you can imagine, given the knowledge that you have. The only thing less likely that you can imagine is that it was some other missing nail altogether that is to blame, other than the one you observed yourself.</p>
+      <p>Congratulations! It likely wasn't your crummy job as a farrier that led to the kingdom's collapse. Kingdoms collapse for unknown reasons, and nails fail to be set into horseshoes for unknown reasons. A causal connection between the two is rather unlikely. In fact, its nearly the least likely interpretation that you can imagine, given the knowledge that you have. The only thing less likely that you can imagine is that it was some other missing nail altogether that is to blame, other than the one you observed yourself.</p>
 
       <p>The point of this example is to encourage you to be careful with your conditional probabilities, <u>especially</u> in the case where you are working with variables that only appear in the etcetera literal and the consequent. You are much better off avoiding these axioms altogether.</p>
 
-      <p>Fortunately, Etcetera Abdcution is perfectly capable of helping you represent the uncertain about whether the horseshoe with the missing nail ended up on a particular horse. All we need to do is add this assumption to the antecedents of our axiom, and make this probability explicit as a prior probability:</p>
+      <p>Fortunately, Etcetera Abduction is perfectly capable of helping you represent the uncertain about whether the horseshoe with the missing nail ended up on a particular horse. All we need to do is add this assumption to the antecedents of our axiom, and make this probability explicit as a prior probability:</p>
 
       <pre>;; Alternative formulation of missing shoe axiom
 
@@ -660,7 +660,7 @@ $
 </g>
 </svg>
       
-      <p>It might be a good exercise for you to rewrite all of the axioms in this manner. This way, you can make explicit the liklihoods that a given rider was on the horse with the missing shoe, that a given message about the enemy was being delivered by that rider, and so forth. Good luck!</p>
+      <p>It might be a good exercise for you to rewrite all of the axioms in this manner. This way, you can make explicit the likelihoods that a given rider was on the horse with the missing shoe, that a given message about the enemy was being delivered by that rider, and so forth. Good luck!</p>
 
 
   </body>
