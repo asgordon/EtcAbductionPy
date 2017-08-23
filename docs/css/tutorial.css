@@ -2,7 +2,7 @@ body {
     font-family: sans-serif;
 }
 
-p, ol, ul {font-family: sans-serif;
+p, ol, ul, dl {font-family: sans-serif;
    font-size: 14px;
    line-height: 1.8;
    color: rgba(0,0,0,0.8);
@@ -63,4 +63,8 @@ tr:nth-child(even){background-color: #f2f2f2}
 th {
     background-color: #4A4A4A;
     color: white;
+}
+
+dt {
+    font-weight: bold;
 }

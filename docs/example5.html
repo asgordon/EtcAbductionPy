@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <h1>Example 5: Twenty Ticks</h1>
+      <span class="date">August 22, 2017</span>
+      <p>Imagine that you are lying in bed trying to sleep, but you hear a repetitive ticking sound. After listening to 20 ticks, you are awake enough to engage your brain and come up with some interpretation.</p>
+
+      <p>The observables are twenty unique ticks.</p>
+
+      <pre>;; The observables
+
+(tick T1)
+(tick T2)
+(tick T3) 
+(tick T4) 
+(tick T5) 
+(tick T6)
+(tick T7) 
+(tick T8)
+(tick T9) 
+(tick T10)
+(tick T11)
+(tick T12)
+(tick T13)
+(tick T14)
+(tick T15)
+(tick T16)
+(tick T17)
+(tick T18)
+(tick T19)
+(tick T20)</pre>
+
+      <p>Ticks like this are pretty rare, and have a low prior probability.</p>
+      <pre>;; The prior
+
+(if (etc0_tick 0.01 x) (tick x))</pre>
+
+      <p>Armed with this knowledge only, the best interpretation is that these ticks are all unrelated random rare events.</p>
+
+      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp 
+((etc0_tick 0.01 T1) (etc0_tick 0.01 T10) (etc0_tick 0.01 T11) (etc0_tick 0.01 T12) (etc0_tick 0.01 T13) (etc0_tick 0.01 T14) (etc0_tick 0.01 T15) (etc0_tick 0.01 T16) (etc0_tick 0.01 T17) (etc0_tick 0.01 T18) (etc0_tick 0.01 T19) (etc0_tick 0.01 T2) (etc0_tick 0.01 T20) (etc0_tick 0.01 T3) (etc0_tick 0.01 T4) (etc0_tick 0.01 T5) (etc0_tick 0.01 T6) (etc0_tick 0.01 T7) (etc0_tick 0.01 T8) (etc0_tick 0.01 T9))
+1 solutions.</pre>
+
+<svg width="540pt" 
+ viewBox="0.00 0.00 2750.41 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-120 2746.41,-120 2746.41,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="60.2054" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="60.2054" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n20 -->
+<g id="node21" class="node"><title>n20</title>
+<polygon fill="none" stroke="black" points="92.8218,-40 27.589,-40 27.589,-4 92.8218,-4 92.8218,-40"/>
+<polygon fill="none" stroke="black" points="96.8286,-44 23.5823,-44 23.5823,-0 96.8286,-0 96.8286,-44"/>
+<text text-anchor="middle" x="60.2054" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T1)</text>
+</g>
+<!-- n0&#45;&gt;n20 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n20</title>
+<path fill="none" stroke="black" d="M60.2054,-79.8369C60.2054,-72.165 60.2054,-62.8775 60.2054,-54.0535"/>
+<polygon fill="black" stroke="black" points="63.7055,-54.0322 60.2054,-44.0322 56.7055,-54.0322 63.7055,-54.0322"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="198.205" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="198.205" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n21 -->
+<g id="node22" class="node"><title>n21</title>
+<polygon fill="none" stroke="black" points="234.322,-40 162.088,-40 162.088,-4 234.322,-4 234.322,-40"/>
+<polygon fill="none" stroke="black" points="238.329,-44 158.082,-44 158.082,-0 238.329,-0 238.329,-44"/>
+<text text-anchor="middle" x="198.205" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T10)</text>
+</g>
+<!-- n1&#45;&gt;n21 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n21</title>
+<path fill="none" stroke="black" d="M198.205,-79.8369C198.205,-72.165 198.205,-62.8775 198.205,-54.0535"/>
+<polygon fill="black" stroke="black" points="201.706,-54.0322 198.205,-44.0322 194.706,-54.0322 201.706,-54.0322"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="336.205" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="336.205" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n22 -->
+<g id="node23" class="node"><title>n22</title>
+<polygon fill="none" stroke="black" points="371.836,-40 300.575,-40 300.575,-4 371.836,-4 371.836,-40"/>
+<polygon fill="none" stroke="black" points="375.817,-44 296.594,-44 296.594,-0 375.817,-0 375.817,-44"/>
+<text text-anchor="middle" x="336.205" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T11)</text>
+</g>
+<!-- n2&#45;&gt;n22 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n22</title>
+<path fill="none" stroke="black" d="M336.205,-79.8369C336.205,-72.165 336.205,-62.8775 336.205,-54.0535"/>
+<polygon fill="black" stroke="black" points="339.706,-54.0322 336.205,-44.0322 332.706,-54.0322 339.706,-54.0322"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="474.205" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="474.205" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n23 -->
+<g id="node24" class="node"><title>n23</title>
+<polygon fill="none" stroke="black" points="510.322,-40 438.088,-40 438.088,-4 510.322,-4 510.322,-40"/>
+<polygon fill="none" stroke="black" points="514.329,-44 434.082,-44 434.082,-0 514.329,-0 514.329,-44"/>
+<text text-anchor="middle" x="474.205" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T12)</text>
+</g>
+<!-- n3&#45;&gt;n23 -->
+<g id="edge4" class="edge"><title>n3&#45;&gt;n23</title>
+<path fill="none" stroke="black" d="M474.205,-79.8369C474.205,-72.165 474.205,-62.8775 474.205,-54.0535"/>
+<polygon fill="black" stroke="black" points="477.706,-54.0322 474.205,-44.0322 470.706,-54.0322 477.706,-54.0322"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="612.205" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="612.205" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n24 -->
+<g id="node25" class="node"><title>n24</title>
+<polygon fill="none" stroke="black" points="648.322,-40 576.088,-40 576.088,-4 648.322,-4 648.322,-40"/>
+<polygon fill="none" stroke="black" points="652.329,-44 572.082,-44 572.082,-0 652.329,-0 652.329,-44"/>
+<text text-anchor="middle" x="612.205" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T13)</text>
+</g>
+<!-- n4&#45;&gt;n24 -->
+<g id="edge5" class="edge"><title>n4&#45;&gt;n24</title>
+<path fill="none" stroke="black" d="M612.205,-79.8369C612.205,-72.165 612.205,-62.8775 612.205,-54.0535"/>
+<polygon fill="black" stroke="black" points="615.706,-54.0322 612.205,-44.0322 608.706,-54.0322 615.706,-54.0322"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="750.205" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="750.205" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n25 -->
+<g id="node26" class="node"><title>n25</title>
+<polygon fill="none" stroke="black" points="786.322,-40 714.088,-40 714.088,-4 786.322,-4 786.322,-40"/>
+<polygon fill="none" stroke="black" points="790.329,-44 710.082,-44 710.082,-0 790.329,-0 790.329,-44"/>
+<text text-anchor="middle" x="750.205" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T14)</text>
+</g>
+<!-- n5&#45;&gt;n25 -->
+<g id="edge6" class="edge"><title>n5&#45;&gt;n25</title>
+<path fill="none" stroke="black" d="M750.205,-79.8369C750.205,-72.165 750.205,-62.8775 750.205,-54.0535"/>
+<polygon fill="black" stroke="black" points="753.706,-54.0322 750.205,-44.0322 746.706,-54.0322 753.706,-54.0322"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="888.205" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="888.205" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n26 -->
+<g id="node27" class="node"><title>n26</title>
+<polygon fill="none" stroke="black" points="924.322,-40 852.088,-40 852.088,-4 924.322,-4 924.322,-40"/>
+<polygon fill="none" stroke="black" points="928.329,-44 848.082,-44 848.082,-0 928.329,-0 928.329,-44"/>
+<text text-anchor="middle" x="888.205" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T15)</text>
+</g>
+<!-- n6&#45;&gt;n26 -->
+<g id="edge7" class="edge"><title>n6&#45;&gt;n26</title>
+<path fill="none" stroke="black" d="M888.205,-79.8369C888.205,-72.165 888.205,-62.8775 888.205,-54.0535"/>
+<polygon fill="black" stroke="black" points="891.706,-54.0322 888.205,-44.0322 884.706,-54.0322 891.706,-54.0322"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<ellipse fill="none" stroke="black" cx="1026.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1026.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n27 -->
+<g id="node28" class="node"><title>n27</title>
+<polygon fill="none" stroke="black" points="1062.32,-40 990.088,-40 990.088,-4 1062.32,-4 1062.32,-40"/>
+<polygon fill="none" stroke="black" points="1066.33,-44 986.082,-44 986.082,-0 1066.33,-0 1066.33,-44"/>
+<text text-anchor="middle" x="1026.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T16)</text>
+</g>
+<!-- n7&#45;&gt;n27 -->
+<g id="edge8" class="edge"><title>n7&#45;&gt;n27</title>
+<path fill="none" stroke="black" d="M1026.21,-79.8369C1026.21,-72.165 1026.21,-62.8775 1026.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1029.71,-54.0322 1026.21,-44.0322 1022.71,-54.0322 1029.71,-54.0322"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<ellipse fill="none" stroke="black" cx="1164.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1164.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n28 -->
+<g id="node29" class="node"><title>n28</title>
+<polygon fill="none" stroke="black" points="1200.32,-40 1128.09,-40 1128.09,-4 1200.32,-4 1200.32,-40"/>
+<polygon fill="none" stroke="black" points="1204.33,-44 1124.08,-44 1124.08,-0 1204.33,-0 1204.33,-44"/>
+<text text-anchor="middle" x="1164.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T17)</text>
+</g>
+<!-- n8&#45;&gt;n28 -->
+<g id="edge9" class="edge"><title>n8&#45;&gt;n28</title>
+<path fill="none" stroke="black" d="M1164.21,-79.8369C1164.21,-72.165 1164.21,-62.8775 1164.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1167.71,-54.0322 1164.21,-44.0322 1160.71,-54.0322 1167.71,-54.0322"/>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<ellipse fill="none" stroke="black" cx="1302.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1302.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n29 -->
+<g id="node30" class="node"><title>n29</title>
+<polygon fill="none" stroke="black" points="1338.32,-40 1266.09,-40 1266.09,-4 1338.32,-4 1338.32,-40"/>
+<polygon fill="none" stroke="black" points="1342.33,-44 1262.08,-44 1262.08,-0 1342.33,-0 1342.33,-44"/>
+<text text-anchor="middle" x="1302.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T18)</text>
+</g>
+<!-- n9&#45;&gt;n29 -->
+<g id="edge10" class="edge"><title>n9&#45;&gt;n29</title>
+<path fill="none" stroke="black" d="M1302.21,-79.8369C1302.21,-72.165 1302.21,-62.8775 1302.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1305.71,-54.0322 1302.21,-44.0322 1298.71,-54.0322 1305.71,-54.0322"/>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<ellipse fill="none" stroke="black" cx="1440.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1440.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n30 -->
+<g id="node31" class="node"><title>n30</title>
+<polygon fill="none" stroke="black" points="1476.32,-40 1404.09,-40 1404.09,-4 1476.32,-4 1476.32,-40"/>
+<polygon fill="none" stroke="black" points="1480.33,-44 1400.08,-44 1400.08,-0 1480.33,-0 1480.33,-44"/>
+<text text-anchor="middle" x="1440.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T19)</text>
+</g>
+<!-- n10&#45;&gt;n30 -->
+<g id="edge11" class="edge"><title>n10&#45;&gt;n30</title>
+<path fill="none" stroke="black" d="M1440.21,-79.8369C1440.21,-72.165 1440.21,-62.8775 1440.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1443.71,-54.0322 1440.21,-44.0322 1436.71,-54.0322 1443.71,-54.0322"/>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<ellipse fill="none" stroke="black" cx="1578.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1578.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n31 -->
+<g id="node32" class="node"><title>n31</title>
+<polygon fill="none" stroke="black" points="1610.82,-40 1545.59,-40 1545.59,-4 1610.82,-4 1610.82,-40"/>
+<polygon fill="none" stroke="black" points="1614.83,-44 1541.58,-44 1541.58,-0 1614.83,-0 1614.83,-44"/>
+<text text-anchor="middle" x="1578.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T2)</text>
+</g>
+<!-- n11&#45;&gt;n31 -->
+<g id="edge12" class="edge"><title>n11&#45;&gt;n31</title>
+<path fill="none" stroke="black" d="M1578.21,-79.8369C1578.21,-72.165 1578.21,-62.8775 1578.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1581.71,-54.0322 1578.21,-44.0322 1574.71,-54.0322 1581.71,-54.0322"/>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<ellipse fill="none" stroke="black" cx="1716.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1716.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n32 -->
+<g id="node33" class="node"><title>n32</title>
+<polygon fill="none" stroke="black" points="1752.32,-40 1680.09,-40 1680.09,-4 1752.32,-4 1752.32,-40"/>
+<polygon fill="none" stroke="black" points="1756.33,-44 1676.08,-44 1676.08,-0 1756.33,-0 1756.33,-44"/>
+<text text-anchor="middle" x="1716.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T20)</text>
+</g>
+<!-- n12&#45;&gt;n32 -->
+<g id="edge13" class="edge"><title>n12&#45;&gt;n32</title>
+<path fill="none" stroke="black" d="M1716.21,-79.8369C1716.21,-72.165 1716.21,-62.8775 1716.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1719.71,-54.0322 1716.21,-44.0322 1712.71,-54.0322 1719.71,-54.0322"/>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<ellipse fill="none" stroke="black" cx="1854.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1854.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n33 -->
+<g id="node34" class="node"><title>n33</title>
+<polygon fill="none" stroke="black" points="1886.82,-40 1821.59,-40 1821.59,-4 1886.82,-4 1886.82,-40"/>
+<polygon fill="none" stroke="black" points="1890.83,-44 1817.58,-44 1817.58,-0 1890.83,-0 1890.83,-44"/>
+<text text-anchor="middle" x="1854.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T3)</text>
+</g>
+<!-- n13&#45;&gt;n33 -->
+<g id="edge14" class="edge"><title>n13&#45;&gt;n33</title>
+<path fill="none" stroke="black" d="M1854.21,-79.8369C1854.21,-72.165 1854.21,-62.8775 1854.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1857.71,-54.0322 1854.21,-44.0322 1850.71,-54.0322 1857.71,-54.0322"/>
+</g>
+<!-- n14 -->
+<g id="node15" class="node"><title>n14</title>
+<ellipse fill="none" stroke="black" cx="1992.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="1992.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n34 -->
+<g id="node35" class="node"><title>n34</title>
+<polygon fill="none" stroke="black" points="2024.82,-40 1959.59,-40 1959.59,-4 2024.82,-4 2024.82,-40"/>
+<polygon fill="none" stroke="black" points="2028.83,-44 1955.58,-44 1955.58,-0 2028.83,-0 2028.83,-44"/>
+<text text-anchor="middle" x="1992.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T4)</text>
+</g>
+<!-- n14&#45;&gt;n34 -->
+<g id="edge15" class="edge"><title>n14&#45;&gt;n34</title>
+<path fill="none" stroke="black" d="M1992.21,-79.8369C1992.21,-72.165 1992.21,-62.8775 1992.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="1995.71,-54.0322 1992.21,-44.0322 1988.71,-54.0322 1995.71,-54.0322"/>
+</g>
+<!-- n15 -->
+<g id="node16" class="node"><title>n15</title>
+<ellipse fill="none" stroke="black" cx="2130.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="2130.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n35 -->
+<g id="node36" class="node"><title>n35</title>
+<polygon fill="none" stroke="black" points="2162.82,-40 2097.59,-40 2097.59,-4 2162.82,-4 2162.82,-40"/>
+<polygon fill="none" stroke="black" points="2166.83,-44 2093.58,-44 2093.58,-0 2166.83,-0 2166.83,-44"/>
+<text text-anchor="middle" x="2130.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T5)</text>
+</g>
+<!-- n15&#45;&gt;n35 -->
+<g id="edge16" class="edge"><title>n15&#45;&gt;n35</title>
+<path fill="none" stroke="black" d="M2130.21,-79.8369C2130.21,-72.165 2130.21,-62.8775 2130.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="2133.71,-54.0322 2130.21,-44.0322 2126.71,-54.0322 2133.71,-54.0322"/>
+</g>
+<!-- n16 -->
+<g id="node17" class="node"><title>n16</title>
+<ellipse fill="none" stroke="black" cx="2268.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="2268.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n36 -->
+<g id="node37" class="node"><title>n36</title>
+<polygon fill="none" stroke="black" points="2300.82,-40 2235.59,-40 2235.59,-4 2300.82,-4 2300.82,-40"/>
+<polygon fill="none" stroke="black" points="2304.83,-44 2231.58,-44 2231.58,-0 2304.83,-0 2304.83,-44"/>
+<text text-anchor="middle" x="2268.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T6)</text>
+</g>
+<!-- n16&#45;&gt;n36 -->
+<g id="edge17" class="edge"><title>n16&#45;&gt;n36</title>
+<path fill="none" stroke="black" d="M2268.21,-79.8369C2268.21,-72.165 2268.21,-62.8775 2268.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="2271.71,-54.0322 2268.21,-44.0322 2264.71,-54.0322 2271.71,-54.0322"/>
+</g>
+<!-- n17 -->
+<g id="node18" class="node"><title>n17</title>
+<ellipse fill="none" stroke="black" cx="2406.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="2406.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n37 -->
+<g id="node38" class="node"><title>n37</title>
+<polygon fill="none" stroke="black" points="2438.82,-40 2373.59,-40 2373.59,-4 2438.82,-4 2438.82,-40"/>
+<polygon fill="none" stroke="black" points="2442.83,-44 2369.58,-44 2369.58,-0 2442.83,-0 2442.83,-44"/>
+<text text-anchor="middle" x="2406.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T7)</text>
+</g>
+<!-- n17&#45;&gt;n37 -->
+<g id="edge18" class="edge"><title>n17&#45;&gt;n37</title>
+<path fill="none" stroke="black" d="M2406.21,-79.8369C2406.21,-72.165 2406.21,-62.8775 2406.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="2409.71,-54.0322 2406.21,-44.0322 2402.71,-54.0322 2409.71,-54.0322"/>
+</g>
+<!-- n18 -->
+<g id="node19" class="node"><title>n18</title>
+<ellipse fill="none" stroke="black" cx="2544.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="2544.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n38 -->
+<g id="node39" class="node"><title>n38</title>
+<polygon fill="none" stroke="black" points="2576.82,-40 2511.59,-40 2511.59,-4 2576.82,-4 2576.82,-40"/>
+<polygon fill="none" stroke="black" points="2580.83,-44 2507.58,-44 2507.58,-0 2580.83,-0 2580.83,-44"/>
+<text text-anchor="middle" x="2544.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T8)</text>
+</g>
+<!-- n18&#45;&gt;n38 -->
+<g id="edge19" class="edge"><title>n18&#45;&gt;n38</title>
+<path fill="none" stroke="black" d="M2544.21,-79.8369C2544.21,-72.165 2544.21,-62.8775 2544.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="2547.71,-54.0322 2544.21,-44.0322 2540.71,-54.0322 2547.71,-54.0322"/>
+</g>
+<!-- n19 -->
+<g id="node20" class="node"><title>n19</title>
+<ellipse fill="none" stroke="black" cx="2682.21" cy="-98" rx="60.4115" ry="18"/>
+<text text-anchor="middle" x="2682.21" y="-93.8" font-family="Times,serif" font-size="14.00">etc0_tick 0.01</text>
+</g>
+<!-- n39 -->
+<g id="node40" class="node"><title>n39</title>
+<polygon fill="none" stroke="black" points="2714.82,-40 2649.59,-40 2649.59,-4 2714.82,-4 2714.82,-40"/>
+<polygon fill="none" stroke="black" points="2718.83,-44 2645.58,-44 2645.58,-0 2718.83,-0 2718.83,-44"/>
+<text text-anchor="middle" x="2682.21" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T9)</text>
+</g>
+<!-- n19&#45;&gt;n39 -->
+<g id="edge20" class="edge"><title>n19&#45;&gt;n39</title>
+<path fill="none" stroke="black" d="M2682.21,-79.8369C2682.21,-72.165 2682.21,-62.8775 2682.21,-54.0535"/>
+<polygon fill="black" stroke="black" points="2685.71,-54.0322 2682.21,-44.0322 2678.71,-54.0322 2685.71,-54.0322"/>
+</g>
+</g>
+</svg>
+
+      <p>As your brain starts to warm up a bit, it engages a tiny bit of associative knowledge about ticks - namely that they can be explained by clocks.</p>
+      <p>Here is what that axiom might look like, along with the prior for clocks.</p>
+
+      <pre>;; Maybe a clock
+
+(if (and (clock c)
+	 (etc1_tick 0.9 c x))
+    (tick x))
+
+(if (etc0_clock 0.001 c) (clock c))</pre>
+
+      <p>Armed with this additional axiom, let's see what the best interpretation might be:</p>
+
+      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp
+<...silence...></pre>
+
+      <p>Uh oh! You broke it. Interpreting this input file seems like it is taking forever. Even after a few hours of interpretation, you still don't have a good answer. You let it run for a few days, weeks, years, and still there is nothing. What went wrong?</p>
+
+      <p>The good news is that nothing is broke. The bad news is that you have just encountered the central challenge that makes interpretation problems computationally difficult to solve: <u>combinatorial search</u>. It turns out that there are quite a lot of solutions to the twenty-ticks problem, even with the minimal set of axioms that we've provided our reasoning engine.</p>
+      <p>To illustrate the problem, try commenting out nineteen of the twenty observable ticks, and see how many solutions there are to the problem. We'll use the "--all" flag (or just "-a") to ask the engine to show us all solutions.</p>
+
+      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp -a
+((etc0_tick 0.01 T1))
+((etc0_clock 0.001 $1) (etc1_tick 0.9 $1 T1))
+2 solutions.</pre>
+      
+      <p>Here we see that there are two interpretations of a single tick. Either it was because ticks sometimes happen (the prior), or maybe there is a clock.</p>
+
+      <p>With just two ticks, there are now five solutions. Already, the best interpretation is that there must be a clock.</p>
+
+      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp -a
+((etc0_clock 0.001 $1) (etc1_tick 0.9 $1 T1) (etc1_tick 0.9 $1 T2))
+((etc0_tick 0.01 T1) (etc0_tick 0.01 T2))
+((etc0_clock 0.001 $1) (etc0_tick 0.01 T1) (etc1_tick 0.9 $1 T2))
+((etc0_clock 0.001 $1) (etc0_tick 0.01 T2) (etc1_tick 0.9 $1 T1))
+((etc0_clock 0.001 $1) (etc0_clock 0.001 $2) (etc1_tick 0.9 $1 T1) (etc1_tick 0.9 $2 T2))
+5 solutions.</pre>
+
+<svg width="340pt"
+ viewBox="0.00 0.00 339.57 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-192 335.567,-192 335.567,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="165.784" cy="-170" rx="70.534" ry="18"/>
+<text text-anchor="middle" x="165.784" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_clock 0.001</text>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<polygon fill="none" stroke="black" points="202.425,-116 129.142,-116 129.142,-80 202.425,-80 202.425,-116"/>
+<text text-anchor="middle" x="165.784" y="-93.8" font-family="Times,serif" font-size="14.00">(clock $1)</text>
+</g>
+<!-- n0&#45;&gt;n3 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n3</title>
+<path fill="none" stroke="black" d="M165.784,-151.697C165.784,-143.983 165.784,-134.712 165.784,-126.112"/>
+<polygon fill="black" stroke="black" points="169.284,-126.104 165.784,-116.104 162.284,-126.104 169.284,-126.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="55.7837" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="55.7837" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<polygon fill="none" stroke="black" points="97.4001,-40 32.1673,-40 32.1673,-4 97.4001,-4 97.4001,-40"/>
+<polygon fill="none" stroke="black" points="101.407,-44 28.1605,-44 28.1605,-0 101.407,-0 101.407,-44"/>
+<text text-anchor="middle" x="64.7837" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T1)</text>
+</g>
+<!-- n1&#45;&gt;n4 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n4</title>
+<path fill="none" stroke="black" d="M57.8711,-79.8369C58.8041,-72.165 59.9337,-62.8775 61.0069,-54.0535"/>
+<polygon fill="black" stroke="black" points="64.4927,-54.3816 62.2257,-44.0322 57.5439,-53.5365 64.4927,-54.3816"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="275.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="275.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<polygon fill="none" stroke="black" points="253.4,-40 188.167,-40 188.167,-4 253.4,-4 253.4,-40"/>
+<polygon fill="none" stroke="black" points="257.407,-44 184.161,-44 184.161,-0 257.407,-0 257.407,-44"/>
+<text text-anchor="middle" x="220.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T2)</text>
+</g>
+<!-- n2&#45;&gt;n5 -->
+<g id="edge4" class="edge"><title>n2&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M263.303,-80.2083C257.175,-71.9629 249.611,-61.7861 242.57,-52.3127"/>
+<polygon fill="black" stroke="black" points="245.341,-50.173 236.566,-44.2349 239.723,-54.3487 245.341,-50.173"/>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="edge3" class="edge"><title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="black" d="M142.358,-79.8369C130.294,-70.9975 115.302,-60.0135 101.723,-50.0646"/>
+<polygon fill="black" stroke="black" points="103.625,-47.1191 93.4898,-44.0322 99.4878,-52.7657 103.625,-47.1191"/>
+</g>
+<!-- n3&#45;&gt;n5 -->
+<g id="edge5" class="edge"><title>n3&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M178.54,-79.8369C184.614,-71.6646 192.05,-61.6593 198.982,-52.3335"/>
+<polygon fill="black" stroke="black" points="201.995,-54.146 205.152,-44.0322 196.377,-49.9703 201.995,-54.146"/>
+</g>
+</g>
+</svg>
+
+      <p>But notice the other, less probable, solutions to this problem. The second solution is that they are unrelated random tick events, as you might expect. The third and fourth solution each hypothesize a clock, but attribute only one of the two ticks to it. The fifth solution is even more odd: perhaps there are <u>two</u> clocks, $1 and $2, each responsible for one of the clicks!</p>
+
+      <pre>python etcabductionpy/ -i twenty-ticks.lisp -g -s 5 | util/dot2safari </pre>
+
+<svg width="464pt" height="196pt"
+ viewBox="0.00 0.00 464.30 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-192 460.301,-192 460.301,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="70.517" cy="-170" rx="70.534" ry="18"/>
+<text text-anchor="middle" x="70.517" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_clock 0.001</text>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<polygon fill="none" stroke="black" points="107.159,-116 33.8753,-116 33.8753,-80 107.159,-80 107.159,-116"/>
+<text text-anchor="middle" x="70.517" y="-93.8" font-family="Times,serif" font-size="14.00">(clock $1)</text>
+</g>
+<!-- n0&#45;&gt;n4 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n4</title>
+<path fill="none" stroke="black" d="M70.517,-151.697C70.517,-143.983 70.517,-134.712 70.517,-126.112"/>
+<polygon fill="black" stroke="black" points="74.0171,-126.104 70.517,-116.104 67.0171,-126.104 74.0171,-126.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="290.517" cy="-170" rx="70.534" ry="18"/>
+<text text-anchor="middle" x="290.517" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_clock 0.001</text>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<polygon fill="none" stroke="black" points="327.159,-116 253.875,-116 253.875,-80 327.159,-80 327.159,-116"/>
+<text text-anchor="middle" x="290.517" y="-93.8" font-family="Times,serif" font-size="14.00">(clock $2)</text>
+</g>
+<!-- n1&#45;&gt;n5 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M290.517,-151.697C290.517,-143.983 290.517,-134.712 290.517,-126.112"/>
+<polygon fill="black" stroke="black" points="294.017,-126.104 290.517,-116.104 287.017,-126.104 294.017,-126.104"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="180.517" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="180.517" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<polygon fill="none" stroke="black" points="158.133,-40 92.9006,-40 92.9006,-4 158.133,-4 158.133,-40"/>
+<polygon fill="none" stroke="black" points="162.14,-44 88.8939,-44 88.8939,-0 162.14,-0 162.14,-44"/>
+<text text-anchor="middle" x="125.517" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T1)</text>
+</g>
+<!-- n2&#45;&gt;n6 -->
+<g id="edge3" class="edge"><title>n2&#45;&gt;n6</title>
+<path fill="none" stroke="black" d="M168.037,-80.2083C161.908,-71.9629 154.345,-61.7861 147.303,-52.3127"/>
+<polygon fill="black" stroke="black" points="150.074,-50.173 141.3,-44.2349 144.456,-54.3487 150.074,-50.173"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="400.517" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="400.517" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<polygon fill="none" stroke="black" points="378.133,-40 312.901,-40 312.901,-4 378.133,-4 378.133,-40"/>
+<polygon fill="none" stroke="black" points="382.14,-44 308.894,-44 308.894,-0 382.14,-0 382.14,-44"/>
+<text text-anchor="middle" x="345.517" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T2)</text>
+</g>
+<!-- n3&#45;&gt;n7 -->
+<g id="edge5" class="edge"><title>n3&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M388.037,-80.2083C381.908,-71.9629 374.345,-61.7861 367.303,-52.3127"/>
+<polygon fill="black" stroke="black" points="370.074,-50.173 361.3,-44.2349 364.456,-54.3487 370.074,-50.173"/>
+</g>
+<!-- n4&#45;&gt;n6 -->
+<g id="edge4" class="edge"><title>n4&#45;&gt;n6</title>
+<path fill="none" stroke="black" d="M83.2734,-79.8369C89.3474,-71.6646 96.7838,-61.6593 103.715,-52.3335"/>
+<polygon fill="black" stroke="black" points="106.729,-54.146 109.885,-44.0322 101.111,-49.9703 106.729,-54.146"/>
+</g>
+<!-- n5&#45;&gt;n7 -->
+<g id="edge6" class="edge"><title>n5&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M303.273,-79.8369C309.347,-71.6646 316.784,-61.6593 323.715,-52.3335"/>
+<polygon fill="black" stroke="black" points="326.729,-54.146 329.885,-44.0322 321.111,-49.9703 326.729,-54.146"/>
+</g>
+</g>
+</svg>
+
+      <p>As improbable as they are, each of these solutions is perfectly valid: each of these five sets of assumptions logically entails the observations given the knowledge base. We've asked the reasoning engine to exhaustively find all of the solutions, and that is exactly what it has done.</p>
+
+      <p>The trouble is any time that Etcetera Abduction finds a pair of assumptions that <u>could</u> be actually the same (i.e. they are unifiable), it considers two possibilities: either they are indeed the same and we've identified a common factor, or they are actually different and we have two similar but not identical assumptions in our solutions. Either the assumptions unify or they do not.</p>
+
+      <p>Every time we consider that the tick might be caused by a clock, we have to wonder whether it was the same clock or a different clock than all of the other clocks that we're imagining in the set of solutions. The result is a explosion of imaginary clocks. Any subset of ticks might be explained by their own individual clock, giving us a powerset of clock explanations for these twenty ticks.</p>
+
+      <p>How bad is this problem? Let's continue to uncomment our ticks one-by-one, and see how many solutions are found.</p>
+
+      <table>
+	<tr><th>Ticks</th><th>Solutions</th></tr>
+	<tr><td>1</td><td>2</td></tr>
+	<tr><td>2</td><td>5</td></tr>
+	<tr><td>3</td><td>15</td></tr>
+	<tr><td>4</td><td>52</td></tr>
+	<tr><td>5</td><td>203</td></tr>
+	<tr><td>6</td><td>877</td></tr>
+	<tr><td>7</td><td>4,140</td></tr>
+	<tr><td>8</td><td>21,147</td></tr>
+	<tr><td>9</td><td>115,975</td></tr>
+	<tr><td>10</td><td>678,570</td></tr>
+	<tr><td>...</td><td>too many</td></tr>
+      </table>
+	
+
+      <p>"Well that sucks!" you might be thinking.</p>
+
+      <p>Yes, indeed, this is cause for serious concern. The exponential growth in solutions means that Etcetera Abduction has little chance of exhaustively interpreting all 20 observable ticks: the problem is simply too big.</p>
+
+      <p>What are we going to do about it? Maybe we could modify Etcetera Abduction to look out for these cases and do something special? Sure that would work for simple degenerate examples of this sort, but more realistic problems with large knowledge bases are also going to have similar explosions. We need a more general solution. Maybe we could optimize the search using fancy technologies like Integer Linear Programming? Sure, that helps when the problems are of modest size, but bigger problems see an explosion in variables that indicate unifications, crippling the best linear solvers. Maybe we could simply optimize the algorithm we have using a fast, typed, compiled programming language? Yes, that helps quite a bit, but gains you only a couple of more interpretable ticks for a given amount of processing time. Maybe we could try massive parallelization and GPU-optimized unification? Perhaps that would work, but nobody has figured out how to do that yet.</p>
+
+      <p>Unfortunately, for the time being, there is no fast way to find the global optimal solution to big interpretation problems - the combinatorics will eventually catch up with you.</p>
+
+      <p>But wait! Don't give up hope. Instead, give up something else: global optimal solutions. Do you really need a guarantee that you've found the <u>absolute best interpretation</u> in every situation? If we give up on optimality, we can make Etcetera Abduction fast.</p>
+
+      <p>One way to do it is to break up big interpretation problems into smaller problems, where the exponential explosion of possible solutions is still manageable. In the influential words of my undergraduate advisor:</p>
+
+      <blockquote><i>"Small exponents make nice pets."</i> - Ken Forbus, Northwestern University</blockquote>
+
+      <p>We need to break up monster-sized interpretation problems into nice-sized pet problems that can be quickly solved, then combine good solutions for these smaller problems into solutions for the big monster problem.<p>
+
+      <p>Fortunately, there's a flag for that.</p>
+
+      <p>The special "--incremental" (or just "-c") flag tells the Etcetera Abduction engine to break up the input observations into a sequence of smaller chunks, and incrementally build up a global interpretation. It works like this:</p>
+      <ol>
+	<li>Etcetera Abduction creates an empty "beam" of a certain size, representing the running interpretations that have been found so far.</li>
+	<li>A "window" of a certain number of uninterpreted observations is pulled from the larger set, and Etcetera Abduction finds the n-best interpretations of these observations <u>combined</u> with those in the beam. Here the "n" size is the same as the "beam" size.</li>
+	<li>The n-best solutions <u>replace</u> the beam.</li>
+	<li>Etcetera Abduction <u>repeats</u> the process starting at #2, until there are no more uninterpreted observations.</li>
+      </ol>
+
+      <p>Effectively, this approach allows Etcetera Abduction to chip away at the interpretation problem in manageable-sized chucks. Let's try it out on the "twenty-ticks" problem:</p>
+
+      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp -c -g | util/dot2safari </pre>
+
+<svg width="540pt"
+ viewBox="0.00 0.00 2679.57 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-192 2675.57,-192 2675.57,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node"><title>n0</title>
+<ellipse fill="none" stroke="black" cx="1335.78" cy="-170" rx="70.534" ry="18"/>
+<text text-anchor="middle" x="1335.78" y="-165.8" font-family="Times,serif" font-size="14.00">etc0_clock 0.001</text>
+</g>
+<!-- n21 -->
+<g id="node22" class="node"><title>n21</title>
+<polygon fill="none" stroke="black" points="1372.43,-116 1299.14,-116 1299.14,-80 1372.43,-80 1372.43,-116"/>
+<text text-anchor="middle" x="1335.78" y="-93.8" font-family="Times,serif" font-size="14.00">(clock $1)</text>
+</g>
+<!-- n0&#45;&gt;n21 -->
+<g id="edge1" class="edge"><title>n0&#45;&gt;n21</title>
+<path fill="none" stroke="black" d="M1335.78,-151.697C1335.78,-143.983 1335.78,-134.712 1335.78,-126.112"/>
+<polygon fill="black" stroke="black" points="1339.28,-126.104 1335.78,-116.104 1332.28,-126.104 1339.28,-126.104"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node"><title>n1</title>
+<ellipse fill="none" stroke="black" cx="55.7837" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="55.7837" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n22 -->
+<g id="node23" class="node"><title>n22</title>
+<polygon fill="none" stroke="black" points="105.4,-40 40.1673,-40 40.1673,-4 105.4,-4 105.4,-40"/>
+<polygon fill="none" stroke="black" points="109.407,-44 36.1605,-44 36.1605,-0 109.407,-0 109.407,-44"/>
+<text text-anchor="middle" x="72.7837" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T1)</text>
+</g>
+<!-- n1&#45;&gt;n22 -->
+<g id="edge2" class="edge"><title>n1&#45;&gt;n22</title>
+<path fill="none" stroke="black" d="M59.7265,-79.8369C61.489,-72.165 63.6226,-62.8775 65.6498,-54.0535"/>
+<polygon fill="black" stroke="black" points="69.124,-54.562 67.9519,-44.0322 62.3017,-52.9947 69.124,-54.562"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node"><title>n2</title>
+<ellipse fill="none" stroke="black" cx="185.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="185.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n23 -->
+<g id="node24" class="node"><title>n23</title>
+<polygon fill="none" stroke="black" points="237.901,-40 165.667,-40 165.667,-4 237.901,-4 237.901,-40"/>
+<polygon fill="none" stroke="black" points="241.907,-44 161.661,-44 161.661,-0 241.907,-0 241.907,-44"/>
+<text text-anchor="middle" x="201.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T10)</text>
+</g>
+<!-- n2&#45;&gt;n23 -->
+<g id="edge4" class="edge"><title>n2&#45;&gt;n23</title>
+<path fill="none" stroke="black" d="M189.495,-79.8369C191.153,-72.165 193.161,-62.8775 195.069,-54.0535"/>
+<polygon fill="black" stroke="black" points="198.544,-54.546 197.236,-44.0322 191.702,-53.0667 198.544,-54.546"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node"><title>n3</title>
+<ellipse fill="none" stroke="black" cx="315.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="315.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n24 -->
+<g id="node25" class="node"><title>n24</title>
+<polygon fill="none" stroke="black" points="367.414,-40 296.153,-40 296.153,-4 367.414,-4 367.414,-40"/>
+<polygon fill="none" stroke="black" points="371.395,-44 292.172,-44 292.172,-0 371.395,-0 371.395,-44"/>
+<text text-anchor="middle" x="331.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T11)</text>
+</g>
+<!-- n3&#45;&gt;n24 -->
+<g id="edge6" class="edge"><title>n3&#45;&gt;n24</title>
+<path fill="none" stroke="black" d="M319.495,-79.8369C321.153,-72.165 323.161,-62.8775 325.069,-54.0535"/>
+<polygon fill="black" stroke="black" points="328.544,-54.546 327.236,-44.0322 321.702,-53.0667 328.544,-54.546"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node"><title>n4</title>
+<ellipse fill="none" stroke="black" cx="445.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="445.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n25 -->
+<g id="node26" class="node"><title>n25</title>
+<polygon fill="none" stroke="black" points="497.901,-40 425.667,-40 425.667,-4 497.901,-4 497.901,-40"/>
+<polygon fill="none" stroke="black" points="501.907,-44 421.661,-44 421.661,-0 501.907,-0 501.907,-44"/>
+<text text-anchor="middle" x="461.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T12)</text>
+</g>
+<!-- n4&#45;&gt;n25 -->
+<g id="edge8" class="edge"><title>n4&#45;&gt;n25</title>
+<path fill="none" stroke="black" d="M449.495,-79.8369C451.153,-72.165 453.161,-62.8775 455.069,-54.0535"/>
+<polygon fill="black" stroke="black" points="458.544,-54.546 457.236,-44.0322 451.702,-53.0667 458.544,-54.546"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node"><title>n5</title>
+<ellipse fill="none" stroke="black" cx="575.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="575.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n26 -->
+<g id="node27" class="node"><title>n26</title>
+<polygon fill="none" stroke="black" points="627.901,-40 555.667,-40 555.667,-4 627.901,-4 627.901,-40"/>
+<polygon fill="none" stroke="black" points="631.907,-44 551.661,-44 551.661,-0 631.907,-0 631.907,-44"/>
+<text text-anchor="middle" x="591.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T13)</text>
+</g>
+<!-- n5&#45;&gt;n26 -->
+<g id="edge10" class="edge"><title>n5&#45;&gt;n26</title>
+<path fill="none" stroke="black" d="M579.495,-79.8369C581.153,-72.165 583.161,-62.8775 585.069,-54.0535"/>
+<polygon fill="black" stroke="black" points="588.544,-54.546 587.236,-44.0322 581.702,-53.0667 588.544,-54.546"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node"><title>n6</title>
+<ellipse fill="none" stroke="black" cx="705.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="705.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n27 -->
+<g id="node28" class="node"><title>n27</title>
+<polygon fill="none" stroke="black" points="757.901,-40 685.667,-40 685.667,-4 757.901,-4 757.901,-40"/>
+<polygon fill="none" stroke="black" points="761.907,-44 681.661,-44 681.661,-0 761.907,-0 761.907,-44"/>
+<text text-anchor="middle" x="721.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T14)</text>
+</g>
+<!-- n6&#45;&gt;n27 -->
+<g id="edge12" class="edge"><title>n6&#45;&gt;n27</title>
+<path fill="none" stroke="black" d="M709.495,-79.8369C711.153,-72.165 713.161,-62.8775 715.069,-54.0535"/>
+<polygon fill="black" stroke="black" points="718.544,-54.546 717.236,-44.0322 711.702,-53.0667 718.544,-54.546"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node"><title>n7</title>
+<ellipse fill="none" stroke="black" cx="835.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="835.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n28 -->
+<g id="node29" class="node"><title>n28</title>
+<polygon fill="none" stroke="black" points="887.901,-40 815.667,-40 815.667,-4 887.901,-4 887.901,-40"/>
+<polygon fill="none" stroke="black" points="891.907,-44 811.661,-44 811.661,-0 891.907,-0 891.907,-44"/>
+<text text-anchor="middle" x="851.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T15)</text>
+</g>
+<!-- n7&#45;&gt;n28 -->
+<g id="edge14" class="edge"><title>n7&#45;&gt;n28</title>
+<path fill="none" stroke="black" d="M839.495,-79.8369C841.153,-72.165 843.161,-62.8775 845.069,-54.0535"/>
+<polygon fill="black" stroke="black" points="848.544,-54.546 847.236,-44.0322 841.702,-53.0667 848.544,-54.546"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node"><title>n8</title>
+<ellipse fill="none" stroke="black" cx="965.784" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="965.784" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n29 -->
+<g id="node30" class="node"><title>n29</title>
+<polygon fill="none" stroke="black" points="1017.9,-40 945.667,-40 945.667,-4 1017.9,-4 1017.9,-40"/>
+<polygon fill="none" stroke="black" points="1021.91,-44 941.661,-44 941.661,-0 1021.91,-0 1021.91,-44"/>
+<text text-anchor="middle" x="981.784" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T16)</text>
+</g>
+<!-- n8&#45;&gt;n29 -->
+<g id="edge16" class="edge"><title>n8&#45;&gt;n29</title>
+<path fill="none" stroke="black" d="M969.495,-79.8369C971.153,-72.165 973.161,-62.8775 975.069,-54.0535"/>
+<polygon fill="black" stroke="black" points="978.544,-54.546 977.236,-44.0322 971.702,-53.0667 978.544,-54.546"/>
+</g>
+<!-- n9 -->
+<g id="node10" class="node"><title>n9</title>
+<ellipse fill="none" stroke="black" cx="1095.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="1095.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n30 -->
+<g id="node31" class="node"><title>n30</title>
+<polygon fill="none" stroke="black" points="1147.9,-40 1075.67,-40 1075.67,-4 1147.9,-4 1147.9,-40"/>
+<polygon fill="none" stroke="black" points="1151.91,-44 1071.66,-44 1071.66,-0 1151.91,-0 1151.91,-44"/>
+<text text-anchor="middle" x="1111.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T17)</text>
+</g>
+<!-- n9&#45;&gt;n30 -->
+<g id="edge18" class="edge"><title>n9&#45;&gt;n30</title>
+<path fill="none" stroke="black" d="M1099.49,-79.8369C1101.15,-72.165 1103.16,-62.8775 1105.07,-54.0535"/>
+<polygon fill="black" stroke="black" points="1108.54,-54.546 1107.24,-44.0322 1101.7,-53.0667 1108.54,-54.546"/>
+</g>
+<!-- n10 -->
+<g id="node11" class="node"><title>n10</title>
+<ellipse fill="none" stroke="black" cx="1225.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="1225.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n31 -->
+<g id="node32" class="node"><title>n31</title>
+<polygon fill="none" stroke="black" points="1267.9,-40 1195.67,-40 1195.67,-4 1267.9,-4 1267.9,-40"/>
+<polygon fill="none" stroke="black" points="1271.91,-44 1191.66,-44 1191.66,-0 1271.91,-0 1271.91,-44"/>
+<text text-anchor="middle" x="1231.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T18)</text>
+</g>
+<!-- n10&#45;&gt;n31 -->
+<g id="edge20" class="edge"><title>n10&#45;&gt;n31</title>
+<path fill="none" stroke="black" d="M1227.18,-79.8369C1227.8,-72.165 1228.55,-62.8775 1229.27,-54.0535"/>
+<polygon fill="black" stroke="black" points="1232.76,-54.2824 1230.08,-44.0322 1225.78,-53.7166 1232.76,-54.2824"/>
+</g>
+<!-- n11 -->
+<g id="node12" class="node"><title>n11</title>
+<ellipse fill="none" stroke="black" cx="1445.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="1445.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n32 -->
+<g id="node33" class="node"><title>n32</title>
+<polygon fill="none" stroke="black" points="1371.9,-40 1299.67,-40 1299.67,-4 1371.9,-4 1371.9,-40"/>
+<polygon fill="none" stroke="black" points="1375.91,-44 1295.66,-44 1295.66,-0 1375.91,-0 1375.91,-44"/>
+<text text-anchor="middle" x="1335.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T19)</text>
+</g>
+<!-- n11&#45;&gt;n32 -->
+<g id="edge22" class="edge"><title>n11&#45;&gt;n32</title>
+<path fill="none" stroke="black" d="M1422.72,-81.4872C1409.12,-72.3328 1391.52,-60.493 1375.71,-49.8629"/>
+<polygon fill="black" stroke="black" points="1377.41,-46.7842 1367.16,-44.1064 1373.5,-52.5922 1377.41,-46.7842"/>
+</g>
+<!-- n12 -->
+<g id="node13" class="node"><title>n12</title>
+<ellipse fill="none" stroke="black" cx="1575.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="1575.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n33 -->
+<g id="node34" class="node"><title>n33</title>
+<polygon fill="none" stroke="black" points="1464.4,-40 1399.17,-40 1399.17,-4 1464.4,-4 1464.4,-40"/>
+<polygon fill="none" stroke="black" points="1468.41,-44 1395.16,-44 1395.16,-0 1468.41,-0 1468.41,-44"/>
+<text text-anchor="middle" x="1431.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T2)</text>
+</g>
+<!-- n12&#45;&gt;n33 -->
+<g id="edge24" class="edge"><title>n12&#45;&gt;n33</title>
+<path fill="none" stroke="black" d="M1547.33,-82.38C1527.45,-72.1624 1500.47,-58.2975 1477.58,-46.535"/>
+<polygon fill="black" stroke="black" points="1478.88,-43.2656 1468.38,-41.8079 1475.68,-49.4916 1478.88,-43.2656"/>
+</g>
+<!-- n13 -->
+<g id="node14" class="node"><title>n13</title>
+<ellipse fill="none" stroke="black" cx="1705.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="1705.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n34 -->
+<g id="node35" class="node"><title>n34</title>
+<polygon fill="none" stroke="black" points="1564.9,-40 1492.67,-40 1492.67,-4 1564.9,-4 1564.9,-40"/>
+<polygon fill="none" stroke="black" points="1568.91,-44 1488.66,-44 1488.66,-0 1568.91,-0 1568.91,-44"/>
+<text text-anchor="middle" x="1528.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T20)</text>
+</g>
+<!-- n13&#45;&gt;n34 -->
+<g id="edge26" class="edge"><title>n13&#45;&gt;n34</title>
+<path fill="none" stroke="black" d="M1672.91,-83.2546C1646.38,-72.1662 1608.65,-56.3919 1578.45,-43.7645"/>
+<polygon fill="black" stroke="black" points="1579.51,-40.4134 1568.93,-39.7852 1576.81,-46.8717 1579.51,-40.4134"/>
+</g>
+<!-- n14 -->
+<g id="node15" class="node"><title>n14</title>
+<ellipse fill="none" stroke="black" cx="1835.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="1835.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n35 -->
+<g id="node36" class="node"><title>n35</title>
+<polygon fill="none" stroke="black" points="1660.4,-40 1595.17,-40 1595.17,-4 1660.4,-4 1660.4,-40"/>
+<polygon fill="none" stroke="black" points="1664.41,-44 1591.16,-44 1591.16,-0 1664.41,-0 1664.41,-44"/>
+<text text-anchor="middle" x="1627.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T3)</text>
+</g>
+<!-- n14&#45;&gt;n35 -->
+<g id="edge28" class="edge"><title>n14&#45;&gt;n35</title>
+<path fill="none" stroke="black" d="M1797.75,-84.7409C1766.03,-74.3601 1719.74,-58.8406 1679.78,-44 1677.94,-43.3135 1676.05,-42.6042 1674.16,-41.88"/>
+<polygon fill="black" stroke="black" points="1675.2,-38.531 1664.61,-38.1715 1672.67,-45.0557 1675.2,-38.531"/>
+</g>
+<!-- n15 -->
+<g id="node16" class="node"><title>n15</title>
+<ellipse fill="none" stroke="black" cx="1965.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="1965.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n36 -->
+<g id="node37" class="node"><title>n36</title>
+<polygon fill="none" stroke="black" points="1758.4,-40 1693.17,-40 1693.17,-4 1758.4,-4 1758.4,-40"/>
+<polygon fill="none" stroke="black" points="1762.41,-44 1689.16,-44 1689.16,-0 1762.41,-0 1762.41,-44"/>
+<text text-anchor="middle" x="1725.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T4)</text>
+</g>
+<!-- n15&#45;&gt;n36 -->
+<g id="edge30" class="edge"><title>n15&#45;&gt;n36</title>
+<path fill="none" stroke="black" d="M1924.6,-85.6655C1887.78,-75.3594 1832.44,-59.4447 1784.78,-44 1780.71,-42.6802 1776.5,-41.2695 1772.28,-39.8273"/>
+<polygon fill="black" stroke="black" points="1773.09,-36.4049 1762.5,-36.4324 1770.8,-43.0179 1773.09,-36.4049"/>
+</g>
+<!-- n16 -->
+<g id="node17" class="node"><title>n16</title>
+<ellipse fill="none" stroke="black" cx="2095.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="2095.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n37 -->
+<g id="node38" class="node"><title>n37</title>
+<polygon fill="none" stroke="black" points="1863.4,-40 1798.17,-40 1798.17,-4 1863.4,-4 1863.4,-40"/>
+<polygon fill="none" stroke="black" points="1867.41,-44 1794.16,-44 1794.16,-0 1867.41,-0 1867.41,-44"/>
+<text text-anchor="middle" x="1830.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T5)</text>
+</g>
+<!-- n16&#45;&gt;n37 -->
+<g id="edge32" class="edge"><title>n16&#45;&gt;n37</title>
+<path fill="none" stroke="black" d="M2054.55,-85.7556C2015.64,-75.1138 1955.71,-58.6341 1903.78,-44 1895.21,-41.5827 1886.07,-38.9784 1877.27,-36.4543"/>
+<polygon fill="black" stroke="black" points="1878.1,-33.0514 1867.52,-33.6528 1876.17,-39.7791 1878.1,-33.0514"/>
+</g>
+<!-- n17 -->
+<g id="node18" class="node"><title>n17</title>
+<ellipse fill="none" stroke="black" cx="2225.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="2225.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n38 -->
+<g id="node39" class="node"><title>n38</title>
+<polygon fill="none" stroke="black" points="1982.4,-40 1917.17,-40 1917.17,-4 1982.4,-4 1982.4,-40"/>
+<polygon fill="none" stroke="black" points="1986.41,-44 1913.16,-44 1913.16,-0 1986.41,-0 1986.41,-44"/>
+<text text-anchor="middle" x="1949.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T6)</text>
+</g>
+<!-- n17&#45;&gt;n38 -->
+<g id="edge34" class="edge"><title>n17&#45;&gt;n38</title>
+<path fill="none" stroke="black" d="M2184.16,-85.8413C2133.66,-72.2998 2048.75,-49.5345 1996.18,-35.44"/>
+<polygon fill="black" stroke="black" points="1997,-32.0368 1986.44,-32.8277 1995.19,-38.798 1997,-32.0368"/>
+</g>
+<!-- n18 -->
+<g id="node19" class="node"><title>n18</title>
+<ellipse fill="none" stroke="black" cx="2355.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="2355.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n39 -->
+<g id="node40" class="node"><title>n39</title>
+<polygon fill="none" stroke="black" points="2129.4,-40 2064.17,-40 2064.17,-4 2129.4,-4 2129.4,-40"/>
+<polygon fill="none" stroke="black" points="2133.41,-44 2060.16,-44 2060.16,-0 2133.41,-0 2133.41,-44"/>
+<text text-anchor="middle" x="2096.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T7)</text>
+</g>
+<!-- n18&#45;&gt;n39 -->
+<g id="edge36" class="edge"><title>n18&#45;&gt;n39</title>
+<path fill="none" stroke="black" d="M2315.31,-85.4375C2268.73,-72.1272 2192.35,-50.3045 2143.34,-36.3013"/>
+<polygon fill="black" stroke="black" points="2144.19,-32.9058 2133.62,-33.5238 2142.27,-39.6364 2144.19,-32.9058"/>
+</g>
+<!-- n19 -->
+<g id="node20" class="node"><title>n19</title>
+<ellipse fill="none" stroke="black" cx="2485.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="2485.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n40 -->
+<g id="node41" class="node"><title>n40</title>
+<polygon fill="none" stroke="black" points="2332.4,-40 2267.17,-40 2267.17,-4 2332.4,-4 2332.4,-40"/>
+<polygon fill="none" stroke="black" points="2336.41,-44 2263.16,-44 2263.16,-0 2336.41,-0 2336.41,-44"/>
+<text text-anchor="middle" x="2299.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T8)</text>
+</g>
+<!-- n19&#45;&gt;n40 -->
+<g id="edge38" class="edge"><title>n19&#45;&gt;n40</title>
+<path fill="none" stroke="black" d="M2452.1,-83.5992C2422.37,-71.7719 2378.77,-54.4231 2345.82,-41.3158"/>
+<polygon fill="black" stroke="black" points="2346.98,-38.0122 2336.4,-37.5676 2344.4,-44.5164 2346.98,-38.0122"/>
+</g>
+<!-- n20 -->
+<g id="node21" class="node"><title>n20</title>
+<ellipse fill="none" stroke="black" cx="2615.78" cy="-98" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="2615.78" y="-93.8" font-family="Times,serif" font-size="14.00">etc1_tick 0.9</text>
+</g>
+<!-- n41 -->
+<g id="node42" class="node"><title>n41</title>
+<polygon fill="none" stroke="black" points="2647.4,-40 2582.17,-40 2582.17,-4 2647.4,-4 2647.4,-40"/>
+<polygon fill="none" stroke="black" points="2651.41,-44 2578.16,-44 2578.16,-0 2651.41,-0 2651.41,-44"/>
+<text text-anchor="middle" x="2614.78" y="-17.8" font-family="Times,serif" font-size="14.00">(tick T9)</text>
+</g>
+<!-- n20&#45;&gt;n41 -->
+<g id="edge40" class="edge"><title>n20&#45;&gt;n41</title>
+<path fill="none" stroke="black" d="M2615.55,-79.8369C2615.45,-72.165 2615.32,-62.8775 2615.2,-54.0535"/>
+<polygon fill="black" stroke="black" points="2618.7,-53.984 2615.07,-44.0322 2611.7,-54.0786 2618.7,-53.984"/>
+</g>
+<!-- n21&#45;&gt;n22 -->
+<g id="edge3" class="edge"><title>n21&#45;&gt;n22</title>
+<path fill="none" stroke="black" d="M1298.74,-81.9284C1296.07,-81.1783 1293.4,-80.5215 1290.78,-80 1042.63,-30.6232 403.174,-80.35 152.784,-44 141.795,-42.4047 130.145,-39.8571 119.237,-37.0781"/>
+<polygon fill="black" stroke="black" points="120.031,-33.6677 109.468,-34.4815 118.233,-40.4328 120.031,-33.6677"/>
+</g>
+<!-- n21&#45;&gt;n23 -->
+<g id="edge5" class="edge"><title>n21&#45;&gt;n23</title>
+<path fill="none" stroke="black" d="M1298.74,-81.9406C1296.07,-81.1877 1293.4,-80.5269 1290.78,-80 851.297,8.38014 726.385,-108.635 282.784,-44 272.757,-42.539 262.181,-40.3152 252.099,-37.8527"/>
+<polygon fill="black" stroke="black" points="252.776,-34.4134 242.221,-35.3301 251.044,-41.1957 252.776,-34.4134"/>
+</g>
+<!-- n21&#45;&gt;n24 -->
+<g id="edge7" class="edge"><title>n21&#45;&gt;n24</title>
+<path fill="none" stroke="black" d="M1298.73,-81.9565C1296.07,-81.1998 1293.4,-80.5338 1290.78,-80 908.103,-1.99192 799.103,-101.331 412.784,-44 402.438,-42.4647 391.506,-40.1322 381.134,-37.5722"/>
+<polygon fill="black" stroke="black" points="381.957,-34.1699 371.4,-35.0667 380.212,-40.949 381.957,-34.1699"/>
+</g>
+<!-- n21&#45;&gt;n25 -->
+<g id="edge9" class="edge"><title>n21&#45;&gt;n25</title>
+<path fill="none" stroke="black" d="M1298.73,-81.9779C1296.07,-81.2161 1293.4,-80.5431 1290.78,-80 964.9,-12.3618 871.832,-94.0278 542.784,-44 532.766,-42.4769 522.194,-40.2249 512.114,-37.7541"/>
+<polygon fill="black" stroke="black" points="512.791,-34.3148 502.236,-35.2294 511.058,-41.0968 512.791,-34.3148"/>
+</g>
+<!-- n21&#45;&gt;n26 -->
+<g id="edge11" class="edge"><title>n21&#45;&gt;n26</title>
+<path fill="none" stroke="black" d="M1298.72,-82.0082C1296.06,-81.2392 1293.4,-80.5563 1290.78,-80 1021.68,-22.728 944.578,-86.7278 672.784,-44 662.774,-42.4264 652.205,-40.1513 642.126,-37.6739"/>
+<polygon fill="black" stroke="black" points="642.804,-34.2346 632.248,-35.1474 641.069,-41.0163 642.804,-34.2346"/>
+</g>
+<!-- n21&#45;&gt;n27 -->
+<g id="edge13" class="edge"><title>n21&#45;&gt;n27</title>
+<path fill="none" stroke="black" d="M1299.21,-82.2018C1296.39,-81.3622 1293.56,-80.6125 1290.78,-80 1078.43,-33.0874 1017.36,-79.4329 802.784,-44 792.679,-42.3313 781.996,-39.9891 771.821,-37.4708"/>
+<polygon fill="black" stroke="black" points="772.411,-34.0089 761.855,-34.9123 770.67,-40.789 772.411,-34.0089"/>
+</g>
+<!-- n21&#45;&gt;n28 -->
+<g id="edge15" class="edge"><title>n21&#45;&gt;n28</title>
+<path fill="none" stroke="black" d="M1299.19,-82.2848C1296.37,-81.426 1293.55,-80.6493 1290.78,-80 1135.11,-43.4323 1090.2,-72.1489 932.784,-44 922.702,-42.1972 912.03,-39.7947 901.857,-37.2595"/>
+<polygon fill="black" stroke="black" points="902.448,-33.7977 891.892,-34.6974 900.705,-40.5772 902.448,-33.7977"/>
+</g>
+<!-- n21&#45;&gt;n29 -->
+<g id="edge17" class="edge"><title>n21&#45;&gt;n29</title>
+<path fill="none" stroke="black" d="M1299.15,-82.46C1296.34,-81.5607 1293.53,-80.727 1290.78,-80 1191.61,-53.7352 1163.22,-64.8976 1062.78,-44 1052.76,-41.9137 1042.11,-39.3839 1031.94,-36.813"/>
+<polygon fill="black" stroke="black" points="1032.54,-33.3515 1021.98,-34.2434 1030.79,-40.1297 1032.54,-33.3515"/>
+</g>
+<!-- n21&#45;&gt;n30 -->
+<g id="edge19" class="edge"><title>n21&#45;&gt;n30</title>
+<path fill="none" stroke="black" d="M1299,-82.9245C1296.23,-81.9178 1293.47,-80.9328 1290.78,-80 1247.56,-64.9666 1197.95,-49.2898 1161.93,-38.1909"/>
+<polygon fill="black" stroke="black" points="1162.74,-34.777 1152.15,-35.1862 1160.68,-41.4684 1162.74,-34.777"/>
+</g>
+<!-- n21&#45;&gt;n31 -->
+<g id="edge21" class="edge"><title>n21&#45;&gt;n31</title>
+<path fill="none" stroke="black" d="M1311.66,-79.8369C1299.24,-70.9975 1283.8,-60.0135 1269.82,-50.0646"/>
+<polygon fill="black" stroke="black" points="1271.52,-46.978 1261.34,-44.0322 1267.46,-52.6816 1271.52,-46.978"/>
+</g>
+<!-- n21&#45;&gt;n32 -->
+<g id="edge23" class="edge"><title>n21&#45;&gt;n32</title>
+<path fill="none" stroke="black" d="M1335.78,-79.8369C1335.78,-72.165 1335.78,-62.8775 1335.78,-54.0535"/>
+<polygon fill="black" stroke="black" points="1339.28,-54.0322 1335.78,-44.0322 1332.28,-54.0322 1339.28,-54.0322"/>
+</g>
+<!-- n21&#45;&gt;n33 -->
+<g id="edge25" class="edge"><title>n21&#45;&gt;n33</title>
+<path fill="none" stroke="black" d="M1358.05,-79.8369C1369.41,-71.0809 1383.5,-60.2206 1396.31,-50.3465"/>
+<polygon fill="black" stroke="black" points="1398.72,-52.9094 1404.5,-44.0322 1394.44,-47.3653 1398.72,-52.9094"/>
+</g>
+<!-- n21&#45;&gt;n34 -->
+<g id="edge27" class="edge"><title>n21&#45;&gt;n34</title>
+<path fill="none" stroke="black" d="M1372.61,-83.0664C1375.38,-82.0268 1378.12,-80.9957 1380.78,-80 1423.85,-63.8745 1434.96,-60.7569 1477.78,-44 1478.22,-43.8299 1478.66,-43.6587 1479.09,-43.4864"/>
+<polygon fill="black" stroke="black" points="1480.47,-46.7039 1488.47,-39.753 1477.88,-40.2004 1480.47,-46.7039"/>
+</g>
+<!-- n21&#45;&gt;n35 -->
+<g id="edge29" class="edge"><title>n21&#45;&gt;n35</title>
+<path fill="none" stroke="black" d="M1372.44,-82.5346C1375.24,-81.6181 1378.05,-80.76 1380.78,-80 1466.54,-56.1758 1492.47,-69.382 1577.78,-44 1579,-43.6375 1580.23,-43.2549 1581.47,-42.8552"/>
+<polygon fill="black" stroke="black" points="1582.7,-46.1297 1590.98,-39.5096 1580.38,-39.5263 1582.7,-46.1297"/>
+</g>
+<!-- n21&#45;&gt;n36 -->
+<g id="edge31" class="edge"><title>n21&#45;&gt;n36</title>
+<path fill="none" stroke="black" d="M1372.39,-82.3534C1375.21,-81.4788 1378.03,-80.6797 1380.78,-80 1508.17,-48.5928 1546.76,-76.8455 1673.78,-44 1675.66,-43.5156 1677.55,-42.9798 1679.46,-42.4035"/>
+<polygon fill="black" stroke="black" points="1680.59,-45.7155 1688.97,-39.2355 1678.38,-39.0739 1680.59,-45.7155"/>
+</g>
+<!-- n21&#45;&gt;n37 -->
+<g id="edge33" class="edge"><title>n21&#45;&gt;n37</title>
+<path fill="none" stroke="black" d="M1372.37,-82.2586C1375.19,-81.4058 1378.02,-80.6377 1380.78,-80 1550.84,-40.8086 1601.36,-81.5525 1771.78,-44 1775.9,-43.0919 1780.13,-41.9765 1784.34,-40.7375"/>
+<polygon fill="black" stroke="black" points="1785.58,-44.0156 1794.06,-37.6615 1783.47,-37.3419 1785.58,-44.0156"/>
+</g>
+<!-- n21&#45;&gt;n38 -->
+<g id="edge35" class="edge"><title>n21&#45;&gt;n38</title>
+<path fill="none" stroke="black" d="M1372.36,-82.1981C1375.18,-81.3593 1378.01,-80.6109 1380.78,-80 1596.63,-32.4502 1659.18,-82.7609 1876.78,-44 1885.46,-42.4541 1894.59,-40.2838 1903.33,-37.9205"/>
+<polygon fill="black" stroke="black" points="1904.32,-41.2769 1913,-35.1933 1902.42,-34.5398 1904.32,-41.2769"/>
+</g>
+<!-- n21&#45;&gt;n39 -->
+<g id="edge37" class="edge"><title>n21&#45;&gt;n39</title>
+<path fill="none" stroke="black" d="M1372.85,-82.0091C1375.51,-81.2398 1378.17,-80.5567 1380.78,-80 1648.58,-22.9671 1724.35,-79.9649 1995.78,-44 2013.57,-41.6427 2032.91,-37.9134 2049.86,-34.2473"/>
+<polygon fill="black" stroke="black" points="2051.06,-37.5659 2060.07,-31.9857 2049.55,-30.7316 2051.06,-37.5659"/>
+</g>
+<!-- n21&#45;&gt;n40 -->
+<g id="edge39" class="edge"><title>n21&#45;&gt;n40</title>
+<path fill="none" stroke="black" d="M1372.84,-81.9753C1375.5,-81.214 1378.17,-80.5419 1380.78,-80 1712.78,-11.2452 1805.11,-74.5028 2142.78,-44 2179.94,-40.6436 2221.81,-34.947 2252.96,-30.3332"/>
+<polygon fill="black" stroke="black" points="2253.72,-33.7585 2263.09,-28.815 2252.68,-26.8358 2253.72,-33.7585"/>
+</g>
+<!-- n21&#45;&gt;n41 -->
+<g id="edge41" class="edge"><title>n21&#45;&gt;n41</title>
+<path fill="none" stroke="black" d="M1372.83,-81.9454C1375.5,-81.1913 1378.16,-80.529 1380.78,-80 1591.13,-37.5254 2131.55,-56.3535 2345.78,-44 2423.6,-39.5126 2513.92,-31.9859 2567.6,-27.2672"/>
+<polygon fill="black" stroke="black" points="2568.18,-30.7296 2577.83,-26.3626 2567.56,-23.7568 2568.18,-30.7296"/>
+</g>
+</g>
+</svg>
+
+      <p>Fantastic! In just a couple of seconds, Etcetera Abduction finds a great interpretation of the twenty ticks: it must be a (single) clock! In fact, this is the optimal solution to this problem - the same one we would have got if we had let the previous call run for years or more.</p>
+      
+      <p>In real interpretation problems with large knowledge bases and many observations, we may not be so lucky. This incremental approach is most susceptible to missing the best solution when there is an extremely unlikely common factor between observations that are far away from each other in the input list. In those cases, that important factor may fall off the beam before it has a chance to unify with explanations of subsequent observations.</p>
+
+      <p>Because of this, you may find it necessary to tune the various parameters of incremental Etcetera Abduction to find acceptable solutions in your problem domain. The three important parameters to tune are these:</p>
+
+      <dl>
+	<dt>BEAM</dt>
+	<dd>The number of running interpretations that should be kept around as subsequent chunks of the problem are considered. Set with the "--beam" (or just "-b") flag, defaults to 10.</dd>
+	<dt>WINDOW</dt>
+	<dd>The number of observations in each chunk. Set with the "--window" (or just "-w") flag, defaults to 4.</dd>
+	<dt>DEPTH</dt>
+	<dd>The depth of interpretations considered for each chuck. Set with the "--depth" (or just "-d") flag, defaults to 5.</dd>
+      </dl>
+
+      <p>It is interesting to note that if either beam or window were infinite, then incremental Etcetera Abduction would be exactly the same as regular exhaustive-search Etcetera Abduction. An infinite window size would mean that the whole problem would appear in the first chunk. An infinite beam size would mean that all possible solutions to previous chucks would be combined with all of those for the next one. The challenge is finding parameters that are less-than-infinite, but still effectively meet the needs of a given interpretation task.</p>
+      
+      <p>My advice is to first set the depth parameter, making it just large enough to get the interpretations you want on your smaller-sized interpretation problems. Then play adjust the beam and window sizes in parallel - making one bigger while making the other one smaller. Window sizes can go up to maybe 10 or so, and beam sizes can be very large: 10, 100, 1000, or even 10000 might work for you. If a particular set of parameters is too slow for you, try inching down either beam or window until speed is acceptable. If you have more time to spare, or the interpretations are coming out blazingly fast, try inching up either beam or window so that you don't miss out on better interpretations of your problems.</p>
+
+
+    </div>
+  </body>
+</html>
