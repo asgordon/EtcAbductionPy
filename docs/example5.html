@@ -476,7 +476,7 @@
 </g>
 </svg>
 
-      <p>But notice the other, less probable, solutions to this problem. The second solution is that they are unrelated random tick events, as you might expect. The third and fourth solution each hypothesize a clock, but attribute only one of the two ticks to it. The fifth solution is even more odd: perhaps there are <u>two</u> clocks, $1 and $2, each responsible for one of the clicks!</p>
+      <p>But notice the other, less probable, solutions to this problem. The second solution is that they are unrelated random tick events, as you might expect. The third and fourth solution each hypothesize a clock, but attribute only one of the two ticks to it. The fifth solution is even more odd: perhaps there are <u>two</u> clocks, $1 and $2, each responsible for one of the ticks!</p>
 
       <pre>python etcabductionpy/ -i twenty-ticks.lisp -g -s 5 | util/dot2safari </pre>
 
@@ -562,7 +562,7 @@
 
       <p>As improbable as they are, each of these solutions is perfectly valid: each of these five sets of assumptions logically entails the observations given the knowledge base. We've asked the reasoning engine to exhaustively find all of the solutions, and that is exactly what it has done.</p>
 
-      <p>The trouble is any time that Etcetera Abduction finds a pair of assumptions that <u>could</u> be actually the same (i.e. they are unifiable), it considers two possibilities: either they are indeed the same and we've identified a common factor, or they are actually different and we have two similar but not identical assumptions in our solutions. Either the assumptions unify or they do not.</p>
+      <p>The trouble is that any time Etcetera Abduction finds a pair of assumptions that <u>could</u> be actually the same (i.e. they are unifiable), it considers two possibilities: either they are indeed the same and we've identified a common factor, or they are actually different and we have two similar but not identical assumptions in our solutions. Either the assumptions unify or they do not, and it considers both cases.</p>
 
       <p>Every time we consider that the tick might be caused by a clock, we have to wonder whether it was the same clock or a different clock than all of the other clocks that we're imagining in the set of solutions. The result is a explosion of imaginary clocks. Any subset of ticks might be explained by their own individual clock, giving us a powerset of clock explanations for these twenty ticks.</p>
 
@@ -588,7 +588,7 @@
 
       <p>Yes, indeed, this is cause for serious concern. The exponential growth in solutions means that Etcetera Abduction has little chance of exhaustively interpreting all 20 observable ticks: the problem is simply too big.</p>
 
-      <p>What are we going to do about it? Maybe we could modify Etcetera Abduction to look out for these cases and do something special? Sure that would work for simple degenerate examples of this sort, but more realistic problems with large knowledge bases are also going to have similar explosions. We need a more general solution. Maybe we could optimize the search using fancy technologies like Integer Linear Programming? Sure, that helps when the problems are of modest size, but bigger problems see an explosion in variables that indicate unifications, crippling the best linear solvers. Maybe we could simply optimize the algorithm we have using a fast, typed, compiled programming language? Yes, that helps quite a bit, but gains you only a couple of more interpretable ticks for a given amount of processing time. Maybe we could try massive parallelization and GPU-optimized unification? Perhaps that would work, but nobody has figured out how to do that yet.</p>
+      <p>What are we going to do about it? Maybe we could modify Etcetera Abduction to look out for these cases and do something special? Sure that would work for simple degenerate examples such as this, but more realistic problems with large knowledge bases are also going to have similar explosions. We need a more general solution. Maybe we could optimize the search using fancy technologies like Integer Linear Programming? Sure, that helps when the problems are of modest size, but bigger problems see an explosion in variables that indicate unifications, crippling the best linear solvers. Maybe we could simply optimize the algorithm we have using a fast, typed, compiled programming language? Yes, that helps quite a bit, but gains you only a couple of more interpretable ticks for a given amount of processing time. Maybe we could try massive parallelization and GPU-optimized unification? Perhaps that would work, but nobody has figured out how to do that yet.</p>
 
       <p>Unfortunately, for the time being, there is no fast way to find the global optimal solution to big interpretation problems - the combinatorics will eventually catch up with you.</p>
 
@@ -1072,7 +1072,7 @@
 	<dd>The depth of interpretations considered for each chuck. Set with the "--depth" (or just "-d") flag, defaults to 5.</dd>
       </dl>
 
-      <p>It is interesting to note that if either beam or window were infinite, then incremental Etcetera Abduction would be exactly the same as regular exhaustive-search Etcetera Abduction. An infinite window size would mean that the whole problem would appear in the first chunk. An infinite beam size would mean that all possible solutions to previous chucks would be combined with all of those for the next one. The challenge is finding parameters that are less-than-infinite, but still effectively meet the needs of a given interpretation task.</p>
+      <p>It is interesting to note that if either beam or window were infinite, then incremental Etcetera Abduction would be exactly the same as regular exhaustive-search Etcetera Abduction. An infinite window size would mean that the whole problem would appear in the first chunk. An infinite beam size would mean that all possible solutions to previous chucks would be combined with all of those for the next one. The challenge is finding parameters that are less-than-infinite, but that still effectively meet the needs of a given interpretation task.</p>
       
       <p>My advice is to first set the depth parameter, making it just large enough to get the interpretations you want on your smaller-sized interpretation problems. Then play adjust the beam and window sizes in parallel - making one bigger while making the other one smaller. Window sizes can go up to maybe 10 or so, and beam sizes can be very large: 10, 100, 1000, or even 10000 might work for you. If a particular set of parameters is too slow for you, try inching down either beam or window until speed is acceptable. If you have more time to spare, or the interpretations are coming out blazingly fast, try inching up either beam or window so that you don't miss out on better interpretations of your problems.</p>
 
