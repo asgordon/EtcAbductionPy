@@ -126,7 +126,7 @@ if args.graph:
     solution = solutions[args.solution - 1]
     print(forward.graph(solution, forward.forward(solution, kb), targets=obs),
           file=args.outfile)
-if args.evalfile:
+elif args.evalfile:
     solution = solutions[args.solution - 1]
     precision, recall, f1 = evaluate.evaluate(solution, goldliterals)
     print("Precision",precision,"Recall",recall,"F1",f1, sep = "\t")
