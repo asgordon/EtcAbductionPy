@@ -12,6 +12,7 @@ import etcetera
 import forward
 import incremental
 import unify
+import evaluate
 
 argparser = argparse.ArgumentParser(description='Etcetera Abduction in Python')
 
@@ -61,6 +62,9 @@ argparser.add_argument('-f', '--forward',
 argparser.add_argument('-c', '--incremental',
                        action='store_true',
                        help='Use incremental abduction')
+argparser.add_argument('-v', '--variables',
+                       action='store_true',
+                       help='Leave variables in solutions rather than Skolem constants')
 argparser.add_argument('-w', '--window',
                        type=int,
                        default=4,
@@ -69,6 +73,10 @@ argparser.add_argument('-b', '--beam',
                        type=int,
                        default=10,
                        help='Incremental abduction beam-size, defaults to 10')
+argparser.add_argument('-e', '--evalfile',
+                       nargs='?',
+                       type=argparse.FileType('r'),
+                       help='Calculate precision, recall, f1-measure using gold-standard literals in evalfile')
 args = argparser.parse_args()
 
 
@@ -79,11 +87,18 @@ intext = "".join(inlines)
 kb, obs = parse.definite_clauses(parse.parse(intext))
 obs = unify.standardize(obs)
 
+skolemize = not args.variables
+
 if args.kb:
     kblines = args.kb.readlines()
     kbtext = "".join(kblines)
     kbkb, kbobs = parse.definite_clauses(parse.parse(kbtext))
     kb.extend(kbkb)
+
+if args.evalfile:
+    evalfilelines = args.evalfile.readlines()
+    evalfiletext = "".join(evalfilelines)
+    ignore, goldliterals = parse.definite_clauses(parse.parse(evalfiletext))
 
 # Handle forward
 
@@ -99,22 +114,26 @@ if args.forward:
 # Handle abduction
 
 if args.all:
-    solutions = etcetera.etcAbduction(obs, kb, args.depth)
+    solutions = etcetera.etcAbduction(obs, kb, args.depth, skolemize = skolemize)
 else:
     if args.incremental:
         solutions = incremental.incremental(obs, kb, args.depth, args.nbest,
-                                            args.window, args.beam)
+                                            args.window, args.beam, skolemize = skolemize)
     else:
-        solutions = etcetera.nbest(obs, kb, args.depth, args.nbest)
+        solutions = etcetera.nbest(obs, kb, args.depth, args.nbest, skolemize = skolemize)
 
 if args.graph:
     solution = solutions[args.solution - 1]
     print(forward.graph(solution, forward.forward(solution, kb), targets=obs),
           file=args.outfile)
+if args.evalfile:
+    solution = solutions[args.solution - 1]
+    precision, recall, f1 = evaluate.evaluate(solution, goldliterals)
+    print("Precision",precision,"Recall",recall,"F1",f1, sep = "\t")
 else:
     for solution in solutions:
         print(parse.display(solution), file=args.outfile)
     print(str(len(solutions)) + " solutions.")
 
 
-# To do: enable skolemize as an option
+
