@@ -16,7 +16,7 @@
 (if (and (lemon x) (etc2_yellow 0.875 x)) ;; 350 / 400
     (yellow x))
 
-(if (and (lime x) (etc2_not_yellow 0.125 x)) ;; 50 / 400
+(if (and (lemon x) (etc2_not_yellow 0.125 x)) ;; 50 / 400
     (not_yellow x))
 
 (if (and (lime x) (etc1_round 0.5 x)) ;; 300 / 600
@@ -50,26 +50,26 @@
 ;; Previously specified prior probabilities must be commented out, above
 
 ;; Prior probabilities of new class labels
-;; (if (etc0_lime_tree 0.1 x) (lime_tree x))
-;; (if (etc0_lemon_tree 0.1 x) (lemon_tree x))
+; (if (etc0_lime_tree 0.1 x) (lime_tree x))
+; (if (etc0_lemon_tree 0.1 x) (lemon_tree x))
 
 ;; Most lime trees produce limes (90%)
-;; (if (and (lime_tree y)
-;; 	 (etc1_lime 0.9 x y))
-;;      (lime x))
+; (if (and (lime_tree y)
+; 	 (etc1_lime 0.9 x y))
+;      (lime x))
 
 ;; Most lemon trees produce lemons (90%)
-;; (if (and (lemon_tree y)
-;; 	 (etc1_lemon 0.9 x y))
-;;     (lemon x))
+; (if (and (lemon_tree y)
+; 	 (etc1_lemon 0.9 x y))
+;     (lemon x))
 
 
 ;; Extra bonus example: From classification to interpretation
 
 ;; Add the prior probabilities of features (and uncomment out the priors above)
 
-;; (if (etc0_yellow 0.9 x) (yellow x))
-;; (if (etc0_not_yellow 0.1 x) (not_yellow x))
-;; (if (etc0_round 0.33 x) (round x))
-;; (if (etc0_not_round 0.67 x) (not_round x))
+; (if (etc0_yellow 0.9 x) (yellow x))
+; (if (etc0_not_yellow 0.1 x) (not_yellow x))
+; (if (etc0_round 0.33 x) (round x))
+; (if (etc0_not_round 0.67 x) (not_round x))
 
