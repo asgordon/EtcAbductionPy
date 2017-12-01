@@ -60,7 +60,7 @@ def graph(facts, entailed, targets=[]):
 def nodelabel(expression):
     '''Turns a s-expression literal into a nice string, with special case for etc'''
     if isinstance(expression, list):
-        if True and expression[0][:3] == "etc": # for nicer graphs
+        if True and expression[0][:3] == "etc" and True: # for nicer graphs # change to False for debugging
             return expression[0] + " " + str(expression[1])
         else:
             return "(" + " ".join(nodelabel(i) for i in expression) + ")"
