@@ -74,37 +74,6 @@ def antecedent(rule): # always a list of literals
 def consequent(rule): # always a literal
     return rule[2]
     
-def arity_warnings(definite_clauses):
-    '''None where predicates and functions have consistent arity throughout a list of expressions'''
-    warnings = set()
-    arity = {}
-    ls = []
-    for dc in definite_clauses:
-        ls.extend(literals(dc))
-    all = []
-    for l in ls:
-        all.append(l)
-        all.extend(functions(l))
-    for i in all:
-        if i[0] in arity:
-            if arity[i[0]] != len(i):
-                warnings.add(i[0])
-        else:
-            arity[i[0]] = len(i)
-    return warnings
-
-def existential_warnings(definite_clauses):
-    '''Definite clauses where there are existential variables in the consequent (not found in antecedent)'''
-    warnings = []
-    for dc in definite_clauses:
-        va = all_variables(antecedent(dc))
-        vc = all_variables(consequent(dc))
-        for v in vc:
-            if v not in va:
-                warnings.append(dc)
-                break;
-    return warnings
-
 def all_variables(sexp):
     '''returns the set of all ?variables'''
     if isinstance(sexp, str) and sexp[0] == '?':
@@ -158,32 +127,79 @@ def display(sexp):
         return str(sexp)
 
 
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description='Parse lisp-style input files into definite clause s-expressions')
-    argparser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
-    argparser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
-    argparser.add_argument('-u', '--unknown', action="store_true", help='Output expressions not definite clauses')
-    argparser.add_argument('-a', '--arity', action="store_true", help='Output predicates with varying arity')
-    argparser.add_argument('-e', '--existentials', action="store_true", help='Output clauses with existentials in consequent')
-    args = argparser.parse_args()
+def parsecheck(obs, kb):
+    res = "--parsecheck report\n"
+    res += str(len(obs)) + " observations, " + str(len(kb)) + " knowledge base axioms\n"
+    res += "arity warnings: " + arity_warnings(obs, kb) + "\n"
+    res += "existential warnings: " + str(existential_warnings(kb)) + "\n"
+    res += "etcetera warnings: " + str(etcetera_warnings(kb)) # + "\n"
 
-    lines = args.infile.readlines()
-    intext = "".join(lines)
-    outlist, other = definite_clauses(parse(intext))
+    return res
 
-    if args.arity:
-        for l in arity_warnings(outlist):
-            print(l, file = args.outfile)
-    elif args.existentials:
-        for l in existential_warnings(outlist):
-            print(l, file = args.outfile)
-    elif args.unknown:
-        for l in other:
-            print(l, file = args.outfile)
+def arity_warnings(obs, kb):
+    '''Checks that predicates and functions have consistent arity throughout observations and knowledge base'''
+    warnings = ""
+    arity = {}
+    ls = []
+    for dc in kb:
+        ls.extend(literals(dc))
+    ls.extend(obs)
+    all = []
+    for l in ls:
+        all.append(l)
+        all.extend(functions(l))
+    for i in all:
+        if i[0] in arity:
+            if arity[i[0]] != len(i):
+                warnings += "\n! inconsistent arity for predicate: " + str(i[0])
+        else:
+            arity[i[0]] = len(i)
+    if len(warnings) == 0:
+        return "none"
     else:
-        for l in outlist:
-            print(repr(l), file = args.outfile)
+        return warnings
 
+def existential_warnings(definite_clauses):
+    '''Definite clauses where there are existential variables in the consequent (not found in antecedent)'''
+    warnings = ""
+    for dc in definite_clauses:
+        va = all_variables(antecedent(dc))
+        vc = all_variables(consequent(dc))
+        for v in vc:
+            if v not in va:
+                warnings += "\n! existential variables in the consequent: " + display(dc)
+                break;
+    if len(warnings) == 0:
+        return "none"
+    else:
+        return warnings
 
-
-    
+def etcetera_warnings(definite_clauses):
+    '''Definite clauses with malformed etcetera literals'''
+    warnings = ""
+    seen_etcs = []
+    for dc in definite_clauses:
+        etcs = [l for l in literals(dc) if l[0][0:3] == 'etc']
+        if len(etcs) < 1:
+            warnings += "\n! definite clause without etcetera literal: " + display(dc)
+        elif len(etcs) > 1:
+            warnings += "\n! definite clause with multiple etcetera literals: " + display(dc)
+        elif etcs[0][0] in seen_etcs:
+            warnings += "\n! etcetera literal previous seen elsewhere: " + display(dc)
+        elif len(etcs[0]) < 2:
+            warnings += "\n! too few arguments in etcetera literal: " + display(dc)
+        elif not isinstance(etcs[0][1], float):
+            warnings += "\n! first argument of etcetera literal is not a probability: " + display(dc)
+        elif etcs[0][1] > 1.0 or etcs[0][1] < 0.0:
+            warnings += "\n! probability of etcetera literal is out of range: " + display(dc)
+        elif len(all_variables(etcs[0])) != len(all_variables(dc)):
+            warnings += "\n! etcetera literal missing variables founds elsewhere in definite clause: " + display(dc)
+        elif len(all_variables([l for l in literals(dc) if l != etcs[0]])) < len(all_variables(etcs[0])):
+            warnings += "\n! etcetera literal includes variables not found elsewhere in definite clause: " + display(dc)
+        else:
+            seen_etcs.append(etcs[0][0])
+    if len(warnings) == 0:
+        return "none"
+    else:
+        return warnings
+                

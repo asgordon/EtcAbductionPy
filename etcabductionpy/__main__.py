@@ -77,6 +77,10 @@ argparser.add_argument('-e', '--evalfile',
                        nargs='?',
                        type=argparse.FileType('r'),
                        help='Calculate precision, recall, f1-measure using gold-standard literals in evalfile')
+argparser.add_argument('-p', '--parsecheck',
+                       action='store_true',
+                       help='check for problems parsing the input and knowledgebase')
+                    
 args = argparser.parse_args()
 
 
@@ -100,6 +104,13 @@ if args.evalfile:
     evalfiletext = "".join(evalfilelines)
     ignore, goldliterals = parse.definite_clauses(parse.parse(evalfiletext))
 
+# Handle parsecheck
+
+if args.parsecheck:
+    report = parse.parsecheck(obs, kb)
+    print(report, file=args.outfile)
+    sys.exit()
+    
 # Handle forward
 
 if args.forward:
