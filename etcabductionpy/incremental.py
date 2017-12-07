@@ -91,6 +91,7 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
                         pr2beat = nbestPr[0] # only if full
     nbest.reverse() # [0] is now highest
     previous = nbest
+    previous = [unify.skolemize(r) for r in previous] # skolemize the past (required)
     
     # next, interpret remaining windows in a special way
     while len(remaining) > 0:
@@ -122,7 +123,7 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
                                 pr2beat = nbestPr[0] # only if full
         nbest.reverse() # [0] is now highest
         previous = nbest
-        previous = [unify.skolemize(r) for r in previous[0:n]] # skolemize the past (required)
+        previous = [unify.skolemize(r) for r in previous] # skolemize the past (required)
     return previous[0:n]
     
 def getContext(solution, obs, kb):
@@ -136,7 +137,7 @@ def getContext(solution, obs, kb):
 # todo: Write alternative to forward.forward that quickly produces unique, none observable inferences
 
 def contextual_and_or_leaflists(remaining, indexed_kb, depth, context, antecedents = [], assumptions = []):
-    '''Returns list of all entailing sets of leafs in the and-or backchaining tree'''
+    '''Returns list of all entailing sets of leafs in the and-or backchaining tree, with belief context'''
     if depth == 0 and len(antecedents) > 0: # fail
         return [] # (empty) list of lists
     elif len(remaining) == 0: # done with this level
