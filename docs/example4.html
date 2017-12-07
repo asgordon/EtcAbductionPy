@@ -90,7 +90,7 @@ For want of a battle the kingdom was lost.<br />
 
       <pre>;; For want of a battle the kingdom was lost
 (if (and (battle_lost_to x y)
-	 (etc1_collapse 0.5 x))
+	 (etc1_collapse 0.5 x y))
     (collapse x))
 
 (if (etc0_battle_lost_to 0.001 x y) (battle_lost_to x y))
@@ -427,14 +427,14 @@ $
       <p>We should really fix the numbers in the other axioms via a similar analysis, but even with this change we have a new order in our interpretations:</p>
 
       <pre>$ python etcabductionpy/ -d 7 -i nail-collapse.lisp -a
+((etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K $3) (etc1_missing_horse 0.5 $4 S $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2) (etc1_missing_shoe 0.5 $1 S $4))
 ((etc0_collapse 0.001 K) (etc0_missing_nail 0.001 $1 S))
-((etc0_battle_lost_to 0.001 K $2) (etc0_missing_nail 0.001 $1 S) (etc1_collapse 0.5 K))
-((etc0_missing_message_about 0.001 $2 $3) (etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K))
-((etc0_missing_nail 0.001 $1 S) (etc0_missing_rider 0.001 $4 $2) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_message_about 0.5 $4 $2 $3))
-((etc0_missing_horse 0.001 $4 $5) (etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2))
-((etc0_missing_nail 0.001 $1 S) (etc0_missing_shoe 0.001 $6 $4) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_horse 0.5 $4 $6 $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2))
-((etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_horse 0.5 $4 S $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2) (etc1_missing_shoe 0.0005 $1 S $4))
-((etc0_missing_nail 0.001 $1 S) (etc0_missing_nail 0.001 $6 $7) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K) (etc1_missing_horse 0.5 $4 $7 $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2) (etc1_missing_shoe 0.0005 $6 $7 $4))
+((etc0_battle_lost_to 0.001 K $2) (etc0_missing_nail 0.001 $1 S) (etc1_collapse 0.5 K $2))
+((etc0_missing_message_about 0.001 $2 $3) (etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K $3))
+((etc0_missing_nail 0.001 $1 S) (etc0_missing_rider 0.001 $4 $2) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K $3) (etc1_missing_message_about 0.5 $4 $2 $3))
+((etc0_missing_horse 0.001 $4 $5) (etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K $3) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2))
+((etc0_missing_nail 0.001 $1 S) (etc0_missing_shoe 0.001 $6 $4) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K $3) (etc1_missing_horse 0.5 $4 $6 $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2))
+((etc0_missing_nail 0.001 $1 S) (etc0_missing_nail 0.001 $6 $7) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K $3) (etc1_missing_horse 0.5 $4 $7 $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2) (etc1_missing_shoe 0.5 $6 $7 $4))
 8 solutions.
 </pre>	
       <p>And here is the graph of the most likely interpretation.</p>

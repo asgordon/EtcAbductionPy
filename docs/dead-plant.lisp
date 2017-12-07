@@ -1,6 +1,6 @@
 ;; The observables
-;(task' E1 Me Mary E2)
-;(water' E2 Mary Plant)
+(task' E1 Me Mary E2)
+(water' E2 Mary Plant)
 (vacation' E3 Me)
 (dead' E4 Plant)
 
@@ -24,7 +24,7 @@
 ;; why didnt? forgot
 (if (and (forgot' e2 x e1)
 	 (task' e3 y x e1)
-	 (etc1_didnt 0.9 e e1 e2 e3 x y))
+	 (etc2_didnt 0.9 e e1 e2 e3 x y))
     (didnt' e x e1))
 
 ;; why couldnt? On vacation

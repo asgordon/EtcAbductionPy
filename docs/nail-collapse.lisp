@@ -12,7 +12,7 @@
 
 ;; For want of a battle the kingdom was lost
 (if (and (battle_lost_to x y)
-	 (etc1_collapse 0.5 x))
+	 (etc1_collapse 0.5 x y))
     (collapse x))
 
 (if (etc0_battle_lost_to 0.001 x y) (battle_lost_to x y))
@@ -47,7 +47,7 @@
 
 ;; For want of a nail the shoe was lost
 (if (and (missing_nail n s)
-	 (etc1_missing_shoe 0.0005 n s h))  ;; <-- or is it 0.0005?
+	 (etc1_missing_shoe 0.5 n s h))  ;; <-- or is it 0.0005?
     (missing_shoe s h))
 
 
