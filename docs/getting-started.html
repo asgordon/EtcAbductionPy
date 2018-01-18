@@ -11,7 +11,7 @@
       <p>Welcome to the world of abductive reasoning! In this tutorial, you will learn how to use software called <u>Etcetera Abduction</u>, a form of logical abduction that finds assumptions that logically entail a given set of observations, and orders them by their probability.</p>
       <p>This technology has lots of potential applications, including:</p>
       <ul>
-	<li>interpretting the intended meaning of natural language text</li>
+	<li>interpreting the intended meaning of natural language text</li>
 	<li>explaining people's observable behavior in terms of their beliefs, plans, and goals</li>
 	<li>weighing competing theories in light of the available evidence</li>
 	<li>inferring the situational context that explains the presence of objects in a visual scene</li>
@@ -24,16 +24,19 @@
 
       <h2>Installing Etcetera Abduction</h2>
 
-      <p>Unlike other programs on your computer, Etcetera Abduction does not have a graphical user interface; you have to use via a command-line interface. On an Apple Macintosh, you can use the <u>Terminal.app</u> program in the Utilities subdirectory of your Applications directory.</p>
+      <p>Unlike other programs on your computer, Etcetera Abduction does not have a graphical user interface; you have to use via a command-line interface. On an Apple Macintosh, you can use the <u>Terminal.app</u> program in the Utilities subdirectory of your Applications directory. On Windows, type "<code>cmd</code>" in the search field of the Start menu.</p>
 
-      <p>If you've never used a command-line interface before, you should start by reading an online tutorial, such as <a href="http://www.ee.surrey.ac.uk/Teaching/Unix/">this one</a>, or <a href="http://www.pgbovine.net/command-line-tutorial.htm">this one</a>, or <a href="https://learnpythonthehardway.org/book/appendixa.html">this one</a>. </p>
+      <p>If you've never used a command-line interface before, you should start by reading an online tutorial, such as <a href="http://www.ee.surrey.ac.uk/Teaching/Unix/">this one</a>, or <a href="http://www.pgbovine.net/command-line-tutorial.htm">this one</a>, or <a href="https://learnpythonthehardway.org/book/appendixa.html">this one</a>. For Windows, learn how to use the DOS prompt from a tutorial like <a href="https://www.computerhope.com/issues/chusedos.htm">this one</a>.</p>
 
-      <p>There are several different implementations of Etcetera Abduction available, but for this tutorial we are going to be using EtcAbductionPy, a reference implementation of Etcetera Abduction written in Python. To use it, you'll need Python installed on your machine. Either Python 2.7 or Python 3.4 should work fine - and one of these is likely already installed on your computer. The code is available online here:</p>
+      <p>There are several different implementations of Etcetera Abduction available, but for this tutorial we are going to be using EtcAbductionPy, a reference implementation of Etcetera Abduction written in Python. To use it, you'll need Python installed on your machine. Either Python 2.7 or Python 3.6 should work fine - and one of these is likely already installed on your computer. On Windows, you'll need to install Python directly, which you can find <a href="https://www.python.org/downloads/windows/">here</a>.</p>
+
+      <p>The code for Etcetera Abduction in Python is available online in a GitHub repository, at this address:</p>
       <ul>
 	<li><a href="https://github.com/asgordon/EtcAbductionPy">https://github.com/asgordon/EtcAbductionPy</a></li>
       </ul>
 
-      <p>If you're a GitHub expert, then just clone this repository to get started. If you're a novice, then find the "Clone or download" button on this EtcAbductionPy webpage, and then click it to see the "Download ZIP" option. Clicking this will download a .zip file with all of the code, which you can double-click to unpack, creating a folder called "EtcAbductionPy-master" that you can put on your desktop or wherever you like to keep your files.</p>
+      <p>If you're a GitHub expert, then just clone this repository to get started. If you're a novice, then find the "Clone or download" button on this EtcAbductionPy webpage, and then click it to see the "Download ZIP" option. Clicking this will download a .zip file with all of the code, which you can double-click to unpack, creating a folder called "EtcAbductionPy-master" that you can put on your desktop or wherever you like to keep your files. However, if you are confortable with <code>git</code>, then clone the repository instead to make it easier to stay current with updates. You can find <code>git</code> for Windows and other operating systems <a href="https://git-scm.com/downloads">here</a>.</p>
+      
 
       <p>Next, open up your Terminal window and navigate to the <code>EtcAbductionPy-master/</code> directory. From inside this directory, you can run the Python code directly:</p>
 
@@ -62,7 +65,17 @@ optional arguments:
   -d DEPTH, --depth DEPTH
                         Backchain to depth DEPTH, defaults to 5
   -a, --all             Generate all solutions
-  -f, --forward         Forward chain from INFILE with KB       
+  -f, --forward         Forward chain from INFILE with KB
+  -c, --incremental     Use incremental abduction
+  -v, --variables       Leave variables in solutions rather than Skolem
+                        constants
+  -w WINDOW, --window WINDOW
+                        Incremental abduction window-size, defaults to 4
+  -b BEAM, --beam BEAM  Incremental abduction beam-size, defaults to 10
+  -e [EVALFILE], --evalfile [EVALFILE]
+                        Calculate precision, recall, f1-measure using gold-
+                        standard literals in evalfile
+  -p, --parsecheck      check for problems parsing the input and knowledgebase  
 </pre>
 
       <p>Did this work? Congratulations! You've now got everything you need to start using Etcetera Abduction.</p>
@@ -71,10 +84,10 @@ optional arguments:
 
       <p>The EtcAbductionPy software takes as input some knowledge and some observations, and spits out as output a list of sets of assumptions that logically entail the observations, ordered by their probability.</p>
       <p>When working through the examples in this tutorial, you should encode the knowledge and observations together in a single text file, and provide that text file as input to the <code>etcabductionpy/</code> script.</p>
-      <p>To author these input files, you'll need to use a plain text editor, like Emacs, or Vim, or Sublime Text, or Notepadd++. On an Apple Macintosh, you could even use the "TextEdit.app" utility, but if you do, please make sure that you save as a "Plain Text" file rather than a "Rich Text" file. There is an option under the "Format" menu to "Make Plain Text" if you find that you are editing the wrong type.</p>
-      <p>Let's create a minimal input file, with the following contents, and save it inside the <code>EtcAbductionPy-master/</code> directory with the name "minimal.txt". </p>
+      <p>To author these input files, you'll need to use a plain text editor, like Emacs, or Vim, or Sublime Text, or Notepad++. On an Apple Macintosh, you could even use the "TextEdit.app" utility, but if you do, please make sure that you save as a "Plain Text" file rather than a "Rich Text" file. There is an option under the "Format" menu to "Make Plain Text" if you find that you are editing the wrong type. On Windows, you can use Notepad++.</p>
+      <p>Let's create a minimal input file, with the following contents, and save it inside the <code>EtcAbductionPy-master/</code> directory with the name "minimal.lisp". The file extension ".lisp" may allow your editing program to help you with formatting your input file, such that lines beginning with semicolons are treated as comments to be ignored, and that parentheses should be balanced. </p>
       <pre>
-;; minimal.txt
+;; minimal.lisp
 
 ;; Observable:
 (explosion E)
@@ -82,18 +95,18 @@ optional arguments:
 ;; Prior probability:
 (if (etc 0.001 x) (explosion x))
 </pre>
-      <p>All blank lines and lines that begin with a semicolon are ignored by the software, so this file only contains two items of interest: an observation and a piece of knowledge.</p>
+      <p>All blank lines and lines that begin with a semicolon are ignored by the Etcetera Abduction software, so this file only contains two items of interest: an observation and a piece of knowledge.</p>
       <p>This file has enough information in it to serve as an input to Etcetera Abduction. We can see the results by specifying it as the input using the "--input" (or just "-i") flag, as follows:</p>
-<pre>$ python etcabductionpy/ -i minimal.txt
+<pre>$ python etcabductionpy/ -i minimal.lisp
 ((etc 0.001 E))
 1 solutions.
 </pre>
-      <p>Did it work? Congratulations! You have just used Etcetera Abduction to do probability-ordered logical abduction.</p>
+      <p>Did it work? Congratulations! You have just used Etcetera Abduction to do probability-ordered logical abduction. Yes, but what did it do exactly?! Well, precisely it identified and ordered all possible explanations for the one observation that was provided, given the one peice of knowledge you've given it. This will all become more clear later.</p>
 
       <h2>Creating graphs of solutions</h2>
       <p>In the minimal example, above, Etcetera Abduction has told us that there is only one set of assumptions that logically entail the observations, and that this set has only one assumption in it, namely <code>(etc 0.001 E)</code>.</p>
       <p>Would you like to see exactly how this assumption entails the observation? EtcAbductionPy includes a nice utility that will present the proof of this entailment as a directed graph. To produce this graph, just add the "--graph" (or just "-g") flag to the command.</p>
-      <pre>$ python etcabductionpy/ -i minimal.txt -g
+      <pre>$ python etcabductionpy/ -i minimal.lisp -g
 digraph proof {
  graph [rankdir="TB"]
  n0 [label="etc 0.001"];
@@ -137,10 +150,13 @@ digraph proof {
 
       <p>If you are like me, and use an Apple Macintosh, then you can install the whole <code>graphviz</code> package, including the <code>dot</code> utility, using the HomeBrew package manager.</p>
       <pre>$ brew install graphviz</pre>
+
+      <p>If you are using Windows or don't use HomeBrew, then download the <code>graphviz</code> suite of programs from <a href="https://graphviz.gitlab.io/download/">here</a>. 
+
       <p>After that, you can pipe the output of <code>etcabductionpy/</code> to <code>dot</code>, to generate nice scalable vector graphics (svg) files, as follows:</p>
-      <pre>$ python etcabductionpy/ -i minimal.txt -g | dot -Tsvg > minimal.svg</pre>
+      <pre>$ python etcabductionpy/ -i minimal.lisp -g | dot -Tsvg > minimal.svg</pre>
       <p>I do this so often that I wrote a handy utility that generates the .svg file in a temp directory, and opens it up in the Safari browser. You can try this utility yourself by piping the graph to ./util/dot2safari as follows:</p>
-      <pre>python etcabductionpy/ -i minimal.txt -g | ./util/dot2safari </pre>
+      <pre>python etcabductionpy/ -i minimal.lisp -g | ./util/dot2safari </pre>
 
       <h2>Getting help</h2>
       <p>If you have made it this far, then you are ready to start learning how to use Etcetera Abduction to solve interpretation problems. I have prepared a few examples to work through, by way of a tutorial, which you should take a look at next.</p>
