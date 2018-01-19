@@ -42,7 +42,7 @@
 
       <pre>
 $ cd EtcAbductionPy-master/
-$ python etcabductionpy/ -h
+$ python etcabductionpy -h
 usage:  [-h] [-i [INFILE]] [-o [OUTFILE]] [-k [KB]] [-n NBEST] [-g]
         [-s SOLUTION] [-d DEPTH] [-a] [-f]
 
@@ -83,7 +83,7 @@ optional arguments:
       <h2>Authoring an input file</h2>
 
       <p>The EtcAbductionPy software takes as input some knowledge and some observations, and spits out as output a list of sets of assumptions that logically entail the observations, ordered by their probability.</p>
-      <p>When working through the examples in this tutorial, you should encode the knowledge and observations together in a single text file, and provide that text file as input to the <code>etcabductionpy/</code> script.</p>
+      <p>When working through the examples in this tutorial, you should encode the knowledge and observations together in a single text file, and provide that text file as input to the <code>etcabductionpy</code> script.</p>
       <p>To author these input files, you'll need to use a plain text editor, like Emacs, or Vim, or Sublime Text, or Notepad++. On an Apple Macintosh, you could even use the "TextEdit.app" utility, but if you do, please make sure that you save as a "Plain Text" file rather than a "Rich Text" file. There is an option under the "Format" menu to "Make Plain Text" if you find that you are editing the wrong type. On Windows, you can use Notepad++.</p>
       <p>Let's create a minimal input file, with the following contents, and save it inside the <code>EtcAbductionPy-master/</code> directory with the name "minimal.lisp". The file extension ".lisp" may allow your editing program to help you with formatting your input file, such that lines beginning with semicolons are treated as comments to be ignored, and that parentheses should be balanced. </p>
       <pre>
@@ -97,16 +97,16 @@ optional arguments:
 </pre>
       <p>All blank lines and lines that begin with a semicolon are ignored by the Etcetera Abduction software, so this file only contains two items of interest: an observation and a piece of knowledge.</p>
       <p>This file has enough information in it to serve as an input to Etcetera Abduction. We can see the results by specifying it as the input using the "--input" (or just "-i") flag, as follows:</p>
-<pre>$ python etcabductionpy/ -i minimal.lisp
+<pre>$ python etcabductionpy -i minimal.lisp
 ((etc 0.001 E))
 1 solutions.
 </pre>
-      <p>Did it work? Congratulations! You have just used Etcetera Abduction to do probability-ordered logical abduction. Yes, but what did it do exactly?! Well, precisely it identified and ordered all possible explanations for the one observation that was provided, given the one peice of knowledge you've given it. This will all become more clear later.</p>
+      <p>Did it work? Congratulations! You have just used Etcetera Abduction to do probability-ordered logical abduction. Yes, but what did it do exactly?! Well, precisely, it identified all possible sets of assumptions that would logically entail the observation given the knowledge base provided, and ordered them according to their probability. Actually, here there is only one set of assumptions that entails the observation, namely its prior probability. Confused? Don't worry, this tutorial is designed to explain it all to you step-by-step, and show you how to use this technology for amazing applications.</p>
 
       <h2>Creating graphs of solutions</h2>
       <p>In the minimal example, above, Etcetera Abduction has told us that there is only one set of assumptions that logically entail the observations, and that this set has only one assumption in it, namely <code>(etc 0.001 E)</code>.</p>
       <p>Would you like to see exactly how this assumption entails the observation? EtcAbductionPy includes a nice utility that will present the proof of this entailment as a directed graph. To produce this graph, just add the "--graph" (or just "-g") flag to the command.</p>
-      <pre>$ python etcabductionpy/ -i minimal.lisp -g
+      <pre>$ python etcabductionpy -i minimal.lisp -g
 digraph proof {
  graph [rankdir="TB"]
  n0 [label="etc 0.001"];
@@ -153,10 +153,10 @@ digraph proof {
 
       <p>If you are using Windows or don't use HomeBrew, then download the <code>graphviz</code> suite of programs from <a href="https://graphviz.gitlab.io/download/">here</a>. 
 
-      <p>After that, you can pipe the output of <code>etcabductionpy/</code> to <code>dot</code>, to generate nice scalable vector graphics (svg) files, as follows:</p>
-      <pre>$ python etcabductionpy/ -i minimal.lisp -g | dot -Tsvg > minimal.svg</pre>
+      <p>After that, you can pipe the output of <code>etcabductionpy</code> to <code>dot</code>, to generate nice scalable vector graphics (svg) files, as follows:</p>
+      <pre>$ python etcabductionpy -i minimal.lisp -g | dot -Tsvg > minimal.svg</pre>
       <p>I do this so often that I wrote a handy utility that generates the .svg file in a temp directory, and opens it up in the Safari browser. You can try this utility yourself by piping the graph to ./util/dot2safari as follows:</p>
-      <pre>python etcabductionpy/ -i minimal.lisp -g | ./util/dot2safari </pre>
+      <pre>python etcabductionpy -i minimal.lisp -g | ./util/dot2safari </pre>
 
       <h2>Getting help</h2>
       <p>If you have made it this far, then you are ready to start learning how to use Etcetera Abduction to solve interpretation problems. I have prepared a few examples to work through, by way of a tutorial, which you should take a look at next.</p>
