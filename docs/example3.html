@@ -67,9 +67,9 @@
     (round x))
 (if (and (lime x) (etc1_not_round 0.5 x)) ;; 300 / 600
     (not_round x))
-(if (and (lemon x) (etc2_round 0.075)) ;; 30 / 400
+(if (and (lemon x) (etc2_round 0.075 x)) ;; 30 / 400
     (round x))
-(if (and (lemon x) (etc2_not_round 0.925)) ;; 370 / 400
+(if (and (lemon x) (etc2_not_round 0.925 x)) ;; 370 / 400
     (not_round x))
 </pre>
       <p>Finally, we'll need to specify the observables. Let's imagine that we are staring at four different fruit, each with their own unique combination of features, as follows:</p>
