@@ -33,12 +33,12 @@ def evaluate2(solution, gold): # simpler, faster, permissive
     unifiableInSolution = 0.0
     for sliteral in solution:
         for gliteral in gold:
-            if unify.unify(sliteral, gliteral):
+            if unify.unify(sliteral, gliteral) != None:
                 unifiableInSolution += 1.0
                 break;
     for gliteral in gold:
         for sliteral in solution:
-            if unify.unify(sliteral, gliteral):
+            if unify.unify(sliteral, gliteral) != None:
                 unifiableInGold += 1.0
                 break;
 

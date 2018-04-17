@@ -53,8 +53,8 @@ def standardize(sexp):
         aliases[f] = next(standardized_universals)
     return subst(aliases, sexp)
 
-def skolemize(sexp):
-    skolem_constants = countup('$') # use skolem_constants.next() to get the next one
+def skolemize(sexp, prefix="$"): 
+    skolem_constants = countup(prefix) # use skolem_constants.next() to get the next one
     all_vars = all_variables(sexp)
     instances = {}
     for var in all_vars:

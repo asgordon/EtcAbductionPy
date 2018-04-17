@@ -63,6 +63,7 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
     # n = n-best
     # w = window size
     # b = beam of running candidate interpretations
+    iteration = 1 # count for skolem constants
     indexed_kb = abduction.index_by_consequent_predicate(kb)
     previous = [] # proofs of the previous
     remaining  = obs[:] # obs yet to be interpretated
@@ -91,10 +92,12 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
                         pr2beat = nbestPr[0] # only if full
     nbest.reverse() # [0] is now highest
     previous = nbest
-    previous = [unify.skolemize(r) for r in previous] # skolemize the past (required)
+    pre = "$" + str(iteration) + ":"
+    previous = [unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
     
     # next, interpret remaining windows in a special way
     while len(remaining) > 0:
+        iteration += 1
         window = remaining[0:w]
         remaining = remaining[w:]
         #print("window: " + str(window))
@@ -123,7 +126,8 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
                                 pr2beat = nbestPr[0] # only if full
         nbest.reverse() # [0] is now highest
         previous = nbest
-        previous = [unify.skolemize(r) for r in previous] # skolemize the past (required)
+        pre = "$" + str(iteration) + ":"
+        previous = [unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
     return previous[0:n]
     
 def getContext(solution, obs, kb):
