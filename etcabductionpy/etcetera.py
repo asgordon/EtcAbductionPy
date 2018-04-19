@@ -9,7 +9,7 @@ import itertools
 import functools
 
 def etcAbduction(obs, kb, maxdepth, skolemize = True):
-    '''Trying something faster'''
+    '''Exhuastive search for conjunctions of etctera literals that logically entail the observations'''
     indexed_kb = abduction.index_by_consequent_predicate(kb)
     res = []
     listoflists = [abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
@@ -23,6 +23,8 @@ def etcAbduction(obs, kb, maxdepth, skolemize = True):
         return res
 
 def jointProbability(etcs):
+    '''Product of probabitilies of etctera literals, and 1.0 for empty list'''
+    if len(etcs) == 0: return 1.0 # needed for incremental
     return functools.reduce(lambda x, y: x*y, [l[1] for l in etcs])
 
 def bestCaseProbability(etcs):
@@ -30,12 +32,14 @@ def bestCaseProbability(etcs):
     predicateSet = set()
     pr = 1.0
     for literal in etcs:
+        # if literal[0][0:3] != 'etc': raise ValueError('Not an etcetera literal: ' + str(literal))
         if literal[0] not in predicateSet:
             predicateSet.add(literal[0])
             pr = pr * literal[1]
     return pr
 
 def nbest(obs, kb, maxdepth, n, skolemize = True):
+    '''Returns n-best conjunctions of etcetera literals that logically entail the observations'''
     indexed_kb = abduction.index_by_consequent_predicate(kb)
     pr2beat = 0.0
     nbest = [] # solutions

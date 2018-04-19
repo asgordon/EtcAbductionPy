@@ -2,7 +2,9 @@
 # A simple parser for definite clauses in first order logic
 # Andrew S. Gordon
 
-# Todo: need to handle conjunctions of observables: (and ...
+# Todo:
+# 1. need to handle conjunctions of observables: (and ...
+# 2. need to check for early final closing parentheses
 
 from __future__ import print_function
 import argparse
@@ -121,6 +123,7 @@ def variablize(sexp):
         return res
 
 def display(sexp):
+    '''Convert a sexp into a string'''
     if isinstance(sexp, list):
         return "(" + " ".join([display(s) for s in sexp]) + ")"
     else:
@@ -128,6 +131,7 @@ def display(sexp):
 
 
 def parsecheck(obs, kb):
+    '''Utility for ensuring that knowledge base axioms are well formulated'''
     res = "--parsecheck report\n"
     res += str(len(obs)) + " observations, " + str(len(kb)) + " knowledge base axioms\n"
     res += "arity warnings: " + arity_warnings(obs, kb) + "\n"

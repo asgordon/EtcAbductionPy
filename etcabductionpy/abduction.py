@@ -58,11 +58,12 @@ def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions
                                       unify.subst(theta, assumptions)]) # new assumptions with substitutions
             return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
 
-def crunch(conjunction): 
+def crunch(conjunction):
+    '''Returns all possible ways that literals in a conjunction could be unified'''
     return [k for k,v in itertools.groupby(sorted(cruncher(conjunction, 0)))] # dedupe solutions
 
 def cruncher(conjunction, idx = 0):
-    if idx == len(conjunction) - 1: # last one
+    if idx >= len(conjunction) - 1: # last one
         return [[k for k,v in itertools.groupby(sorted(conjunction))]] # dedupe literals in solution
     else:
         res = []

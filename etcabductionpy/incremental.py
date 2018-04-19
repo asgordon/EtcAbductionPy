@@ -1,3 +1,7 @@
+# incremental.py
+# Incremental version of Etcetera Abduction
+# Andrew S. Gordon
+
 import unify
 import abduction
 import bisect

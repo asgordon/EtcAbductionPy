@@ -34,6 +34,10 @@ h2 {font-family: sans-serif;
     margin: 60px auto 60px auto;
 }
 
+.menu {
+    float: right;
+}
+
 pre {
     font-size: 14px;
 
@@ -68,3 +72,4 @@ th {
 dt {
     font-weight: bold;
 }
+

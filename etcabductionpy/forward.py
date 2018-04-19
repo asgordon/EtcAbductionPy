@@ -67,4 +67,6 @@ def nodelabel(expression):
     else:
         return str(expression)
                                            
-# todo: When do we need to standardize variables?
+# todo:
+# 1. When do we need to standardize variables?
+# 2. Handle universal variables in the observations
