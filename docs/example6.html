@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <a href="index.html" class="menu">home</a>
+      <h1>Example 6: Man Bites Dog</h1>
+      <span class="date">April 21, 2018</span>
+      <p>Imagine that you open up your neighborhood newsletter and read the following headline:</p>
+      <blockquote><i>Man Bites Dog!</i></blockquote>
+      <p>You do a double-take. That can't be right. Surely, they meant to write "Dog bites man." Was this an editorial failure?</p>
+      <p>Your mental anguish over this headline stems from a conflict between syntax and semantics. Or put another way, the <u>order</u> of these three words is promoting an interpretation that is different than the one you would favor if these words were <u>unordered</u>. That is probably a good way to think about syntax, in general: our linguistic capacity for organizing words into syntactic structures based on their order serves to promote some interpretations of the words over others.</p>
+      <p>In the examples on this page, we are going to use Etcetera Abduction to interpret the meaning of natural language words, first by <u>ignoring their order</u>. We'll see that syntax is superfluous in some  cases, and that it is entirely possible to construct structured representations of the meaning of sentences by ignoring syntax altogether - but sometimes we'll get it wrong, as in the simple example "Man Bites Dog."</p>
+      <p>To begin, we need some way to represent an <u>unordered</u> set of words as our "observables." One way to do this is to have each word be its own literal, each represented as a predicate with no arguments. Technically, would call this a "propositional logic" representation.</p>
+
+<pre>;; the observables
+
+(man)
+(bites)
+(dog)</pre>
+
+      <p>The important thing to note here is that the input observations in our interpretation problem is the set of words in the sentences. In Etcetera Abduction, we are searching for the most probable set of assumptions that logically entail the observations. So we're looking for the most probable set of assumptions that logically entail these words. The interpretation of this sentence, then, is a set of assumptions. The "meaning" of the sentence explains why these words are observed.</p>
+
+      <p>For this particular trio of words, there are a variety of interpretations that account for their cooccurence. At least one of them, however, posits some "biting" event, where some man and some dog are both participants. To encode this meaning, we'll need first-order logic. Indeed the concepts of biting, man, and dog are <u>different</u> literals than the ones we have articulated as observations. The words can be represented as zero-argument propositions, but the concepts that explain them are going to be relational.</p>
+      <p>Here I provide the core concepts that explain the words - namely a man, a dog, and a biting event - each encoded using eventuality notation.</p>
+      
+<pre>;; why word bites? maybe bite'
+
+(if (and (bite' e x y)
+	 (etc1_word_bites 0.1 e x y))
+    (bites))
+
+;; why bites'? why not!
+
+(if (etc0_bites 0.1 e x y) (bite' e x y))
+
+;; why word man? may be a man
+
+(if (and (man' e x)
+	 (etc1_word_man 0.1 e x))
+    (man))
+
+;; why man'? why not!
+
+(if (etc0_man 0.1 e x) (man' e x))
+
+;; why word dog? maybe a dog
+
+(if (and (dog' e x)
+	 (etc1_word_dog 0.1 e x))
+    (dog))
+
+;; why dog'? why not! 
+
+(if (etc0_dog 0.1 e x) (dog' e x))
+</pre>
+
+      <p>With these six axioms in place, we get the beginning of a structured representation of three propositional observations:</p>
+
+      <svg width="540pt" 
+ viewBox="0.00 0.00 859.57 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-192 855.5702,-192 855.5702,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node">
+<title>n0</title>
+<ellipse fill="none" stroke="#000000" cx="59.2252" cy="-170" rx="59.4512" ry="18"/>
+<text text-anchor="middle" x="59.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_bites 0.1</text>
+</g>
+<!-- n6 -->
+<g id="node7" class="node">
+<title>n6</title>
+<polygon fill="none" stroke="#000000" points="110.0656,-116 8.3848,-116 8.3848,-80 110.0656,-80 110.0656,-116"/>
+<text text-anchor="middle" x="59.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bite&#39; $4 $5 $3)</text>
+</g>
+<!-- n0&#45;&gt;n6 -->
+<g id="edge1" class="edge">
+<title>n0&#45;&gt;n6</title>
+<path fill="none" stroke="#000000" d="M59.2252,-151.8314C59.2252,-144.131 59.2252,-134.9743 59.2252,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="62.7253,-126.4132 59.2252,-116.4133 55.7253,-126.4133 62.7253,-126.4132"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node">
+<title>n1</title>
+<ellipse fill="none" stroke="#000000" cx="351.2252" cy="-170" rx="55.5768" ry="18"/>
+<text text-anchor="middle" x="351.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_dog 0.1</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node">
+<title>n7</title>
+<polygon fill="none" stroke="#000000" points="393.072,-116 309.3784,-116 309.3784,-80 393.072,-80 393.072,-116"/>
+<text text-anchor="middle" x="351.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog&#39; $2 $1)</text>
+</g>
+<!-- n1&#45;&gt;n7 -->
+<g id="edge2" class="edge">
+<title>n1&#45;&gt;n7</title>
+<path fill="none" stroke="#000000" d="M351.2252,-151.8314C351.2252,-144.131 351.2252,-134.9743 351.2252,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="354.7253,-126.4132 351.2252,-116.4133 347.7253,-126.4133 354.7253,-126.4132"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node">
+<title>n2</title>
+<ellipse fill="none" stroke="#000000" cx="629.2252" cy="-170" rx="57.9979" ry="18"/>
+<text text-anchor="middle" x="629.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_man 0.1</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node">
+<title>n8</title>
+<polygon fill="none" stroke="#000000" points="672.6754,-116 585.775,-116 585.775,-80 672.6754,-80 672.6754,-116"/>
+<text text-anchor="middle" x="629.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man&#39; $6 $7)</text>
+</g>
+<!-- n2&#45;&gt;n8 -->
+<g id="edge3" class="edge">
+<title>n2&#45;&gt;n8</title>
+<path fill="none" stroke="#000000" d="M629.2252,-151.8314C629.2252,-144.131 629.2252,-134.9743 629.2252,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="632.7253,-126.4132 629.2252,-116.4133 625.7253,-126.4133 632.7253,-126.4132"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node">
+<title>n3</title>
+<ellipse fill="none" stroke="#000000" cx="209.2252" cy="-98" rx="81.644" ry="18"/>
+<text text-anchor="middle" x="209.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_bites 0.1</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node">
+<title>n9</title>
+<polygon fill="none" stroke="#000000" points="161.2252,-40 107.2252,-40 107.2252,-4 161.2252,-4 161.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="165.2252,-44 103.2252,-44 103.2252,0 165.2252,0 165.2252,-44"/>
+<text text-anchor="middle" x="134.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bites)</text>
+</g>
+<!-- n3&#45;&gt;n9 -->
+<g id="edge4" class="edge">
+<title>n3&#45;&gt;n9</title>
+<path fill="none" stroke="#000000" d="M191.8302,-80.373C183.3473,-71.7771 172.9157,-61.2064 163.2712,-51.4333"/>
+<polygon fill="#000000" stroke="#000000" points="165.61,-48.8204 156.0947,-44.1611 160.6276,-53.7373 165.61,-48.8204"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node">
+<title>n4</title>
+<ellipse fill="none" stroke="#000000" cx="489.2252" cy="-98" rx="78.2694" ry="18"/>
+<text text-anchor="middle" x="489.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_dog 0.1</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node">
+<title>n10</title>
+<polygon fill="none" stroke="#000000" points="447.2252,-40 393.2252,-40 393.2252,-4 447.2252,-4 447.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="451.2252,-44 389.2252,-44 389.2252,0 451.2252,0 451.2252,-44"/>
+<text text-anchor="middle" x="420.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog)</text>
+</g>
+<!-- n4&#45;&gt;n10 -->
+<g id="edge6" class="edge">
+<title>n4&#45;&gt;n10</title>
+<path fill="none" stroke="#000000" d="M473.2218,-80.373C465.4941,-71.8614 456.0085,-61.4135 447.2087,-51.721"/>
+<polygon fill="#000000" stroke="#000000" points="449.6584,-49.2123 440.3451,-44.1611 444.4757,-53.9176 449.6584,-49.2123"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node">
+<title>n5</title>
+<ellipse fill="none" stroke="#000000" cx="771.2252" cy="-98" rx="80.1903" ry="18"/>
+<text text-anchor="middle" x="771.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_man 0.1</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node">
+<title>n11</title>
+<polygon fill="none" stroke="#000000" points="727.2252,-40 673.2252,-40 673.2252,-4 727.2252,-4 727.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="731.2252,-44 669.2252,-44 669.2252,0 731.2252,0 731.2252,-44"/>
+<text text-anchor="middle" x="700.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man)</text>
+</g>
+<!-- n5&#45;&gt;n11 -->
+<g id="edge8" class="edge">
+<title>n5&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M754.7579,-80.373C746.8062,-71.8614 737.0457,-61.4135 727.9908,-51.721"/>
+<polygon fill="#000000" stroke="#000000" points="730.3125,-49.0791 720.9283,-44.1611 725.1974,-53.8578 730.3125,-49.0791"/>
+</g>
+<!-- n6&#45;&gt;n9 -->
+<g id="edge5" class="edge">
+<title>n6&#45;&gt;n9</title>
+<path fill="none" stroke="#000000" d="M76.9991,-79.9891C85.4217,-71.4542 95.7002,-61.0387 105.2103,-51.4018"/>
+<polygon fill="#000000" stroke="#000000" points="107.7566,-53.8044 112.2895,-44.2282 102.7741,-48.8875 107.7566,-53.8044"/>
+</g>
+<!-- n7&#45;&gt;n10 -->
+<g id="edge7" class="edge">
+<title>n7&#45;&gt;n10</title>
+<path fill="none" stroke="#000000" d="M367.5772,-79.9891C375.25,-71.5379 384.5969,-61.2428 393.2739,-51.6855"/>
+<polygon fill="#000000" stroke="#000000" points="395.9137,-53.9847 400.0443,-44.2282 390.7311,-49.2794 395.9137,-53.9847"/>
+</g>
+<!-- n8&#45;&gt;n11 -->
+<g id="edge9" class="edge">
+<title>n8&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M646.0512,-79.9891C653.9464,-71.5379 663.5642,-61.2428 672.4927,-51.6855"/>
+<polygon fill="#000000" stroke="#000000" points="675.1903,-53.9249 679.4594,-44.2282 670.0751,-49.1463 675.1903,-53.9249"/>
+</g>
+</g>
+</svg>
+
+      <p>So far we have three new eventualities ($4, $2, and $6), one agent of biting ($5), one patient of biting ($3), one dog ($1), and one man ($7). What we would rather have is a more parsimonious interpretation, where the entity doing the biting is either the dog ($5 is equal to either $1 or $7), with  the thing bitten being the other one. Facilitating these unifications will be the central goal of the axioms we write next, so that the best interpretation is a fully-connected graph.</p>
+
+      <p>For our first attempt, let's add some commonsense knowledge about dogs and men. One of the big fears of many dog owners is that their dog might bite someone. It's one of the things dogs occasionally do, and is the reason that people want to see dogs on short leashes. The following three axioms encode this bit of commonsense knowledge.</p>
+
+      <pre>;; why a dog? maybe a dog biting a person
+
+(if (and (person' e1 a)
+	 (bite' e2 d a)
+	 (etc1_dog 0.2 e e1 e2 d a))
+    (dog' e d))
+
+;; why person? why not!
+
+(if (etc0_person 0.1 e x) (person' e x))
+
+;; why person? maybe a man
+
+(if (and (man' e1 x)
+	 (etc1_person 1.0 e e1 x))
+    (person' e x))
+</pre>
+
+      <p>It is the first of these three axioms that encodes the core bit of commonsense knowledge: When a person gets bitten, its possible that there was a dog to blame. Or put another way, when you observe a dog, it might be that it might be engaged in some person-biting. The second axiom gives a prior for persons. The third axiom is somewhat interesting, though. It states that whenever you have a man, then that man is always a person (probability of 1.0). This axioms is encoding a simple bit of taxonomic knowledge. When forward-chaining on this axiom, we ascend the taxonomy: a man is a type of person. When backward-chaining on this axiom, we are descending this same taxonomy: if its a person, it might be a man.</p>
+
+      <p>With these three axioms in place, we have a new most-probable interpretation, where we envision some dog ($6) and some man ($4), where it is the dog that is biting the man.</p>
+
+<svg width="540pt"
+ viewBox="0.00 0.00 692.97 340.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 336)">
+<title>proof</title>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-336 688.9736,-336 688.9736,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node">
+<title>n0</title>
+<ellipse fill="none" stroke="#000000" cx="59.2252" cy="-242" rx="59.4512" ry="18"/>
+<text text-anchor="middle" x="59.2252" y="-237.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_bites 0.1</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node">
+<title>n7</title>
+<polygon fill="none" stroke="#000000" points="110.0656,-188 8.3848,-188 8.3848,-152 110.0656,-152 110.0656,-188"/>
+<text text-anchor="middle" x="59.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bite&#39; $5 $6 $4)</text>
+</g>
+<!-- n0&#45;&gt;n7 -->
+<g id="edge1" class="edge">
+<title>n0&#45;&gt;n7</title>
+<path fill="none" stroke="#000000" d="M59.2252,-223.8314C59.2252,-216.131 59.2252,-206.9743 59.2252,-198.4166"/>
+<polygon fill="#000000" stroke="#000000" points="62.7253,-198.4132 59.2252,-188.4133 55.7253,-198.4133 62.7253,-198.4132"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node">
+<title>n1</title>
+<ellipse fill="none" stroke="#000000" cx="627.2252" cy="-314" rx="57.9979" ry="18"/>
+<text text-anchor="middle" x="627.2252" y="-309.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_man 0.1</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node">
+<title>n8</title>
+<polygon fill="none" stroke="#000000" points="670.6754,-260 583.775,-260 583.775,-224 670.6754,-224 670.6754,-260"/>
+<text text-anchor="middle" x="627.2252" y="-237.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man&#39; $1 $4)</text>
+</g>
+<!-- n1&#45;&gt;n8 -->
+<g id="edge2" class="edge">
+<title>n1&#45;&gt;n8</title>
+<path fill="none" stroke="#000000" d="M627.2252,-295.8314C627.2252,-288.131 627.2252,-278.9743 627.2252,-270.4166"/>
+<polygon fill="#000000" stroke="#000000" points="630.7253,-270.4132 627.2252,-260.4133 623.7253,-270.4133 630.7253,-270.4132"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node">
+<title>n2</title>
+<ellipse fill="none" stroke="#000000" cx="247.2252" cy="-170" rx="55.5768" ry="18"/>
+<text text-anchor="middle" x="247.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_dog 0.2</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node">
+<title>n12</title>
+<polygon fill="none" stroke="#000000" points="289.072,-116 205.3784,-116 205.3784,-80 289.072,-80 289.072,-116"/>
+<text text-anchor="middle" x="247.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog&#39; $2 $6)</text>
+</g>
+<!-- n2&#45;&gt;n12 -->
+<g id="edge9" class="edge">
+<title>n2&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M247.2252,-151.8314C247.2252,-144.131 247.2252,-134.9743 247.2252,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="250.7253,-126.4132 247.2252,-116.4133 243.7253,-126.4133 250.7253,-126.4132"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node">
+<title>n3</title>
+<ellipse fill="none" stroke="#000000" cx="414.2252" cy="-242" rx="66.1994" ry="18"/>
+<text text-anchor="middle" x="414.2252" y="-237.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_person 1.0</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node">
+<title>n10</title>
+<polygon fill="none" stroke="#000000" points="464.3962,-188 364.0541,-188 364.0541,-152 464.3962,-152 464.3962,-188"/>
+<text text-anchor="middle" x="414.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">(person&#39; $3 $4)</text>
+</g>
+<!-- n3&#45;&gt;n10 -->
+<g id="edge5" class="edge">
+<title>n3&#45;&gt;n10</title>
+<path fill="none" stroke="#000000" d="M414.2252,-223.8314C414.2252,-216.131 414.2252,-206.9743 414.2252,-198.4166"/>
+<polygon fill="#000000" stroke="#000000" points="417.7253,-198.4132 414.2252,-188.4133 410.7253,-198.4133 417.7253,-198.4132"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node">
+<title>n4</title>
+<ellipse fill="none" stroke="#000000" cx="105.2252" cy="-98" rx="81.644" ry="18"/>
+<text text-anchor="middle" x="105.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_bites 0.1</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node">
+<title>n9</title>
+<polygon fill="none" stroke="#000000" points="77.2252,-40 23.2252,-40 23.2252,-4 77.2252,-4 77.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="81.2252,-44 19.2252,-44 19.2252,0 81.2252,0 81.2252,-44"/>
+<text text-anchor="middle" x="50.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bites)</text>
+</g>
+<!-- n4&#45;&gt;n9 -->
+<g id="edge3" class="edge">
+<title>n4&#45;&gt;n9</title>
+<path fill="none" stroke="#000000" d="M92.191,-79.9891C86.2567,-71.7889 79.066,-61.8527 72.3258,-52.539"/>
+<polygon fill="#000000" stroke="#000000" points="75.0095,-50.2774 66.3114,-44.2282 69.3387,-54.3814 75.0095,-50.2774"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node">
+<title>n5</title>
+<ellipse fill="none" stroke="#000000" cx="385.2252" cy="-98" rx="78.2694" ry="18"/>
+<text text-anchor="middle" x="385.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_dog 0.1</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node">
+<title>n13</title>
+<polygon fill="none" stroke="#000000" points="343.2252,-40 289.2252,-40 289.2252,-4 343.2252,-4 343.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="347.2252,-44 285.2252,-44 285.2252,0 347.2252,0 347.2252,-44"/>
+<text text-anchor="middle" x="316.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog)</text>
+</g>
+<!-- n5&#45;&gt;n13 -->
+<g id="edge12" class="edge">
+<title>n5&#45;&gt;n13</title>
+<path fill="none" stroke="#000000" d="M369.2218,-80.373C361.4941,-71.8614 352.0085,-61.4135 343.2087,-51.721"/>
+<polygon fill="#000000" stroke="#000000" points="345.6584,-49.2123 336.3451,-44.1611 340.4757,-53.9176 345.6584,-49.2123"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node">
+<title>n6</title>
+<ellipse fill="none" stroke="#000000" cx="562.2252" cy="-98" rx="80.1903" ry="18"/>
+<text text-anchor="middle" x="562.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_man 0.1</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node">
+<title>n11</title>
+<polygon fill="none" stroke="#000000" points="643.2252,-40 589.2252,-40 589.2252,-4 643.2252,-4 643.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="647.2252,-44 585.2252,-44 585.2252,0 647.2252,0 647.2252,-44"/>
+<text text-anchor="middle" x="616.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man)</text>
+</g>
+<!-- n6&#45;&gt;n11 -->
+<g id="edge7" class="edge">
+<title>n6&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M575.0224,-79.9891C580.8488,-71.7889 587.9088,-61.8527 594.5264,-52.539"/>
+<polygon fill="#000000" stroke="#000000" points="597.4925,-54.4073 600.4315,-44.2282 591.7862,-50.3528 597.4925,-54.4073"/>
+</g>
+<!-- n7&#45;&gt;n9 -->
+<g id="edge4" class="edge">
+<title>n7&#45;&gt;n9</title>
+<path fill="none" stroke="#000000" d="M38.3674,-151.6461C29.0712,-142.0709 19.1274,-129.54 14.2252,-116 8.7784,-100.9557 9.8382,-95.3868 14.2252,-80 16.9505,-70.4415 21.7539,-60.9209 26.9812,-52.4393"/>
+<polygon fill="#000000" stroke="#000000" points="29.9477,-54.2983 32.5129,-44.0187 24.0971,-50.4549 29.9477,-54.2983"/>
+</g>
+<!-- n7&#45;&gt;n12 -->
+<g id="edge10" class="edge">
+<title>n7&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M106.6655,-151.8314C133.8133,-141.4343 167.8927,-128.3827 195.6956,-117.7347"/>
+<polygon fill="#000000" stroke="#000000" points="197.1596,-120.922 205.2464,-114.077 194.656,-114.385 197.1596,-120.922"/>
+</g>
+<!-- n8&#45;&gt;n10 -->
+<g id="edge6" class="edge">
+<title>n8&#45;&gt;n10</title>
+<path fill="none" stroke="#000000" d="M583.6075,-227.256C552.0121,-216.5759 508.9128,-202.0071 474.0972,-190.2384"/>
+<polygon fill="#000000" stroke="#000000" points="475.1078,-186.8855 464.5135,-186.9989 472.8661,-193.5169 475.1078,-186.8855"/>
+</g>
+<!-- n8&#45;&gt;n11 -->
+<g id="edge8" class="edge">
+<title>n8&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M634.808,-223.7143C646.3109,-193.3801 665.4061,-130.9467 651.2252,-80 648.6081,-70.5978 644.01,-61.1967 638.9902,-52.7839"/>
+<polygon fill="#000000" stroke="#000000" points="641.7763,-50.6431 633.4514,-44.0897 635.8725,-54.4042 641.7763,-50.6431"/>
+</g>
+<!-- n10&#45;&gt;n12 -->
+<g id="edge11" class="edge">
+<title>n10&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M372.084,-151.8314C349.7488,-142.2018 322.1316,-130.295 298.5542,-120.1299"/>
+<polygon fill="#000000" stroke="#000000" points="299.6319,-116.7831 289.0633,-116.038 296.8605,-123.2112 299.6319,-116.7831"/>
+</g>
+<!-- n12&#45;&gt;n13 -->
+<g id="edge13" class="edge">
+<title>n12&#45;&gt;n13</title>
+<path fill="none" stroke="#000000" d="M263.5772,-79.9891C271.25,-71.5379 280.5969,-61.2428 289.2739,-51.6855"/>
+<polygon fill="#000000" stroke="#000000" points="291.9137,-53.9847 296.0443,-44.2282 286.7311,-49.2794 291.9137,-53.9847"/>
+</g>
+</g>
+</svg>
+
+      <p>Not bad. We successfully constructed a structured first-order representation that captures the meaning of a sentence of three (unordered) words. </p>
+      <p>Back in the 1970s and 1980s, there were a number of natural lanugage processing researchers who thought that syntax (derived from word order) was over-rated as a focus of research effort, and that natural language understanding was better approached as a commonsense reasoning problem. The example above provides at least one approach toward deep interpretation without using syntax. You might apply the same approach to understand stories that have no syntax whatsoever, like: <i>"Driving. Night. Raining. Curve. Crash. Coma."</i> Also, this approach seems useful in understanding nonstandard grammatical constructions, e.g., coercing a non-transitive verb into a transitive one, as in <i>"The dog barked the cat up the tree."</i></p>
+
+      <p>Of course the main problem here is that we got the wrong interpretation! The headline was <i>"Man Bites Dog!"</i> Reading this headline does indeed conjure up some vision of some man and some dog, but it is the man that is doing the biting, not the dog. How do we get the right interpretation?</p>
+      
+      <p>The second thing we can try is to simply provide more commonsense knowledge. Just like we know that dogs are prone to biting people, we know that people are prone to biting food. Indeed, people bite into food around three meals a day. If we can envision the dog as a type of food, then we can get the right interpretation. Here are three axioms that get the job done:</p>
+
+      <pre>;; why man'? Maybe eating food
+
+(if (and (food' e1 y)
+	 (bite' e2 x y)
+	 (etc1_man 0.2 e e1 e2 x y))
+    (man' e x))
+
+;; why food? why not!
+
+(if (etc0_food 0.1 e x) (food' e x))
+
+;; why food? maybe a dog
+
+(if (and (dog' e1 x)
+	 (etc2_dog 0.9 e e1 x))
+    (food' e x))
+</pre>
+
+      <p>Adding these axioms opens up some new interpretations of our three words. Still, the "correct" interpretation that we sought is only #2 in the list of most probable. We use the "--solution" (or "-s") flag when we want to graph solutions further down the list, as follows:
+
+	<pre>&gt; python etcabductionpy -i man-bites-dog-v1.lisp -g -s 2</pre>
+
+<svg width="540pt"
+ viewBox="0.00 0.00 689.01 340.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 336)">
+<title>proof</title>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-336 685.0132,-336 685.0132,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node">
+<title>n0</title>
+<ellipse fill="none" stroke="#000000" cx="59.2252" cy="-242" rx="59.4512" ry="18"/>
+<text text-anchor="middle" x="59.2252" y="-237.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_bites 0.1</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node">
+<title>n7</title>
+<polygon fill="none" stroke="#000000" points="110.0656,-188 8.3848,-188 8.3848,-152 110.0656,-152 110.0656,-188"/>
+<text text-anchor="middle" x="59.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bite&#39; $5 $6 $4)</text>
+</g>
+<!-- n0&#45;&gt;n7 -->
+<g id="edge1" class="edge">
+<title>n0&#45;&gt;n7</title>
+<path fill="none" stroke="#000000" d="M59.2252,-223.8314C59.2252,-216.131 59.2252,-206.9743 59.2252,-198.4166"/>
+<polygon fill="#000000" stroke="#000000" points="62.7253,-198.4132 59.2252,-188.4133 55.7253,-198.4133 62.7253,-198.4132"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node">
+<title>n1</title>
+<ellipse fill="none" stroke="#000000" cx="625.2252" cy="-314" rx="55.5768" ry="18"/>
+<text text-anchor="middle" x="625.2252" y="-309.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_dog 0.1</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node">
+<title>n8</title>
+<polygon fill="none" stroke="#000000" points="667.072,-260 583.3784,-260 583.3784,-224 667.072,-224 667.072,-260"/>
+<text text-anchor="middle" x="625.2252" y="-237.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog&#39; $3 $4)</text>
+</g>
+<!-- n1&#45;&gt;n8 -->
+<g id="edge2" class="edge">
+<title>n1&#45;&gt;n8</title>
+<path fill="none" stroke="#000000" d="M625.2252,-295.8314C625.2252,-288.131 625.2252,-278.9743 625.2252,-270.4166"/>
+<polygon fill="#000000" stroke="#000000" points="628.7253,-270.4132 625.2252,-260.4133 621.7253,-270.4133 628.7253,-270.4132"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node">
+<title>n2</title>
+<ellipse fill="none" stroke="#000000" cx="248.2252" cy="-170" rx="57.9979" ry="18"/>
+<text text-anchor="middle" x="248.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_man 0.2</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node">
+<title>n12</title>
+<polygon fill="none" stroke="#000000" points="291.6754,-116 204.775,-116 204.775,-80 291.6754,-80 291.6754,-116"/>
+<text text-anchor="middle" x="248.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man&#39; $1 $6)</text>
+</g>
+<!-- n2&#45;&gt;n12 -->
+<g id="edge9" class="edge">
+<title>n2&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M248.2252,-151.8314C248.2252,-144.131 248.2252,-134.9743 248.2252,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="251.7253,-126.4132 248.2252,-116.4133 244.7253,-126.4133 251.7253,-126.4132"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node">
+<title>n3</title>
+<ellipse fill="none" stroke="#000000" cx="105.2252" cy="-98" rx="81.644" ry="18"/>
+<text text-anchor="middle" x="105.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_bites 0.1</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node">
+<title>n9</title>
+<polygon fill="none" stroke="#000000" points="77.2252,-40 23.2252,-40 23.2252,-4 77.2252,-4 77.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="81.2252,-44 19.2252,-44 19.2252,0 81.2252,0 81.2252,-44"/>
+<text text-anchor="middle" x="50.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bites)</text>
+</g>
+<!-- n3&#45;&gt;n9 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n9</title>
+<path fill="none" stroke="#000000" d="M92.191,-79.9891C86.2567,-71.7889 79.066,-61.8527 72.3258,-52.539"/>
+<polygon fill="#000000" stroke="#000000" points="75.0095,-50.2774 66.3114,-44.2282 69.3387,-54.3814 75.0095,-50.2774"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node">
+<title>n4</title>
+<ellipse fill="none" stroke="#000000" cx="567.2252" cy="-98" rx="78.2694" ry="18"/>
+<text text-anchor="middle" x="567.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_dog 0.1</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node">
+<title>n10</title>
+<polygon fill="none" stroke="#000000" points="647.2252,-40 593.2252,-40 593.2252,-4 647.2252,-4 647.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="651.2252,-44 589.2252,-44 589.2252,0 651.2252,0 651.2252,-44"/>
+<text text-anchor="middle" x="620.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog)</text>
+</g>
+<!-- n4&#45;&gt;n10 -->
+<g id="edge5" class="edge">
+<title>n4&#45;&gt;n10</title>
+<path fill="none" stroke="#000000" d="M579.7855,-79.9891C585.504,-71.7889 592.4332,-61.8527 598.9283,-52.539"/>
+<polygon fill="#000000" stroke="#000000" points="601.8746,-54.4327 604.7239,-44.2282 596.1329,-50.4286 601.8746,-54.4327"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node">
+<title>n5</title>
+<ellipse fill="none" stroke="#000000" cx="390.2252" cy="-98" rx="80.1903" ry="18"/>
+<text text-anchor="middle" x="390.2252" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_man 0.1</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node">
+<title>n13</title>
+<polygon fill="none" stroke="#000000" points="346.2252,-40 292.2252,-40 292.2252,-4 346.2252,-4 346.2252,-40"/>
+<polygon fill="none" stroke="#000000" points="350.2252,-44 288.2252,-44 288.2252,0 350.2252,0 350.2252,-44"/>
+<text text-anchor="middle" x="319.2252" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man)</text>
+</g>
+<!-- n5&#45;&gt;n13 -->
+<g id="edge12" class="edge">
+<title>n5&#45;&gt;n13</title>
+<path fill="none" stroke="#000000" d="M373.7579,-80.373C365.8062,-71.8614 356.0457,-61.4135 346.9908,-51.721"/>
+<polygon fill="#000000" stroke="#000000" points="349.3125,-49.0791 339.9283,-44.1611 344.1974,-53.8578 349.3125,-49.0791"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node">
+<title>n6</title>
+<ellipse fill="none" stroke="#000000" cx="415.2252" cy="-242" rx="55.5768" ry="18"/>
+<text text-anchor="middle" x="415.2252" y="-237.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc2_dog 0.9</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node">
+<title>n11</title>
+<polygon fill="none" stroke="#000000" points="459.2353,-188 371.215,-188 371.215,-152 459.2353,-152 459.2353,-188"/>
+<text text-anchor="middle" x="415.2252" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">(food&#39; $2 $4)</text>
+</g>
+<!-- n6&#45;&gt;n11 -->
+<g id="edge7" class="edge">
+<title>n6&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M415.2252,-223.8314C415.2252,-216.131 415.2252,-206.9743 415.2252,-198.4166"/>
+<polygon fill="#000000" stroke="#000000" points="418.7253,-198.4132 415.2252,-188.4133 411.7253,-198.4133 418.7253,-198.4132"/>
+</g>
+<!-- n7&#45;&gt;n9 -->
+<g id="edge4" class="edge">
+<title>n7&#45;&gt;n9</title>
+<path fill="none" stroke="#000000" d="M38.3674,-151.6461C29.0712,-142.0709 19.1274,-129.54 14.2252,-116 8.7784,-100.9557 9.8382,-95.3868 14.2252,-80 16.9505,-70.4415 21.7539,-60.9209 26.9812,-52.4393"/>
+<polygon fill="#000000" stroke="#000000" points="29.9477,-54.2983 32.5129,-44.0187 24.0971,-50.4549 29.9477,-54.2983"/>
+</g>
+<!-- n7&#45;&gt;n12 -->
+<g id="edge10" class="edge">
+<title>n7&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M106.9179,-151.8314C133.8187,-141.5834 167.4898,-128.7564 195.2155,-118.1942"/>
+<polygon fill="#000000" stroke="#000000" points="196.6547,-121.3913 204.7536,-114.5606 194.1627,-114.8499 196.6547,-121.3913"/>
+</g>
+<!-- n8&#45;&gt;n10 -->
+<g id="edge6" class="edge">
+<title>n8&#45;&gt;n10</title>
+<path fill="none" stroke="#000000" d="M633.6676,-223.7907C646.5312,-193.5665 668.1497,-131.2874 654.2252,-80 651.6873,-70.6524 647.2222,-61.2705 642.3458,-52.8587"/>
+<polygon fill="#000000" stroke="#000000" points="645.202,-50.8227 636.9649,-44.1593 639.2488,-54.5051 645.202,-50.8227"/>
+</g>
+<!-- n8&#45;&gt;n11 -->
+<g id="edge8" class="edge">
+<title>n8&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M583.2333,-227.6028C550.4109,-216.3494 504.5537,-200.6269 469.0393,-188.4505"/>
+<polygon fill="#000000" stroke="#000000" points="469.9107,-185.0494 459.3161,-185.1169 467.6404,-191.671 469.9107,-185.0494"/>
+</g>
+<!-- n11&#45;&gt;n12 -->
+<g id="edge11" class="edge">
+<title>n11&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M373.084,-151.8314C350.7488,-142.2018 323.1316,-130.295 299.5542,-120.1299"/>
+<polygon fill="#000000" stroke="#000000" points="300.6319,-116.7831 290.0633,-116.038 297.8605,-123.2112 300.6319,-116.7831"/>
+</g>
+<!-- n12&#45;&gt;n13 -->
+<g id="edge13" class="edge">
+<title>n12&#45;&gt;n13</title>
+<path fill="none" stroke="#000000" d="M265.0512,-79.9891C272.9464,-71.5379 282.5642,-61.2428 291.4927,-51.6855"/>
+<polygon fill="#000000" stroke="#000000" points="294.1903,-53.9249 298.4594,-44.2282 289.0751,-49.1463 294.1903,-53.9249"/>
+</g>
+</g>
+</svg>
+
+	
+      
+      <p>It is not a totally outlandish idea; there are certainly some countries in the world where dogs are eaten as a type of food. Still, the likelihood that a given dog is food is probably not 90 percent, as we stated in our axiom, above. The whole approach seems somewhat wonky, though. There must be an easier way to have the man be the agent of the bite event.</p>
+
+      <h2>Version 2: The sequence "man bites dog"</h2>
+
+      <p>In natural lanuage, the order of the words provide you with a lot of information that points you toward the intended interpretation. It is from the order of our three words that we can infer that the man is the agent of the bite, and the dog is the thing that was bitten.</p>
+      <p>To get Etcetera Abduction to do the right thing, we need to make this ordering part of the observation. While our simple no-argument propositions were good enough to represent an unordered set of input words, specifying both a word and its order requires first-order logic. There are lots of representational options, but one simple way is to posit that there are 3 constants, W1 W2 and W3, which are the three words. Then, the labels for the different words and their sequential order can be predications on these constants, as follows:</p>
+
+      <pre>;; "man bites dog" version 2
+
+;; The observables
+
+(man W1)
+(bites W2)
+(dog W3)
+(seq W1 W2 W3)
+</pre>
+
+      <p>Just as we did in version 1, we'll need axioms that bridge the gap between the words and the entities that they refer to. This time, however, we can make explicit that these words refer to these imagined entities, using a "ref" relation.</p>
+
+      <pre>;; why word man? maybe refering to a man
+
+(if (and (man' e x)
+	 (ref w x)
+	 (etc1_word_man 0.1 e w x))
+    (man w))
+
+;; why man'? why not!
+
+(if (etc0_man 0.1 e x) (man' e x))
+
+;; why word bites? Maybe refering to a biting eventuality
+
+(if (and (bite' e x y)
+	 (ref w e)
+	 (etc1_word_bites 0.1 e x y w))
+    (bites w))
+
+;; why bites'? why not!
+
+(if (etc0_bite 0.1 e x y) (bite' e x y))
+
+;; why dog? Maybe refering to a dog
+
+(if (and (dog' e d)
+	 (ref w d)
+	 (etc1_word_dog 0.1 e w d))
+    (dog w))
+
+;; why dog'? why not!
+
+(if (etc0_dog 0.1 e x) (dog' e x))
+
+;; why ref? Why not!
+
+(if (etc0_ref 0.1 w c) (ref w c))
+      </pre>
+
+      <p>If we were to ignore the sequence literal (seq W1 W2 W3), we could use these axioms alone to get an unconnected interpretation that imagines a man, a dog, and a biting eventuality, looking like this:</p>
+
+      <svg width="540pt"
+ viewBox="0.00 0.00 1217.12 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">
+<title>proof</title>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-192 1213.1215,-192 1213.1215,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node">
+<title>n0</title>
+<ellipse fill="none" stroke="#000000" cx="55.7837" cy="-170" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="55.7837" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_bite 0.1</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node">
+<title>n9</title>
+<polygon fill="none" stroke="#000000" points="106.6241,-116 4.9433,-116 4.9433,-80 106.6241,-80 106.6241,-116"/>
+<text text-anchor="middle" x="55.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bite&#39; $4 $5 $2)</text>
+</g>
+<!-- n0&#45;&gt;n9 -->
+<g id="edge1" class="edge">
+<title>n0&#45;&gt;n9</title>
+<path fill="none" stroke="#000000" d="M55.7837,-151.8314C55.7837,-144.131 55.7837,-134.9743 55.7837,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="59.2838,-126.4132 55.7837,-116.4133 52.2838,-126.4133 59.2838,-126.4132"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node">
+<title>n1</title>
+<ellipse fill="none" stroke="#000000" cx="472.7837" cy="-170" rx="55.5768" ry="18"/>
+<text text-anchor="middle" x="472.7837" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_dog 0.1</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node">
+<title>n10</title>
+<polygon fill="none" stroke="#000000" points="514.6305,-116 430.9368,-116 430.9368,-80 514.6305,-80 514.6305,-116"/>
+<text text-anchor="middle" x="472.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog&#39; $7 $6)</text>
+</g>
+<!-- n1&#45;&gt;n10 -->
+<g id="edge2" class="edge">
+<title>n1&#45;&gt;n10</title>
+<path fill="none" stroke="#000000" d="M472.7837,-151.8314C472.7837,-144.131 472.7837,-134.9743 472.7837,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="476.2838,-126.4132 472.7837,-116.4133 469.2838,-126.4133 476.2838,-126.4132"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node">
+<title>n2</title>
+<ellipse fill="none" stroke="#000000" cx="875.7837" cy="-170" rx="57.9979" ry="18"/>
+<text text-anchor="middle" x="875.7837" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_man 0.1</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node">
+<title>n11</title>
+<polygon fill="none" stroke="#000000" points="919.2339,-116 832.3335,-116 832.3335,-80 919.2339,-80 919.2339,-116"/>
+<text text-anchor="middle" x="875.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man&#39; $1 $3)</text>
+</g>
+<!-- n2&#45;&gt;n11 -->
+<g id="edge3" class="edge">
+<title>n2&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M875.7837,-151.8314C875.7837,-144.131 875.7837,-134.9743 875.7837,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="879.2838,-126.4132 875.7837,-116.4133 872.2838,-126.4133 879.2838,-126.4132"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node">
+<title>n3</title>
+<ellipse fill="none" stroke="#000000" cx="1156.7837" cy="-170" rx="52.1762" ry="18"/>
+<text text-anchor="middle" x="1156.7837" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_ref 0.1</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node">
+<title>n12</title>
+<polygon fill="none" stroke="#000000" points="1197.6139,-116 1115.9534,-116 1115.9534,-80 1197.6139,-80 1197.6139,-116"/>
+<text text-anchor="middle" x="1156.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(ref W1 $3)</text>
+</g>
+<!-- n3&#45;&gt;n12 -->
+<g id="edge4" class="edge">
+<title>n3&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M1156.7837,-151.8314C1156.7837,-144.131 1156.7837,-134.9743 1156.7837,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="1160.2838,-126.4132 1156.7837,-116.4133 1153.2838,-126.4133 1160.2838,-126.4132"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node">
+<title>n4</title>
+<ellipse fill="none" stroke="#000000" cx="346.7837" cy="-170" rx="52.1762" ry="18"/>
+<text text-anchor="middle" x="346.7837" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_ref 0.1</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node">
+<title>n13</title>
+<polygon fill="none" stroke="#000000" points="387.6139,-116 305.9534,-116 305.9534,-80 387.6139,-80 387.6139,-116"/>
+<text text-anchor="middle" x="346.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(ref W2 $4)</text>
+</g>
+<!-- n4&#45;&gt;n13 -->
+<g id="edge5" class="edge">
+<title>n4&#45;&gt;n13</title>
+<path fill="none" stroke="#000000" d="M346.7837,-151.8314C346.7837,-144.131 346.7837,-134.9743 346.7837,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="350.2838,-126.4132 346.7837,-116.4133 343.2838,-126.4133 350.2838,-126.4132"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node">
+<title>n5</title>
+<ellipse fill="none" stroke="#000000" cx="747.7837" cy="-170" rx="52.1762" ry="18"/>
+<text text-anchor="middle" x="747.7837" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_ref 0.1</text>
+</g>
+<!-- n14 -->
+<g id="node15" class="node">
+<title>n14</title>
+<polygon fill="none" stroke="#000000" points="788.6139,-116 706.9534,-116 706.9534,-80 788.6139,-80 788.6139,-116"/>
+<text text-anchor="middle" x="747.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(ref W3 $6)</text>
+</g>
+<!-- n5&#45;&gt;n14 -->
+<g id="edge6" class="edge">
+<title>n5&#45;&gt;n14</title>
+<path fill="none" stroke="#000000" d="M747.7837,-151.8314C747.7837,-144.131 747.7837,-134.9743 747.7837,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="751.2838,-126.4132 747.7837,-116.4133 744.2838,-126.4133 751.2838,-126.4132"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node">
+<title>n6</title>
+<ellipse fill="none" stroke="#000000" cx="205.7837" cy="-98" rx="81.644" ry="18"/>
+<text text-anchor="middle" x="205.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_bites 0.1</text>
+</g>
+<!-- n16 -->
+<g id="node17" class="node">
+<title>n16</title>
+<polygon fill="none" stroke="#000000" points="243.5061,-40 168.0612,-40 168.0612,-4 243.5061,-4 243.5061,-40"/>
+<polygon fill="none" stroke="#000000" points="247.5174,-44 164.0499,-44 164.0499,0 247.5174,0 247.5174,-44"/>
+<text text-anchor="middle" x="205.7837" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bites W2)</text>
+</g>
+<!-- n6&#45;&gt;n16 -->
+<g id="edge10" class="edge">
+<title>n6&#45;&gt;n16</title>
+<path fill="none" stroke="#000000" d="M205.7837,-79.9891C205.7837,-72.291 205.7837,-63.0629 205.7837,-54.2561"/>
+<polygon fill="#000000" stroke="#000000" points="209.2838,-54.2282 205.7837,-44.2282 202.2838,-54.2282 209.2838,-54.2282"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node">
+<title>n7</title>
+<ellipse fill="none" stroke="#000000" cx="610.7837" cy="-98" rx="78.2694" ry="18"/>
+<text text-anchor="middle" x="610.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_dog 0.1</text>
+</g>
+<!-- n17 -->
+<g id="node18" class="node">
+<title>n17</title>
+<polygon fill="none" stroke="#000000" points="645.5866,-40 575.9807,-40 575.9807,-4 645.5866,-4 645.5866,-40"/>
+<polygon fill="none" stroke="#000000" points="649.5759,-44 571.9914,-44 571.9914,0 649.5759,0 649.5759,-44"/>
+<text text-anchor="middle" x="610.7837" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog W3)</text>
+</g>
+<!-- n7&#45;&gt;n17 -->
+<g id="edge13" class="edge">
+<title>n7&#45;&gt;n17</title>
+<path fill="none" stroke="#000000" d="M610.7837,-79.9891C610.7837,-72.291 610.7837,-63.0629 610.7837,-54.2561"/>
+<polygon fill="#000000" stroke="#000000" points="614.2838,-54.2282 610.7837,-44.2282 607.2838,-54.2282 614.2838,-54.2282"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node">
+<title>n8</title>
+<ellipse fill="none" stroke="#000000" cx="1017.7837" cy="-98" rx="80.1903" ry="18"/>
+<text text-anchor="middle" x="1017.7837" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_man 0.1</text>
+</g>
+<!-- n15 -->
+<g id="node16" class="node">
+<title>n15</title>
+<polygon fill="none" stroke="#000000" points="1054.1844,-40 981.3829,-40 981.3829,-4 1054.1844,-4 1054.1844,-40"/>
+<polygon fill="none" stroke="#000000" points="1058.1792,-44 977.3881,-44 977.3881,0 1058.1792,0 1058.1792,-44"/>
+<text text-anchor="middle" x="1017.7837" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man W1)</text>
+</g>
+<!-- n8&#45;&gt;n15 -->
+<g id="edge7" class="edge">
+<title>n8&#45;&gt;n15</title>
+<path fill="none" stroke="#000000" d="M1017.7837,-79.9891C1017.7837,-72.291 1017.7837,-63.0629 1017.7837,-54.2561"/>
+<polygon fill="#000000" stroke="#000000" points="1021.2838,-54.2282 1017.7837,-44.2282 1014.2838,-54.2282 1021.2838,-54.2282"/>
+</g>
+<!-- n9&#45;&gt;n16 -->
+<g id="edge11" class="edge">
+<title>n9&#45;&gt;n16</title>
+<path fill="none" stroke="#000000" d="M91.3316,-79.9891C110.3493,-70.3534 134.0981,-58.3207 155.0254,-47.7175"/>
+<polygon fill="#000000" stroke="#000000" points="156.7677,-50.7584 164.1062,-43.1166 153.6039,-44.5142 156.7677,-50.7584"/>
+</g>
+<!-- n10&#45;&gt;n17 -->
+<g id="edge14" class="edge">
+<title>n10&#45;&gt;n17</title>
+<path fill="none" stroke="#000000" d="M505.4877,-79.9891C522.6895,-70.5156 544.0986,-58.7251 563.1116,-48.2542"/>
+<polygon fill="#000000" stroke="#000000" points="564.8673,-51.283 571.9384,-43.3931 561.4905,-45.1513 564.8673,-51.283"/>
+</g>
+<!-- n11&#45;&gt;n15 -->
+<g id="edge8" class="edge">
+<title>n11&#45;&gt;n15</title>
+<path fill="none" stroke="#000000" d="M909.4357,-79.9891C926.9944,-70.5914 948.8135,-58.9136 968.2598,-48.5057"/>
+<polygon fill="#000000" stroke="#000000" points="970.129,-51.4751 977.2941,-43.6705 966.8258,-45.3035 970.129,-51.4751"/>
+</g>
+<!-- n12&#45;&gt;n15 -->
+<g id="edge9" class="edge">
+<title>n12&#45;&gt;n15</title>
+<path fill="none" stroke="#000000" d="M1123.8426,-79.9891C1106.9396,-70.7471 1086.0033,-59.2999 1067.2092,-49.0241"/>
+<polygon fill="#000000" stroke="#000000" points="1068.6355,-45.8149 1058.1822,-44.0884 1065.2773,-51.9568 1068.6355,-45.8149"/>
+</g>
+<!-- n13&#45;&gt;n16 -->
+<g id="edge12" class="edge">
+<title>n13&#45;&gt;n16</title>
+<path fill="none" stroke="#000000" d="M313.3686,-79.9891C296.1444,-70.7051 274.7917,-59.1958 255.6606,-48.884"/>
+<polygon fill="#000000" stroke="#000000" points="257.2269,-45.7522 246.7635,-44.0884 253.9056,-51.9142 257.2269,-45.7522"/>
+</g>
+<!-- n14&#45;&gt;n17 -->
+<g id="edge15" class="edge">
+<title>n14&#45;&gt;n17</title>
+<path fill="none" stroke="#000000" d="M715.3166,-79.9891C698.4527,-70.6339 677.5157,-59.0193 658.8186,-48.6471"/>
+<polygon fill="#000000" stroke="#000000" points="660.29,-45.4609 649.8476,-43.6705 656.8943,-51.5822 660.29,-45.4609"/>
+</g>
+</g>
+</svg>
+
+
+      <p>But we don't want to ignore the sequence literal - that is where all the important information lies. To exploit it, we need a bit of syntactic knowledge. Actually, we need two parts:</p>
+      <ol>
+	<li>A sequence of three words <u>might</u> be an expression involving a monotransitive verb, i.e., where an agent does something to a single patient, where the first word refers to the agent, the second to the verb, and the third to the patient, and</li>
+	<li>The 3-arity eventuality literal "bite" directly maps to a monotransitive expression.</li>
+      </ol>
+
+      <p>Here's how I would express these two bits of syntactic knowledge:</p>
+
+      <pre>;; why seq? maybe monotransitive construction
+
+(if (and (monotransitive e x y)
+	 (ref s1 x)
+	 (ref s2 e)
+	 (ref s3 y)
+	 (etc1_seq 0.1 e x y s1 s2 s3))
+    (seq s1 s2 s3))
+
+;; why monotransitive? maybe bite'
+
+(if (and (bite' e x y)
+	 (etc1_monotransitive 0.1 e x y))
+    (monotransitive e x y))
+</pre>
+
+      <p>Adding back in our (seq W1 W2 W3) literal as an input, the best interpretation now makes all of the right unifications, leading us to interpret this input as meaning a man is doing the biting, and the dog is the thing that is bitten.</p>
+
+<svg width="540pt"
+ viewBox="0.00 0.00 1400.73 268.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 264)">
+<title>proof</title>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-264 1396.7296,-264 1396.7296,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node">
+<title>n0</title>
+<ellipse fill="none" stroke="#000000" cx="717.345" cy="-242" rx="55.5682" ry="18"/>
+<text text-anchor="middle" x="717.345" y="-237.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_bite 0.1</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node">
+<title>n11</title>
+<polygon fill="none" stroke="#000000" points="768.1854,-188 666.5046,-188 666.5046,-152 768.1854,-152 768.1854,-188"/>
+<text text-anchor="middle" x="717.345" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bite&#39; $1 $4 $3)</text>
+</g>
+<!-- n0&#45;&gt;n11 -->
+<g id="edge1" class="edge">
+<title>n0&#45;&gt;n11</title>
+<path fill="none" stroke="#000000" d="M717.345,-223.8314C717.345,-216.131 717.345,-206.9743 717.345,-198.4166"/>
+<polygon fill="#000000" stroke="#000000" points="720.8451,-198.4132 717.345,-188.4133 713.8451,-198.4133 720.8451,-198.4132"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node">
+<title>n1</title>
+<ellipse fill="none" stroke="#000000" cx="1182.345" cy="-170" rx="55.5768" ry="18"/>
+<text text-anchor="middle" x="1182.345" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_dog 0.1</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node">
+<title>n12</title>
+<polygon fill="none" stroke="#000000" points="1218.1918,-116 1134.4982,-116 1134.4982,-80 1218.1918,-80 1218.1918,-116"/>
+<text text-anchor="middle" x="1176.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog&#39; $5 $3)</text>
+</g>
+<!-- n1&#45;&gt;n12 -->
+<g id="edge2" class="edge">
+<title>n1&#45;&gt;n12</title>
+<path fill="none" stroke="#000000" d="M1180.831,-151.8314C1180.1893,-144.131 1179.4262,-134.9743 1178.7131,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="1182.1979,-126.088 1177.8795,-116.4133 1175.2221,-126.6694 1182.1979,-126.088"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node">
+<title>n2</title>
+<ellipse fill="none" stroke="#000000" cx="215.345" cy="-170" rx="57.9979" ry="18"/>
+<text text-anchor="middle" x="215.345" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_man 0.1</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node">
+<title>n13</title>
+<polygon fill="none" stroke="#000000" points="265.7952,-116 178.8948,-116 178.8948,-80 265.7952,-80 265.7952,-116"/>
+<text text-anchor="middle" x="222.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man&#39; $2 $4)</text>
+</g>
+<!-- n2&#45;&gt;n13 -->
+<g id="edge3" class="edge">
+<title>n2&#45;&gt;n13</title>
+<path fill="none" stroke="#000000" d="M217.1114,-151.8314C217.8601,-144.131 218.7503,-134.9743 219.5823,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="223.0707,-126.7051 220.5548,-116.4133 216.1035,-126.0276 223.0707,-126.7051"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node">
+<title>n3</title>
+<ellipse fill="none" stroke="#000000" cx="343.345" cy="-170" rx="52.1762" ry="18"/>
+<text text-anchor="middle" x="343.345" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_ref 0.1</text>
+</g>
+<!-- n14 -->
+<g id="node15" class="node">
+<title>n14</title>
+<polygon fill="none" stroke="#000000" points="378.1753,-116 296.5148,-116 296.5148,-80 378.1753,-80 378.1753,-116"/>
+<text text-anchor="middle" x="337.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(ref W1 $4)</text>
+</g>
+<!-- n3&#45;&gt;n14 -->
+<g id="edge4" class="edge">
+<title>n3&#45;&gt;n14</title>
+<path fill="none" stroke="#000000" d="M341.831,-151.8314C341.1893,-144.131 340.4262,-134.9743 339.7131,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="343.1979,-126.088 338.8795,-116.4133 336.2221,-126.6694 343.1979,-126.088"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node">
+<title>n4</title>
+<ellipse fill="none" stroke="#000000" cx="838.345" cy="-170" rx="52.1762" ry="18"/>
+<text text-anchor="middle" x="838.345" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_ref 0.1</text>
+</g>
+<!-- n15 -->
+<g id="node16" class="node">
+<title>n15</title>
+<polygon fill="none" stroke="#000000" points="784.1753,-116 702.5148,-116 702.5148,-80 784.1753,-80 784.1753,-116"/>
+<text text-anchor="middle" x="743.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(ref W2 $1)</text>
+</g>
+<!-- n4&#45;&gt;n15 -->
+<g id="edge5" class="edge">
+<title>n4&#45;&gt;n15</title>
+<path fill="none" stroke="#000000" d="M816.3113,-153.3008C804.1464,-144.081 788.8176,-132.4634 775.3535,-122.2591"/>
+<polygon fill="#000000" stroke="#000000" points="777.34,-119.373 767.2562,-116.1222 773.1118,-124.9518 777.34,-119.373"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node">
+<title>n5</title>
+<ellipse fill="none" stroke="#000000" cx="1056.345" cy="-170" rx="52.1762" ry="18"/>
+<text text-anchor="middle" x="1056.345" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc0_ref 0.1</text>
+</g>
+<!-- n16 -->
+<g id="node17" class="node">
+<title>n16</title>
+<polygon fill="none" stroke="#000000" points="1104.1753,-116 1022.5148,-116 1022.5148,-80 1104.1753,-80 1104.1753,-116"/>
+<text text-anchor="middle" x="1063.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(ref W3 $3)</text>
+</g>
+<!-- n5&#45;&gt;n16 -->
+<g id="edge6" class="edge">
+<title>n5&#45;&gt;n16</title>
+<path fill="none" stroke="#000000" d="M1058.1114,-151.8314C1058.8601,-144.131 1059.7503,-134.9743 1060.5823,-126.4166"/>
+<polygon fill="#000000" stroke="#000000" points="1064.0707,-126.7051 1061.5548,-116.4133 1057.1035,-126.0276 1064.0707,-126.7051"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node">
+<title>n6</title>
+<ellipse fill="none" stroke="#000000" cx="553.345" cy="-170" rx="95.65" ry="18"/>
+<text text-anchor="middle" x="553.345" y="-165.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_monotransitive 0.1</text>
+</g>
+<!-- n17 -->
+<g id="node18" class="node">
+<title>n17</title>
+<polygon fill="none" stroke="#000000" points="684.1557,-116 522.5344,-116 522.5344,-80 684.1557,-80 684.1557,-116"/>
+<text text-anchor="middle" x="603.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">(monotransitive $1 $4 $3)</text>
+</g>
+<!-- n6&#45;&gt;n17 -->
+<g id="edge7" class="edge">
+<title>n6&#45;&gt;n17</title>
+<path fill="none" stroke="#000000" d="M565.9621,-151.8314C571.6622,-143.6232 578.5113,-133.7606 584.7809,-124.7323"/>
+<polygon fill="#000000" stroke="#000000" points="587.7288,-126.6234 590.558,-116.4133 581.9792,-122.6306 587.7288,-126.6234"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node">
+<title>n7</title>
+<ellipse fill="none" stroke="#000000" cx="450.345" cy="-98" rx="54.123" ry="18"/>
+<text text-anchor="middle" x="450.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_seq 0.1</text>
+</g>
+<!-- n21 -->
+<g id="node22" class="node">
+<title>n21</title>
+<polygon fill="none" stroke="#000000" points="660.7225,-40 545.9675,-40 545.9675,-4 660.7225,-4 660.7225,-40"/>
+<polygon fill="none" stroke="#000000" points="664.7353,-44 541.9547,-44 541.9547,0 664.7353,0 664.7353,-44"/>
+<text text-anchor="middle" x="603.345" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(seq W1 W2 W3)</text>
+</g>
+<!-- n7&#45;&gt;n21 -->
+<g id="edge18" class="edge">
+<title>n7&#45;&gt;n21</title>
+<path fill="none" stroke="#000000" d="M480.5729,-82.9848C500.3316,-73.1701 526.687,-60.0785 549.9129,-48.5415"/>
+<polygon fill="#000000" stroke="#000000" points="551.575,-51.6239 558.9739,-44.0406 548.4609,-45.3547 551.575,-51.6239"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node">
+<title>n8</title>
+<ellipse fill="none" stroke="#000000" cx="884.345" cy="-98" rx="81.644" ry="18"/>
+<text text-anchor="middle" x="884.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_bites 0.1</text>
+</g>
+<!-- n19 -->
+<g id="node20" class="node">
+<title>n19</title>
+<polygon fill="none" stroke="#000000" points="922.0675,-40 846.6225,-40 846.6225,-4 922.0675,-4 922.0675,-40"/>
+<polygon fill="none" stroke="#000000" points="926.0787,-44 842.6113,-44 842.6113,0 926.0787,0 926.0787,-44"/>
+<text text-anchor="middle" x="884.345" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(bites W2)</text>
+</g>
+<!-- n8&#45;&gt;n19 -->
+<g id="edge12" class="edge">
+<title>n8&#45;&gt;n19</title>
+<path fill="none" stroke="#000000" d="M884.345,-79.9891C884.345,-72.291 884.345,-63.0629 884.345,-54.2561"/>
+<polygon fill="#000000" stroke="#000000" points="887.8451,-54.2282 884.345,-44.2282 880.8451,-54.2282 887.8451,-54.2282"/>
+</g>
+<!-- n9 -->
+<g id="node10" class="node">
+<title>n9</title>
+<ellipse fill="none" stroke="#000000" cx="1314.345" cy="-98" rx="78.2694" ry="18"/>
+<text text-anchor="middle" x="1314.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_dog 0.1</text>
+</g>
+<!-- n20 -->
+<g id="node21" class="node">
+<title>n20</title>
+<polygon fill="none" stroke="#000000" points="1211.148,-40 1141.5421,-40 1141.5421,-4 1211.148,-4 1211.148,-40"/>
+<polygon fill="none" stroke="#000000" points="1215.1373,-44 1137.5527,-44 1137.5527,0 1215.1373,0 1215.1373,-44"/>
+<text text-anchor="middle" x="1176.345" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(dog W3)</text>
+</g>
+<!-- n9&#45;&gt;n20 -->
+<g id="edge15" class="edge">
+<title>n9&#45;&gt;n20</title>
+<path fill="none" stroke="#000000" d="M1284.0603,-81.3215C1266.5154,-71.6591 1244.0329,-59.2774 1224.1506,-48.3277"/>
+<polygon fill="#000000" stroke="#000000" points="1225.6734,-45.1707 1215.2255,-43.4124 1222.2966,-51.3024 1225.6734,-45.1707"/>
+</g>
+<!-- n10 -->
+<g id="node11" class="node">
+<title>n10</title>
+<ellipse fill="none" stroke="#000000" cx="80.345" cy="-98" rx="80.1903" ry="18"/>
+<text text-anchor="middle" x="80.345" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#000000">etc1_word_man 0.1</text>
+</g>
+<!-- n18 -->
+<g id="node19" class="node">
+<title>n18</title>
+<polygon fill="none" stroke="#000000" points="258.7457,-40 185.9443,-40 185.9443,-4 258.7457,-4 258.7457,-40"/>
+<polygon fill="none" stroke="#000000" points="262.7406,-44 181.9494,-44 181.9494,0 262.7406,0 262.7406,-44"/>
+<text text-anchor="middle" x="222.345" y="-17.8" font-family="Times,serif" font-size="14.00" fill="#000000">(man W1)</text>
+</g>
+<!-- n10&#45;&gt;n18 -->
+<g id="edge9" class="edge">
+<title>n10&#45;&gt;n18</title>
+<path fill="none" stroke="#000000" d="M111.5075,-81.3215C129.5,-71.6917 152.5391,-59.3609 172.9466,-48.4386"/>
+<polygon fill="#000000" stroke="#000000" points="174.6436,-51.5002 181.8087,-43.6955 171.3404,-45.3285 174.6436,-51.5002"/>
+</g>
+<!-- n11&#45;&gt;n17 -->
+<g id="edge8" class="edge">
+<title>n11&#45;&gt;n17</title>
+<path fill="none" stroke="#000000" d="M688.578,-151.8314C674.1317,-142.7074 656.4485,-131.539 640.941,-121.7449"/>
+<polygon fill="#000000" stroke="#000000" points="642.4267,-118.5436 632.1028,-116.1628 638.6887,-124.462 642.4267,-118.5436"/>
+</g>
+<!-- n11&#45;&gt;n19 -->
+<g id="edge13" class="edge">
+<title>n11&#45;&gt;n19</title>
+<path fill="none" stroke="#000000" d="M768.3028,-154.2907C771.3531,-153.4817 774.3841,-152.711 777.345,-152 820.8303,-141.5585 946.6899,-150.3349 975.345,-116 985.597,-103.716 983.0394,-94.0284 975.345,-80 966.5333,-63.9344 951.1721,-51.6788 935.552,-42.6668"/>
+<polygon fill="#000000" stroke="#000000" points="936.8379,-39.3844 926.3728,-37.7313 933.5228,-45.5497 936.8379,-39.3844"/>
+</g>
+<!-- n12&#45;&gt;n20 -->
+<g id="edge16" class="edge">
+<title>n12&#45;&gt;n20</title>
+<path fill="none" stroke="#000000" d="M1176.345,-79.9891C1176.345,-72.291 1176.345,-63.0629 1176.345,-54.2561"/>
+<polygon fill="#000000" stroke="#000000" points="1179.8451,-54.2282 1176.345,-44.2282 1172.8451,-54.2282 1179.8451,-54.2282"/>
+</g>
+<!-- n13&#45;&gt;n18 -->
+<g id="edge10" class="edge">
+<title>n13&#45;&gt;n18</title>
+<path fill="none" stroke="#000000" d="M222.345,-79.9891C222.345,-72.291 222.345,-63.0629 222.345,-54.2561"/>
+<polygon fill="#000000" stroke="#000000" points="225.8451,-54.2282 222.345,-44.2282 218.8451,-54.2282 225.8451,-54.2282"/>
+</g>
+<!-- n14&#45;&gt;n18 -->
+<g id="edge11" class="edge">
+<title>n14&#45;&gt;n18</title>
+<path fill="none" stroke="#000000" d="M310.0916,-79.9891C296.544,-71.0359 279.8648,-60.0131 264.6991,-49.9905"/>
+<polygon fill="#000000" stroke="#000000" points="266.2523,-46.8218 255.9798,-44.2282 262.3928,-52.6617 266.2523,-46.8218"/>
+</g>
+<!-- n14&#45;&gt;n21 -->
+<g id="edge19" class="edge">
+<title>n14&#45;&gt;n21</title>
+<path fill="none" stroke="#000000" d="M378.181,-82.9862C381.272,-81.9457 384.352,-80.9388 387.345,-80 435.192,-64.9922 489.7352,-50.3657 532.0413,-39.5553"/>
+<polygon fill="#000000" stroke="#000000" points="533.1414,-42.887 541.9705,-37.0306 531.4164,-36.1029 533.1414,-42.887"/>
+</g>
+<!-- n15&#45;&gt;n19 -->
+<g id="edge14" class="edge">
+<title>n15&#45;&gt;n19</title>
+<path fill="none" stroke="#000000" d="M776.76,-79.9891C793.9842,-70.7051 815.337,-59.1958 834.4681,-48.884"/>
+<polygon fill="#000000" stroke="#000000" points="836.2231,-51.9142 843.3652,-44.0884 832.9018,-45.7522 836.2231,-51.9142"/>
+</g>
+<!-- n15&#45;&gt;n21 -->
+<g id="edge20" class="edge">
+<title>n15&#45;&gt;n21</title>
+<path fill="none" stroke="#000000" d="M710.167,-79.9891C693.0649,-70.7051 671.8636,-59.1958 652.8682,-48.884"/>
+<polygon fill="#000000" stroke="#000000" points="654.4926,-45.7834 644.0342,-44.0884 651.1529,-51.9354 654.4926,-45.7834"/>
+</g>
+<!-- n16&#45;&gt;n20 -->
+<g id="edge17" class="edge">
+<title>n16&#45;&gt;n20</title>
+<path fill="none" stroke="#000000" d="M1090.1244,-79.9891C1103.4364,-71.0359 1119.8256,-60.0131 1134.7275,-49.9905"/>
+<polygon fill="#000000" stroke="#000000" points="1136.9506,-52.7134 1143.2952,-44.2282 1133.044,-46.9049 1136.9506,-52.7134"/>
+</g>
+<!-- n16&#45;&gt;n21 -->
+<g id="edge21" class="edge">
+<title>n16&#45;&gt;n21</title>
+<path fill="none" stroke="#000000" d="M1022.2347,-89.1736C1007.477,-86.1157 990.6921,-82.7644 975.345,-80 871.2066,-61.2419 750.0174,-43.0143 674.9858,-32.1474"/>
+<polygon fill="#000000" stroke="#000000" points="675.109,-28.629 664.7114,-30.6636 674.1084,-35.5571 675.109,-28.629"/>
+</g>
+<!-- n17&#45;&gt;n21 -->
+<g id="edge22" class="edge">
+<title>n17&#45;&gt;n21</title>
+<path fill="none" stroke="#000000" d="M603.345,-79.9891C603.345,-72.291 603.345,-63.0629 603.345,-54.2561"/>
+<polygon fill="#000000" stroke="#000000" points="606.8451,-54.2282 603.345,-44.2282 599.8451,-54.2282 606.8451,-54.2282"/>
+</g>
+</g>
+</svg>
+
+      <p>Great! But that seemed like a lot of work for a pretty simple semantic role labeling problem. Wouldn't it be a lot easier just to apply the Stanford Parser to this text?</p>
+      <p>Yes it would! Indeed, if you apply the Stanford Parser to this three-word sequence, you'll get an output that is essentially equivalent to what we've done here using abduction, particularly when you look at the Universal depedencies section.</p>
+
+<pre>Stanford Parser
+
+Your query:
+
+  man bites dog
+
+Tagging:
+  
+  man/NN bites/VBZ dog/NN
+
+Parse:
+
+  (ROOT
+    (S
+       (NP (NN man))
+         (VP (VBZ bites)
+           (NP (NN dog)))))
+
+Universal dependencies:
+
+  nsubj(bites-2, man-1)
+  root(ROOT-0, bites-2)
+  dobj(bites-2, dog-3)
+</pre>
+      <p>Both the Stanford Parser and our Version 2 are finding structured representations that explain the ordered sequence of words, using very different methods. Still, there are some analogies to be drawn between the two algorithmic approaches, particularly around how the search is conducted.</p>
+      <p>If you were really ambitious, you could probably write a pretty good syntactic parser using Etcetera Abduction. The advantage of doing so is that you could provide an integrated account of language understanding that included syntax, semantics, and pragmatics all under the umbrella of logical abduction. This idea was one of the great achievements of Prof. Jerry Hobbs and his colleagues at SRI back in the 1990s, immortalized in the following famous NLP paper:</p>
+
+      <ul>
+	<li>Hobbs, Jerry R., Mark Stickel, Douglas Appelt, and Paul Martin, 1993. Interpretation as Abduction, Artificial Intelligence, Vol. 63, Nos. 1-2, pp. 69-142. <a href="https://www.isi.edu/%7Ehobbs/interp-abduct-ai.pdf">pdf</a></li>
+      </ul>
+      
+      <p>But since then, data-driven statistical parsers like Stanford's have gotten really good at the syntax part of the puzzle. So much so that even the few researchers who are really interested in the idea of "interpretation as abduction" will opt to use a high-performance statsitical parser at the front-end of the language interpretation pipeline. The current favorite among language-logicians is probably the Combinatorial Categorial Grammar parsers coming out of the University of Edinburgh, but people have also had some luck converting the Stanford Parser's Universal Dependenices in a usable logical form for use as input literals. Give it a try!</p>
+
+
+</div>
+  </body>
+</html>

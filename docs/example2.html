@@ -5,6 +5,7 @@
   </head>
   <body>
     <div class="content">
+      <a href="index.html" class="menu">home</a>
       <h1>Example 2: Dead Plant</h1>
       <span class="date">July 13, 2017</span>
       <p>Imagine that you come home from vacation and you find that your favorite plant is dead, wilted up from lack of moisture. That sucks. But wait, you told your neighbor Mary to water it while you away, right? So who really is to blame? Let's use Etcetera Abduction to solve this problem.</p>
@@ -35,7 +36,7 @@
 (vacation Me)      
 (dead Plant)
 </pre>
-      <p>That's better. This business of "reifying" a literal turns out to be pretty useful, and has been explored thoroughly by Jerry Hobbs and Donald Davidson. Some like to call it "Davidsonian" notation, but we will use the term "eventuality notation," and adhere to a set of conventions. When representing an eventuality, we make sure that the predicate and arguments are all the same as the relation it is supposed to be reifying, with two exceptions. First, the predicate gets a new last character, an apostrophe, which distinguishes it from the predicate used in the un-refied version of the literal. Second, one more argument is added, always in the first position, which is mean to represent the reified eventuality of the event.</p>
+      <p>That's better. This business of "reifying" a literal turns out to be pretty useful, and has been explored thoroughly by Jerry Hobbs and Donald Davidson. Some like to call it "Davidsonian" notation, but we will use the term "eventuality notation," and adhere to a set of conventions. When representing an eventuality, we make sure that the predicate and arguments are all the same as the relation it is supposed to be reifying, with two exceptions. First, the predicate gets a new last character, an apostrophe, which distinguishes it from the predicate used in the un-refied version of the literal. Second, one more argument is added, always in the first position, which is meant to represent the reified eventuality of the event.</p>
       <p>Eventuality notation turns out to be so useful in knowledge representation that we may want to use it in other places, as well. We may need to write axioms that rely on second-order relations between literals.  For example, we may want to say that the <i>eventuality</i> of the death of the plant should have been a concern of Mary, or that the <i>eventuality</i> of me tasking her should have obligated her to actually do the task.</p>
       <p>For this reason, we might as well represent <u>all</u> of the literals in our problem in eventuality notation, both the observables and in the knowledgebase. That is, every predicate will get the apostrophe at the end, and every first argument reifies an eventuality. Here's what that would look like:</p>
       <pre>;; The best way to represent the observables
@@ -53,7 +54,7 @@
 (if (etc0_dead 0.01 e x) (dead' e x))
 </pre>	
       <p>And with that, we can get our first solution to the dead plant problem by invoking the Etcetera Abduction reasoning engine:</p>
-      <pre>$ python etcabductionpy/ -i dead-plant.lisp 
+      <pre>$ python etcabductionpy -i dead-plant.lisp 
 ((etc0_dead 0.01 E4 Plant) (etc0_task 0.1 E1 Me Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant))
 1 solutions.</pre>
       <svg width="540pt" 
@@ -171,7 +172,7 @@
 (if (etc0_forgot 0.05 e x e1) (forgot' e x e1))
 </pre>
       <p>That should do it. Let's see what we get now when we run the Etcetera Abduction engine. We'll use the "--all" (or "-a") flag to say that we want to list all solutions, just to see how many we get -- even if there are a million of them.</p>
-      <pre>$ python etcabductionpy/ -i dead-plant.lisp -a
+      <pre>$ python etcabductionpy -i dead-plant.lisp -a
 ((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $2 E3 E2 Me) (etc1_dead 0.9 E4 $3 E2 Plant Mary) (etc2_didnt 0.9 $3 E2 $1 E1 Mary Me) (etc1_task 0.9 E1 E2 $2 Me Mary))
 ((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $3 E3 E2 Me) (etc1_dead 0.9 E4 $4 E2 Plant Mary) (etc2_didnt 0.9 $4 E2 $1 $2 Mary Me) (etc1_task 0.9 $2 E2 $3 Me Mary) (etc1_task 0.9 E1 E2 $3 Me Mary))
 ((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $4 E3 E2 Me) (etc1_couldnt 0.9 $3 E3 E2 Me) (etc1_dead 0.9 E4 $5 E2 Plant Mary) (etc2_didnt 0.9 $5 E2 $1 $2 Mary Me) (etc1_task 0.9 $2 E2 $3 Me Mary) (etc1_task 0.9 E1 E2 $4 Me Mary))

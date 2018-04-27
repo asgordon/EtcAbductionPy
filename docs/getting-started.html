@@ -5,6 +5,7 @@
   </head>
   <body>
     <div class="content">
+      <a href="index.html" class="menu">home</a>
       <h1>Getting Started</h1>
       <span class="date">July 21, 2017</span>
 
@@ -155,7 +156,7 @@ digraph proof {
 
       <p>After that, you can pipe the output of <code>etcabductionpy</code> to <code>dot</code>, to generate nice scalable vector graphics (svg) files, as follows:</p>
       <pre>$ python etcabductionpy -i minimal.lisp -g | dot -Tsvg > minimal.svg</pre>
-      <p>I do this so often that I wrote a handy utility that generates the .svg file in a temp directory, and opens it up in the Safari browser. You can try this utility yourself by piping the graph to ./util/dot2safari as follows:</p>
+      <p>I do this so often that I wrote a handy utility that generates the .svg file in a temp directory, and opens it up in the Safari browser. If you are using a Mac, you can try this utility yourself by piping the graph to ./util/dot2safari as follows:</p>
       <pre>python etcabductionpy -i minimal.lisp -g | ./util/dot2safari </pre>
 
       <h2>Getting help</h2>

@@ -5,6 +5,7 @@
   </head>
   <body>
     <div class="content">
+      <a href="index.html" class="menu">home</a>
       <h1>Example 5: Twenty Ticks</h1>
       <span class="date">August 22, 2017</span>
       <p>Imagine that you are lying in bed trying to sleep, but you hear a repetitive ticking sound. After listening to 20 ticks, you are awake enough to engage your brain and come up with some interpretation.</p>
@@ -41,7 +42,7 @@
 
       <p>Armed with this knowledge only, the best interpretation is that these ticks are all unrelated random rare events.</p>
 
-      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp 
+      <pre>$ python etcabductionpy -i twenty-ticks.lisp 
 ((etc0_tick 0.01 T1) (etc0_tick 0.01 T10) (etc0_tick 0.01 T11) (etc0_tick 0.01 T12) (etc0_tick 0.01 T13) (etc0_tick 0.01 T14) (etc0_tick 0.01 T15) (etc0_tick 0.01 T16) (etc0_tick 0.01 T17) (etc0_tick 0.01 T18) (etc0_tick 0.01 T19) (etc0_tick 0.01 T2) (etc0_tick 0.01 T20) (etc0_tick 0.01 T3) (etc0_tick 0.01 T4) (etc0_tick 0.01 T5) (etc0_tick 0.01 T6) (etc0_tick 0.01 T7) (etc0_tick 0.01 T8) (etc0_tick 0.01 T9))
 1 solutions.</pre>
 
@@ -386,7 +387,7 @@
 
       <p>Armed with this additional axiom, let's see what the best interpretation might be:</p>
 
-      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp
+      <pre>$ python etcabductionpy -i twenty-ticks.lisp
 <...silence...></pre>
 
       <p>Uh oh! You broke it. Interpreting this input file seems like it is taking forever. Even after a few hours of interpretation, you still don't have a good answer. You let it run for a few days, weeks, years, and still there is nothing. What went wrong?</p>
@@ -394,7 +395,7 @@
       <p>The good news is that nothing is broke. The bad news is that you have just encountered the central challenge that makes interpretation problems computationally difficult to solve: <u>combinatorial search</u>. It turns out that there are quite a lot of solutions to the twenty-ticks problem, even with the minimal set of axioms that we've provided our reasoning engine.</p>
       <p>To illustrate the problem, try commenting out nineteen of the twenty observable ticks, and see how many solutions there are to the problem. We'll use the "--all" flag (or just "-a") to ask the engine to show us all solutions.</p>
 
-      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp -a
+      <pre>$ python etcabductionpy -i twenty-ticks.lisp -a
 ((etc0_tick 0.01 T1))
 ((etc0_clock 0.001 $1) (etc1_tick 0.9 $1 T1))
 2 solutions.</pre>
@@ -403,7 +404,7 @@
 
       <p>With just two ticks, there are now five solutions. Already, the best interpretation is that there must be a clock.</p>
 
-      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp -a
+      <pre>$ python etcabductionpy -i twenty-ticks.lisp -a
 ((etc0_clock 0.001 $1) (etc1_tick 0.9 $1 T1) (etc1_tick 0.9 $1 T2))
 ((etc0_tick 0.01 T1) (etc0_tick 0.01 T2))
 ((etc0_clock 0.001 $1) (etc0_tick 0.01 T1) (etc1_tick 0.9 $1 T2))
@@ -478,7 +479,7 @@
 
       <p>But notice the other, less probable, solutions to this problem. The second solution is that they are unrelated random tick events, as you might expect. The third and fourth solution each hypothesize a clock, but attribute only one of the two ticks to it. The fifth solution is even more odd: perhaps there are <u>two</u> clocks, $1 and $2, each responsible for one of the ticks!</p>
 
-      <pre>python etcabductionpy/ -i twenty-ticks.lisp -g -s 5 | util/dot2safari </pre>
+      <pre>python etcabductionpy -i twenty-ticks.lisp -g -s 5 | util/dot2safari </pre>
 
 <svg width="464pt" height="196pt"
  viewBox="0.00 0.00 464.30 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -610,9 +611,9 @@
 	<li>Etcetera Abduction <u>repeats</u> the process starting at #2, until there are no more uninterpreted observations.</li>
       </ol>
 
-      <p>Effectively, this approach allows Etcetera Abduction to chip away at the interpretation problem in manageable-sized chucks. Let's try it out on the "twenty-ticks" problem:</p>
+      <p>Effectively, this approach allows Etcetera Abduction to chip away at the interpretation problem in manageable-sized chuncks. Let's try it out on the "twenty-ticks" problem:</p>
 
-      <pre>$ python etcabductionpy/ -i twenty-ticks.lisp -c -g | util/dot2safari </pre>
+      <pre>$ python etcabductionpy -i twenty-ticks.lisp -c -g | util/dot2safari </pre>
 
 <svg width="540pt"
  viewBox="0.00 0.00 2679.57 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1069,10 +1070,10 @@
 	<dt>WINDOW</dt>
 	<dd>The number of observations in each chunk. Set with the "--window" (or just "-w") flag, defaults to 4.</dd>
 	<dt>DEPTH</dt>
-	<dd>The depth of interpretations considered for each chuck. Set with the "--depth" (or just "-d") flag, defaults to 5.</dd>
+	<dd>The depth of interpretations considered for each chunck. Set with the "--depth" (or just "-d") flag, defaults to 5.</dd>
       </dl>
 
-      <p>It is interesting to note that if either beam or window were infinite, then incremental Etcetera Abduction would be exactly the same as regular exhaustive-search Etcetera Abduction. An infinite window size would mean that the whole problem would appear in the first chunk. An infinite beam size would mean that all possible solutions to previous chucks would be combined with all of those for the next one. The challenge is finding parameters that are less-than-infinite, but that still effectively meet the needs of a given interpretation task.</p>
+      <p>It is interesting to note that if either beam or window were infinite, then incremental Etcetera Abduction would be exactly the same as regular exhaustive-search Etcetera Abduction. An infinite window size would mean that the whole problem would appear in the first chunk. An infinite beam size would mean that all possible solutions to previous chuncks would be combined with all of those for the next one. The challenge is finding parameters that are less-than-infinite, but that still effectively meet the needs of a given interpretation task.</p>
       
       <p>My advice is to first set the depth parameter, making it just large enough to get the interpretations you want on your smaller-sized interpretation problems. Then play adjust the beam and window sizes in parallel - making one bigger while making the other one smaller. Window sizes can go up to maybe 10 or so, and beam sizes can be very large: 10, 100, 1000, or even 10000 might work for you. If a particular set of parameters is too slow for you, try inching down either beam or window until speed is acceptable. If you have more time to spare, or the interpretations are coming out blazingly fast, try inching up either beam or window so that you don't miss out on better interpretations of your problems.</p>
 
