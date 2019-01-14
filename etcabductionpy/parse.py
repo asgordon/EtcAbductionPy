@@ -2,9 +2,6 @@
 # A simple parser for definite clauses in first order logic
 # Andrew S. Gordon
 
-# Todo:
-# 1. need to handle conjunctions of observables: (and ...
-# 2. need to check for early final closing parentheses
 
 from __future__ import print_function
 import argparse
@@ -128,82 +125,3 @@ def display(sexp):
         return "(" + " ".join([display(s) for s in sexp]) + ")"
     else:
         return str(sexp)
-
-
-def parsecheck(obs, kb):
-    '''Utility for ensuring that knowledge base axioms are well formulated'''
-    res = "--parsecheck report\n"
-    res += str(len(obs)) + " observations, " + str(len(kb)) + " knowledge base axioms\n"
-    res += "arity warnings: " + arity_warnings(obs, kb) + "\n"
-    res += "existential warnings: " + str(existential_warnings(kb)) + "\n"
-    res += "etcetera warnings: " + str(etcetera_warnings(kb)) # + "\n"
-
-    return res
-
-def arity_warnings(obs, kb):
-    '''Checks that predicates and functions have consistent arity throughout observations and knowledge base'''
-    warnings = ""
-    arity = {}
-    ls = []
-    for dc in kb:
-        ls.extend(literals(dc))
-    ls.extend(obs)
-    all = []
-    for l in ls:
-        all.append(l)
-        all.extend(functions(l))
-    for i in all:
-        if i[0] in arity:
-            if arity[i[0]] != len(i):
-                warnings += "\n! inconsistent arity for predicate: " + str(i[0])
-        else:
-            arity[i[0]] = len(i)
-    if len(warnings) == 0:
-        return "none"
-    else:
-        return warnings
-
-def existential_warnings(definite_clauses):
-    '''Definite clauses where there are existential variables in the consequent (not found in antecedent)'''
-    warnings = ""
-    for dc in definite_clauses:
-        va = all_variables(antecedent(dc))
-        vc = all_variables(consequent(dc))
-        for v in vc:
-            if v not in va:
-                warnings += "\n! existential variables in the consequent: " + display(dc)
-                break;
-    if len(warnings) == 0:
-        return "none"
-    else:
-        return warnings
-
-def etcetera_warnings(definite_clauses):
-    '''Definite clauses with malformed etcetera literals'''
-    warnings = ""
-    seen_etcs = []
-    for dc in definite_clauses:
-        etcs = [l for l in literals(dc) if l[0][0:3] == 'etc']
-        if len(etcs) < 1:
-            warnings += "\n! definite clause without etcetera literal: " + display(dc)
-        elif len(etcs) > 1:
-            warnings += "\n! definite clause with multiple etcetera literals: " + display(dc)
-        elif etcs[0][0] in seen_etcs:
-            warnings += "\n! etcetera literal previous seen elsewhere: " + display(dc)
-        elif len(etcs[0]) < 2:
-            warnings += "\n! too few arguments in etcetera literal: " + display(dc)
-        elif not isinstance(etcs[0][1], float):
-            warnings += "\n! first argument of etcetera literal is not a probability: " + display(dc)
-        elif etcs[0][1] > 1.0 or etcs[0][1] < 0.0:
-            warnings += "\n! probability of etcetera literal is out of range: " + display(dc)
-        elif len(all_variables(etcs[0])) != len(all_variables(dc)):
-            warnings += "\n! etcetera literal missing variables founds elsewhere in definite clause: " + display(dc)
-        elif len(all_variables([l for l in literals(dc) if l != etcs[0]])) < len(all_variables(etcs[0])):
-            warnings += "\n! etcetera literal includes variables not found elsewhere in definite clause: " + display(dc)
-        else:
-            seen_etcs.append(etcs[0][0])
-    if len(warnings) == 0:
-        return "none"
-    else:
-        return warnings
-                
