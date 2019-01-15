@@ -73,3 +73,7 @@ dt {
     font-weight: bold;
 }
 
+blockquote {
+    font-size: 14px;
+    line-height: 1.8;
+}
