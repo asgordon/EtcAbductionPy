@@ -11,6 +11,7 @@ import etcetera
 import forward
 import incremental
 import unify
+import abduction
 
 argparser = argparse.ArgumentParser(description='Etcetera Abduction in Python')
 

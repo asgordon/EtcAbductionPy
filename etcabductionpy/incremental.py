@@ -4,12 +4,14 @@
 
 import unify
 import abduction
-import bisect
-import itertools
 import etcetera
 import forward
-import sys
 import parse
+
+import bisect
+import itertools
+import sys
+
 
 def incremental(obs, kb, maxdepth, n, w, b, skolemize = True):
     #return incremental1(obs, kb, maxdepth, n, w, b, skolemize)

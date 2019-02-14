@@ -4,6 +4,7 @@
 
 import parse
 import unify
+
 import itertools
 
 def abduction(obs, kb, maxdepth, skolemize = True):
