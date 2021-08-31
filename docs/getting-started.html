@@ -39,11 +39,11 @@
       <p>If you're a GitHub expert, then just clone this repository to get started. If you're a novice, then find the "Clone or download" button on this EtcAbductionPy webpage, and then click it to see the "Download ZIP" option. Clicking this will download a .zip file with all of the code, which you can double-click to unpack, creating a folder called "EtcAbductionPy-master" that you can put on your desktop or wherever you like to keep your files. However, if you are confortable with <code>git</code>, then clone the repository instead to make it easier to stay current with updates. You can find <code>git</code> for Windows and other operating systems <a href="https://git-scm.com/downloads">here</a>.</p>
       
 
-      <p>Next, open up your Terminal window and navigate to the <code>EtcAbductionPy-master/</code> directory. From inside this directory, you can run the Python code directly:</p>
+      <p>Next, open up your Terminal window and navigate to the <code>EtcAbductionPy-master/</code> directory. From inside this directory, you can run the command-line interface directly, using the -m flag to invoke the module:</p>
 
       <pre>
 $ cd EtcAbductionPy-master/
-$ python etcabductionpy -h
+$ python -m etcabductionpy -h
 usage:  [-h] [-i [INFILE]] [-o [OUTFILE]] [-k [KB]] [-n NBEST] [-g]
         [-s SOLUTION] [-d DEPTH] [-a] [-f]
 
@@ -94,7 +94,7 @@ optional arguments:
 </pre>
       <p>All blank lines and lines that begin with a semicolon are ignored by the Etcetera Abduction software, so this file only contains two items of interest: an observation and a piece of knowledge.</p>
       <p>This file has enough information in it to serve as an input to Etcetera Abduction. We can see the results by specifying it as the input using the "--input" (or just "-i") flag, as follows:</p>
-<pre>$ python etcabductionpy -i minimal.lisp
+<pre>$ python -m etcabductionpy -i minimal.lisp
 ((etc 0.001 E))
 1 solutions.
 </pre>
@@ -103,7 +103,7 @@ optional arguments:
       <h2>Creating graphs of solutions</h2>
       <p>In the minimal example, above, Etcetera Abduction has told us that there is only one set of assumptions that logically entail the observations, and that this set has only one assumption in it, namely <code>(etc 0.001 E)</code>.</p>
       <p>Would you like to see exactly how this assumption entails the observation? EtcAbductionPy includes a nice utility that will present the proof of this entailment as a directed graph. To produce this graph, just add the "--graph" (or just "-g") flag to the command.</p>
-      <pre>$ python etcabductionpy -i minimal.lisp -g
+      <pre>$ python -m etcabductionpy -i minimal.lisp -g
 digraph proof {
  graph [rankdir="TB"]
  n0 [label="etc 0.001"];
@@ -151,9 +151,9 @@ digraph proof {
       <p>If you are using Windows or don't use HomeBrew, then download the <code>graphviz</code> suite of programs from <a href="https://graphviz.gitlab.io/download/">here</a>. 
 
       <p>After that, you can pipe the output of <code>etcabductionpy</code> to <code>dot</code>, to generate nice scalable vector graphics (svg) files, as follows:</p>
-      <pre>$ python etcabductionpy -i minimal.lisp -g | dot -Tsvg > minimal.svg</pre>
+      <pre>$ python -m etcabductionpy -i minimal.lisp -g | dot -Tsvg > minimal.svg</pre>
       <p>I do this so often that I wrote a handy utility that generates the .svg file in a temp directory, and opens it up in the Safari browser. If you are using a Mac, you can try this utility yourself by piping the graph to ./util/dot2safari as follows:</p>
-      <pre>python etcabductionpy -i minimal.lisp -g | ./util/dot2safari </pre>
+      <pre>python -m etcabductionpy -i minimal.lisp -g | ./util/dot2safari </pre>
 
       <h2>Getting help</h2>
       <p>If you have made it this far, then you are ready to start learning how to use Etcetera Abduction to solve interpretation problems. I have prepared a few examples to work through, by way of a tutorial, which you should take a look at next.</p>

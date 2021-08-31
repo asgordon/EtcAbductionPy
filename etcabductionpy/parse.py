@@ -1,13 +1,15 @@
-# parse.py
-# A simple parser for definite clauses in first order logic
-# Andrew S. Gordon
-
+'''parse.py
+A simple parser for definite clauses in first order logic
+Andrew S. Gordon
+'''
 
 from __future__ import print_function
-import argparse
-import sys
 
 def parse(src):
+    '''Parse a source file into a tuple of (axioms, literals)'''
+    return(definite_clauses(variablize(sexp(wrap(src)))))
+
+def parse_old(src):
     '''Parse multiple expressions in src text into a list of python list s-expressions'''
     return(variablize(sexp(wrap(src))))
 
@@ -31,7 +33,7 @@ def wrap(src):
 
 def read_from_tokens(tokens):
     '''Read an expression from a sequence of tokens.'''
-    if len(tokens) == 0:
+    if not tokens:
         raise SyntaxError('unexpected EOF while reading')
     token = tokens.pop(0)
     if '(' == token:
@@ -75,7 +77,7 @@ def consequent(rule): # always a literal
     
 def all_variables(sexp):
     '''returns the set of all ?variables'''
-    if isinstance(sexp, str) and sexp[0] == '?':
+    if isinstance(sexp, str) and sexp.startswith('?'):
         return set([sexp])
     elif isinstance(sexp, list):
         return set().union(*[all_variables(item) for item in sexp])
@@ -86,7 +88,7 @@ def literals(definite_clause):
     if (isinstance(definite_clause, list) and
         len(definite_clause) == 3 and
         isinstance(definite_clause[1], list) and
-        len(definite_clause[1]) > 0):
+        definite_clause[1]): # len > 0
         if definite_clause[1][0] == 'and':
             return definite_clause[1][1:] + [definite_clause[2]]
         else:
@@ -106,7 +108,7 @@ def functions(literal):
 
 def variablize(sexp):
     '''Converts any lowercase-beginning term in the [1:] of any list into a ?term'''
-    if isinstance(sexp, list) == False: # problem
+    if not isinstance(sexp, list): # problem
         return sexp
     else:
         res = []

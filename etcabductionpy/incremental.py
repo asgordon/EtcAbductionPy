@@ -1,19 +1,20 @@
-# incremental.py
-# Incremental version of Etcetera Abduction
-# Andrew S. Gordon
+'''incremental.py
+Incremental Etcetera Abduction for solving large interpretation problems
+Andrew S. Gordon
+'''
 
-import unify
-import abduction
-import etcetera
-import forward
-import parse
 
 import bisect
 import itertools
-import sys
 
+from . import unify
+from . import abduction
+from . import etcetera
+from . import forward
+from . import parse
 
 def incremental(obs, kb, maxdepth, n, w, b, skolemize = True):
+    '''Incremental method for etcetera abduction for handling lengthy lists of input observations'''
     #return incremental1(obs, kb, maxdepth, n, w, b, skolemize)
     return incremental2(obs, kb, maxdepth, n, w, b, skolemize)
 
@@ -32,20 +33,20 @@ def incremental1(obs, kb, maxdepth, n, w, b, skolemize = True):
     # b = beam of running candidate interpretations
     indexed_kb = abduction.index_by_consequent_predicate(kb)
     previous = [] # proofs of the previous
-    while len(obs) > 0:
+    while obs:
         window = obs[0:w]
         obs = obs[w:]
         listoflists = [abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in window]
-        if len(previous) > 0:
+        if previous:
             listoflists.append(previous)
         pr2beat = 0.0
         nbest = [] # solutions
         nbestPr = [] # probabilities
         for u in itertools.product(*listoflists):
             u = list(itertools.chain.from_iterable(u))
-            if etcetera.bestCaseProbability(u) > pr2beat:
+            if etcetera.best_case_probability(u) > pr2beat:
                 for solution in abduction.crunch(u):
-                    jpr = etcetera.jointProbability(solution)
+                    jpr = etcetera.joint_probability(solution)
                     if jpr > pr2beat:
                         insertAt = bisect.bisect_left(nbestPr, jpr)
                         nbest.insert(insertAt, solution)
@@ -86,9 +87,9 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
     nbestPr = [] # probabilities
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
-        if etcetera.bestCaseProbability(u) > pr2beat:
+        if etcetera.best_case_probability(u) > pr2beat:
             for solution in abduction.crunch(u):
-                jpr = etcetera.jointProbability(solution)
+                jpr = etcetera.joint_probability(solution)
                 if jpr > pr2beat:
                     insertAt = bisect.bisect_left(nbestPr, jpr)
                     nbest.insert(insertAt, solution)
@@ -103,7 +104,7 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
     previous = [unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
     
     # next, interpret remaining windows in a special way
-    while len(remaining) > 0:
+    while remaining:
         iteration += 1
         window = remaining[0:w]
         remaining = remaining[w:]
@@ -111,15 +112,15 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
         nbest = [] # solutions
         nbestPr = [] # probabilities
         for previousSolution in previous:
-            previousSolutionJpr = etcetera.jointProbability(previousSolution)
-            context = getContext(previousSolution, obs, kb)
+            previousSolutionJpr = etcetera.joint_probability(previousSolution)
+            context = get_context(previousSolution, obs, kb)
             listoflists = [contextual_and_or_leaflists([ob], indexed_kb, maxdepth, context) for ob in window]
 
             for u in itertools.product(*listoflists):
                 u = list(itertools.chain.from_iterable(u))
-                if etcetera.bestCaseProbability(u) * previousSolutionJpr > pr2beat:
+                if etcetera.best_case_probability(u) * previousSolutionJpr > pr2beat:
                     for solution in abduction.crunch(u):
-                        jpr = etcetera.jointProbability(solution) * previousSolutionJpr
+                        jpr = etcetera.joint_probability(solution) * previousSolutionJpr
                         if jpr > pr2beat:
                             insertAt = bisect.bisect_left(nbestPr, jpr)
                             nbest.insert(insertAt, previousSolution + solution) # joined
@@ -134,7 +135,7 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
         previous = [unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
     return previous[0:n]
     
-def getContext(solution, obs, kb):
+def get_context(solution, obs, kb):
     withDuplicates = [item[0] for item in forward.forward(solution, kb)] # why contains duplicates?
     res = []
     for item in withDuplicates:
@@ -147,10 +148,10 @@ def getContext(solution, obs, kb):
 
 def contextual_and_or_leaflists(remaining, indexed_kb, depth, context, antecedents = [], assumptions = []):
     '''Returns list of all entailing sets of leafs in the and-or backchaining tree, with belief context'''
-    if depth == 0 and len(antecedents) > 0: # fail
+    if depth == 0 and antecedents: # fail
         return [] # (empty) list of lists
-    elif len(remaining) == 0: # done with this level
-        if len(antecedents) == 0: # found one
+    elif not remaining: # done with this level
+        if not antecedents: # found one
             return [assumptions] # list of lists
         else:
             return contextual_and_or_leaflists(antecedents, indexed_kb, depth - 1, context, [], assumptions)

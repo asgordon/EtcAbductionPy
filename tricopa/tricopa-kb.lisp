@@ -1322,7 +1322,7 @@
 ;; shake 2: maybe you are trying to defend yourself
 (if (and (goal' e1 e2 x)
 	 (defend' e2 x x)
-	 (etc2_shake 0.4 e1 e2 e3 e x y))
+	 (etc2_shake 0.4 e1 e2 e3 e x x))
     (shake' e x))
 
 ;; shake 3: maybe you are cold

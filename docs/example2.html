@@ -54,7 +54,7 @@
 (if (etc0_dead 0.01 e x) (dead' e x))
 </pre>	
       <p>And with that, we can get our first solution to the dead plant problem by invoking the Etcetera Abduction reasoning engine:</p>
-      <pre>$ python etcabductionpy -i dead-plant.lisp 
+      <pre>$ python -m etcabductionpy -i dead-plant.lisp 
 ((etc0_dead 0.01 E4 Plant) (etc0_task 0.1 E1 Me Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant))
 1 solutions.</pre>
       <svg width="540pt" 
@@ -172,7 +172,7 @@
 (if (etc0_forgot 0.05 e x e1) (forgot' e x e1))
 </pre>
       <p>That should do it. Let's see what we get now when we run the Etcetera Abduction engine. We'll use the "--all" (or "-a") flag to say that we want to list all solutions, just to see how many we get -- even if there are a million of them.</p>
-      <pre>$ python etcabductionpy -i dead-plant.lisp -a
+      <pre>$ python -m etcabductionpy -i dead-plant.lisp -a
 ((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $2 E3 E2 Me) (etc1_dead 0.9 E4 $3 E2 Plant Mary) (etc2_didnt 0.9 $3 E2 $1 E1 Mary Me) (etc1_task 0.9 E1 E2 $2 Me Mary))
 ((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $3 E3 E2 Me) (etc1_dead 0.9 E4 $4 E2 Plant Mary) (etc2_didnt 0.9 $4 E2 $1 $2 Mary Me) (etc1_task 0.9 $2 E2 $3 Me Mary) (etc1_task 0.9 E1 E2 $3 Me Mary))
 ((etc0_forgot 0.05 $1 Mary E2) (etc0_vacation 0.01 E3 Me) (etc0_water 0.02 E2 Mary Plant) (etc1_couldnt 0.9 $4 E3 E2 Me) (etc1_couldnt 0.9 $3 E3 E2 Me) (etc1_dead 0.9 E4 $5 E2 Plant Mary) (etc2_didnt 0.9 $5 E2 $1 $2 Mary Me) (etc1_task 0.9 $2 E2 $3 Me Mary) (etc1_task 0.9 E1 E2 $4 Me Mary))

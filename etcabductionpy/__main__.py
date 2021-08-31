@@ -1,17 +1,17 @@
-# etcabductionpy.__main__
-# Etcetera Abduction in Python
-# Andrew S. Gordon
+'''etcabductionpy.__main__
+Command line interface
+Andrew S. Gordon
+'''
 
 from __future__ import print_function
 import argparse
 import sys
 
-import parse
-import etcetera
-import forward
-import incremental
-import unify
-import abduction
+from . import parse
+from . import etcetera
+from . import forward
+from . import incremental
+from . import unify
 
 argparser = argparse.ArgumentParser(description='Etcetera Abduction in Python')
 
@@ -84,7 +84,7 @@ args = argparser.parse_args()
 
 inlines = args.infile.readlines()
 intext = "".join(inlines)
-kb, obs = parse.definite_clauses(parse.parse(intext))
+kb, obs = parse.parse(intext)
 obs = unify.standardize(obs)
 
 skolemize = not args.variables
@@ -92,7 +92,7 @@ skolemize = not args.variables
 if args.kb:
     kblines = args.kb.readlines()
     kbtext = "".join(kblines)
-    kbkb, kbobs = parse.definite_clauses(parse.parse(kbtext))
+    kbkb, kbobs = parse.parse(kbtext)
     kb.extend(kbkb)
 
 # Handle forward
@@ -109,7 +109,7 @@ if args.forward:
 # Handle abduction
 
 if args.all:
-    solutions = etcetera.etcAbduction(obs, kb, args.depth, skolemize = skolemize)
+    solutions = etcetera.etcetera(obs, kb, args.depth, skolemize = skolemize)
 else:
     if args.incremental:
         solutions = incremental.incremental(obs, kb, args.depth, args.nbest,

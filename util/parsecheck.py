@@ -6,11 +6,9 @@ from __future__ import print_function
 import datetime
 import argparse
 import sys
-sys.path.append('../etcabductionpy')
-sys.path.append('./etcabductionpy')
 
-import parse
-import unify
+from context import etcabductionpy
+from etcabductionpy import parse, unify
 
 argparser = argparse.ArgumentParser(description='Utility for ensuring well-formulated knowledge base axioms')
 
@@ -25,6 +23,10 @@ argparser.add_argument('-o', '--outfile',
                        type=argparse.FileType('w'),
                        default=sys.stdout,
                        help='Output file, defaults to STDOUT')
+
+argparser.add_argument('-t', '--text',
+                       action='store_true',
+                       help='treat text literals differently')
 
 
 
@@ -129,17 +131,32 @@ def missing_axiom_warnings(definite_clauses):
         return "none"
     else:
         return warnings
-
-
     
+
+def is_text_literal(literal):
+    if literal[0] == 'text':
+        return True
+    else:
+        return False
+
+def is_text_definite_clause(definite_clause):
+    if is_text_literal(definite_clause[2]):
+        return True
+    else:
+        return False
+        
 # run
 
 args = argparser.parse_args()
 
 inlines = args.infile.readlines()
 intext = "".join(inlines)
-kb, obs = parse.definite_clauses(parse.parse(intext))
+kb, obs = parse.parse(intext)
 obs = unify.standardize(obs)
+
+if args.text: # text flag is set, so ignore text literals and axioms
+    obs = [o for o in obs if not is_text_literal(o)]
+    kb  = [a for a in kb if not is_text_definite_clause(a)]
 
 report = parsecheck(obs, kb)
 print(report, file=args.outfile)

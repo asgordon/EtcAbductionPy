@@ -1,11 +1,12 @@
-# abduction.py
-# Logical abduction for kb of definite clauses
-# Andrew S. Gordon
-
-import parse
-import unify
+'''abduction.py
+Base functionality for logical abduction using a knowledge base of definite clauses
+Andrew S. Gordon
+'''
 
 import itertools
+
+from . import parse
+from . import unify
 
 def abduction(obs, kb, maxdepth, skolemize = True):
     '''Logical abduction: returns a list of all sets of assumptions that entail the observations given the kb'''
@@ -32,10 +33,10 @@ def index_by_consequent_predicate(kb):
 
 def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions = []):
     '''Returns list of all entailing sets of leafs in the and-or backchaining tree'''
-    if depth == 0 and len(antecedents) > 0: # fail
+    if depth == 0 and antecedents: # fail
         return [] # (empty) list of lists
-    elif len(remaining) == 0: # done with this level
-        if len(antecedents) == 0: # found one
+    elif not remaining: # done with this level
+        if not antecedents:  # found one
             return [assumptions] # list of lists
         else:
             return and_or_leaflists(antecedents, indexed_kb, depth - 1, [], assumptions)

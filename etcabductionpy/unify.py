@@ -1,13 +1,15 @@
-# unify.py
-# A most-general-unifier unification algorithm for arbitrary s-expressions
-# Andrew S. Gordon
+'''unify.py
+A most-general-unifier unification algorithm for arbitrary s-expressions
+Andrew S. Gordon
+'''
 
 def unify(x, y, theta = {}, functions = False):
+    '''attempt to unify two firt-order literals, with support for existing substitutions and function terms'''
     # return unify1(x, y, theta) # old
     if functions:
         return robinson(x, y, {})
     else:
-        return nofunctions(x, y, {})
+        return no_functions(x, y, {})
 
 # Support functions
 
@@ -23,7 +25,7 @@ def listp(item): # includes both literals and functions
     return isinstance(item, list)
 
 def variablep(item): # a string that starts with a question mark
-    return isinstance(item, str) and len(item) > 1 and item[0] == "?"
+    return isinstance(item, str) and len(item) > 1 and item.startswith('?')
 
 def countup(prefix = "_"):
     '''Unique symbol name generator'''
@@ -36,7 +38,6 @@ standardized_universals = countup('?#') # use standardized_universals.next() to 
 
 def all_variables(sexp):
     '''returns the set of all ?variables'''
-    #if isinstance(sexp, str) and sexp[0] == '?':
     if variablep(sexp):
         return set([sexp])
     elif isinstance(sexp, list):
@@ -45,15 +46,16 @@ def all_variables(sexp):
         return set()
 
 def standardize(sexp):
-    '''Ensures that all variable ?names in an s-expression are standardized variables, e.g. ?#42'''
-    foreigners = [x for x in all_variables(sexp) if not x[0:2] == "?#"]
+    '''Ensures that all variable ?names in an s-expression are standardized variables'''
+    foreigners = [x for x in all_variables(sexp) if not x.startswith("?#")]
     aliases = {}
     for f in foreigners:
         #aliases[f] = standardized_universals.next()
         aliases[f] = next(standardized_universals)
     return subst(aliases, sexp)
 
-def skolemize(sexp, prefix="$"): 
+def skolemize(sexp, prefix="$"):
+    '''Turns variables in an s-expression into unique Skolem constants'''
     skolem_constants = countup(prefix) # use skolem_constants.next() to get the next one
     all_vars = all_variables(sexp)
     instances = {}
@@ -124,12 +126,12 @@ def robinson(x, y, theta = {}):
                     else:
                         theta[s] = t
                 else:
-                    if robOccursCheck(s,t,theta):
+                    if robinson_occurs_check(s,t,theta):
                         theta[s] = t
                     else:
                         return None
             elif variablep(t):
-                if robOccursCheck(t,s,theta):
+                if robinson_occurs_check(t,s,theta):
                     theta[t] = s
                 else:
                     return None
@@ -142,18 +144,18 @@ def robinson(x, y, theta = {}):
                 return None
     return theta
 
-def robOccursCheck(var, target, theta):
+def robinson_occurs_check(var, target, theta):
     stack = [target]
     while stack:
         t = stack.pop()
-        for z in allvars(t):
+        for z in all_vars(t):
             if var == z:
-                return false
+                return False
             if z in theta:
                 stack.append(theta[z])
     return True
 
-def allvars(term):
+def all_vars(term):
     res = []
     stack = [term]
     while stack:
@@ -167,7 +169,7 @@ def allvars(term):
 
 # Version 3: Faster, but no functions
 
-def nofunctions(x, y, theta = {}):
+def no_functions(x, y, theta = {}):
     # unifies two lists not containing lists
     lx = len(x)
     if lx != len(y):
@@ -180,12 +182,12 @@ def nofunctions(x, y, theta = {}):
         while t in theta: 
             t = theta[t]
         if s != t:
-            if s[0] == "?": # cheaper var test
-                if t[0] == "?" and s < t: # deal with standardized/non-standardized var ordering
+            if s.startswith('?'): # cheaper var test
+                if t.startswith('?') and s < t: # deal with standardized/non-standardized var ordering
                     theta[t] = s
                 else:
                     theta[s] = t
-            elif t[0] == "?": # cheaper var test
+            elif t.startswith('?'): # cheaper var test
                 theta[t] = s
             else:
                 return None

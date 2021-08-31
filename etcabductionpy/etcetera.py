@@ -1,15 +1,16 @@
-# etcetera.py
-# Etcetera Abduction: Probability-ordered logical abduction for kb of definite clauses 
-# Andrew S. Gordon
-
-import unify
-import abduction
+'''etcetera.py
+Probability-ordered logical abduction for a Knowledge Base of definite clauses 
+Andrew S. Gordon
+'''
 
 import bisect
 import itertools
 import functools
 
-def etcAbduction(obs, kb, maxdepth, skolemize = True):
+from . import unify
+from . import abduction
+
+def etcetera(obs, kb, maxdepth, skolemize = True):
     '''Exhuastive search for conjunctions of etctera literals that logically entail the observations'''
     indexed_kb = abduction.index_by_consequent_predicate(kb)
     res = []
@@ -17,18 +18,18 @@ def etcAbduction(obs, kb, maxdepth, skolemize = True):
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
         res.extend(abduction.crunch(u))
-    res.sort(key=lambda item: jointProbability(item), reverse=True)
+    res.sort(key=lambda item: joint_probability(item), reverse=True)
     if skolemize:
         return [unify.skolemize(r) for r in res]
     else:
         return res
 
-def jointProbability(etcs):
+def joint_probability(etcs):
     '''Product of probabitilies of etctera literals, and 1.0 for empty list'''
-    if len(etcs) == 0: return 1.0 # needed for incremental
+    if not etcs: return 1.0 # needed for incremental
     return functools.reduce(lambda x, y: x*y, [l[1] for l in etcs])
 
-def bestCaseProbability(etcs):
+def best_case_probability(etcs):
     '''If we were wildly successful at unifing all literals, what would the joint probability be?'''
     predicateSet = set()
     pr = 1.0
@@ -48,9 +49,9 @@ def nbest(obs, kb, maxdepth, n, skolemize = True):
     listoflists = [abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
-        if bestCaseProbability(u) > pr2beat:
+        if best_case_probability(u) > pr2beat:
             for solution in abduction.crunch(u):
-                jpr = jointProbability(solution)
+                jpr = joint_probability(solution)
                 if jpr > pr2beat:
                     insertAt = bisect.bisect_left(nbestPr, jpr)
                     nbest.insert(insertAt, solution)

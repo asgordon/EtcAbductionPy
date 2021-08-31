@@ -493,7 +493,7 @@ b. The small triangle and the circle were waiting for the big triangle to join t
 (and (waitFor' e10 LT E3) (waitFor' e11 C E3))
 
 71. A circle is in the room. A triangle knocks on the door and the circle runs to the corner of the room. The triangle pushes the door open and the circle is in the corner of the room shaking. How does the circle feel? 
-(and (inside' E1 C) (knock' E2 LT D) (outside' E3 LT) (moveTo' E4 C CORNER) (open' E5 LT D) (shake' e6 C) (seq E1 E2 E3 E4))
+(and (inside' E1 C) (knock' E2 LT D) (outside' E3 LT) (moveTo' E4 C CORNER) (open' E5 LT D) (shake' E6 C) (seq E1 E2 E3 E4))
 a. The circle is very scared.
 (afraid' e5 C)
 b. The circle is excited.
@@ -612,7 +612,7 @@ b. The circle does this to be polite.
 (polite' e4 C)
 
 88. A small triangle kisses a big triangle. Why does the small triangle do this? 
-(and (kiss' e1 LT BT))
+(and (kiss' E1 LT BT))
 a. The small triangle hates the big triangle. 
 (hate' e2 LT BT)
 b. The small triangle loves the big triangle.

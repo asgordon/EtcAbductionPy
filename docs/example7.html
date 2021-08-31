@@ -82,7 +82,7 @@
 
       <p>With these axioms in place, the core structure of the first story is generated as the top interpretation of the observations, as follows:</p>
 
-      <pre>> python etcabductionpy -i docs/story1.lisp -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i docs/story1.lisp -g | ./util/dot2safari</pre>
       
       <img src="story1.svg" width="100%" />
 
@@ -110,7 +110,7 @@
 
       <p>With these changes, the resulting proof structure changes slightly:</p>
       
-      <pre>> python etcabductionpy -i docs/story2.lisp -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i docs/story2.lisp -g | ./util/dot2safari</pre>
       
       <img src="story2.svg" width="100%" />
 
@@ -157,7 +157,7 @@
 
       <p>Combined with two additional axioms that connect train commuting to train cards, and baseball players to baseball cards, the visualized proof graph depicts the long spine of causality between the baseball player's profession and the symbol of love. To achieve this proof, however, the depth of inference must be elevated from the default of five to seven.</p>
 	      
-      <pre>> python etcabductionpy -i docs/story3.lisp -d 7 -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i docs/story3.lisp -d 7 -g | ./util/dot2safari</pre>
       
       <img src="story3.svg" width="100%" />
 
@@ -210,7 +210,7 @@
 
       <p>As in the previous story, this long chain of inferences requires a depth of seven, raised from the software's default of five.</p>
       
-      <pre>> python etcabductionpy -i docs/story4.lisp -d 7 -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i docs/story4.lisp -d 7 -g | ./util/dot2safari</pre>
       
       <img src="story4.svg" width="100%" />
 
@@ -237,7 +237,7 @@
 
       <p>A depth of six is required to find the solution:</p>
       
-      <pre>> python etcabductionpy -i docs/story5.lisp -d 6 -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i docs/story5.lisp -d 6 -g | ./util/dot2safari</pre>
       
       <img src="story5.svg" width="100%" />
 
@@ -272,7 +272,7 @@
 
       <p>The combination of these three key inferences yields a nice proof structure, somewhat more dense than the long stringy ones seen in earlier stories.</p>
       
-      <pre>> python etcabductionpy -i docs/story6.lisp -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i docs/story6.lisp -g | ./util/dot2safari</pre>
       
       <img src="story6.svg" width="100%" />
       
@@ -310,7 +310,7 @@
 
       <p>In this one overloaded axiom, we've collapsed the concepts of anthropomorphism, frequent distractions, train stations, and late trains! From a knowledge representation perspective, this axiom is pretty embarrassing. It's not wrong, per se; it just seems too specific to this one proof structure. Where would we ever use this axiom again? However, it gets the job done, and we can generate a complete proof graph:</p>
 
-      <pre>> python etcabductionpy -i docs/story7.lisp -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i docs/story7.lisp -g | ./util/dot2safari</pre>
       
       <img src="story7.svg" width="100%" />
 
@@ -381,7 +381,7 @@
 
       <p>With these three inferential chains in place, the complete proof structure can be generated:</p>
 
-          <pre>> python etcabductionpy -i docs/story8.lisp -g | ./util/dot2safari</pre>
+          <pre>$ python -m etcabductionpy -i docs/story8.lisp -g | ./util/dot2safari</pre>
       
       <img src="story8.svg" width="100%" />
 

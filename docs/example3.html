@@ -100,7 +100,7 @@
 (round FRUIT4)
 </pre>      
       <p>Now let's ask Etcetera Abduction to give us an interpretation, and then graph it out.</p>
-      <pre>> python etcabductionpy -i lemon-lime.lisp -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i lemon-lime.lisp -g | ./util/dot2safari</pre>
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="540pt" viewBox="0.00 0.00 1333.89 124.00">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
@@ -268,7 +268,7 @@
 
       <p>But our axioms look correct. Surely one of the possible interpretations has the classifications that we are looking for. Let's take a look at the <u>second</u>-most probable interpretation, using the -s (--solution) flag.</p>
 
-      <pre>> python etcabductionpy -i lemon-lime.lisp -s 2 -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i lemon-lime.lisp -s 2 -g | ./util/dot2safari</pre>
       
       
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="540pt"  viewBox="0.00 0.00 1524.75 196.00">
@@ -478,7 +478,7 @@
       
       <p>For this particular problem, there is a very hackish way we can do this with a one-line shell script. Using the <code>awk</code> command, we can filter out all solutions that don't have exactly four occurences of <code>etc0</code>. By convention, <code>etc0</code> is used to explain things by their prior probability - used both for class labels and features. As a consequence of our particular knowledge base, solutions containing exactly four of these prior probabilities will be exactly those where these priors are each assigned to class labels for the four fruit, and not to any of the features. Here's a bit of code that finds all solutions, assigns a consequtive number to each solution, and then filters out all of the ones that do not have exactly four prior probabilities.</p>
 
-      <pre>> python etcabductionpy -i lemon-lime.lisp -a | cat -n | awk 'gsub(/etc0/,"etc0") == 4'
+      <pre>$ python -m etcabductionpy -i lemon-lime.lisp -a | cat -n | awk 'gsub(/etc0/,"etc0") == 4'
 	
    251	((etc0_lemon 0.4 FRUIT1) (etc0_lemon 0.4 FRUIT3) (etc0_lime 0.6 FRUIT2) (etc0_lime 0.6 FRUIT4) (etc1_not_yellow 0.08333333333 FRUIT4) (etc1_round 0.5 FRUIT2) (etc1_round 0.5 FRUIT4) (etc1_yellow 0.9166666667 FRUIT2) (etc2_not_round 0.925 FRUIT1) (etc2_not_round 0.925 FRUIT3) (etc2_not_yellow 0.125 FRUIT3) (etc2_yellow 0.875 FRUIT1))
    392	((etc0_lemon 0.4 FRUIT3) (etc0_lime 0.6 FRUIT1) (etc0_lime 0.6 FRUIT2) (etc0_lime 0.6 FRUIT4) (etc1_not_round 0.5 FRUIT1) (etc1_not_yellow 0.08333333333 FRUIT4) (etc1_round 0.5 FRUIT2) (etc1_round 0.5 FRUIT4) (etc1_yellow 0.9166666667 FRUIT1) (etc1_yellow 0.9166666667 FRUIT2) (etc2_not_round 0.925 FRUIT3) (etc2_not_yellow 0.125 FRUIT3))
@@ -500,7 +500,7 @@
       <p>Good! We are left with exactly 16 admissible solutions, which is equal to 2<sup>4</sup>, or two possible solutions for each of the four fruit. So every possible combinations of classifications is represented in the list of all interpretations.</p>
       
       <p>Furthermore, we can see that it is solution number 251 that is the most-probable of those that are admissible. Let's see what that particular one looks like.</p>
-      <pre>> python etcabductionpy -i lemon-lime.lisp -a -s 251 -g | ./util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -i lemon-lime.lisp -a -s 251 -g | ./util/dot2safari</pre>
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="540pt" viewBox="0.00 0.00 2032.87 196.00">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192)">

@@ -5,13 +5,10 @@
 from __future__ import print_function
 import argparse
 import sys
+import os
 import re
 
-sys.path.append('../etcabductionpy')
-import etcetera
-import parse
-import forward
-import unify
+from context import etcabductionpy as etc
 
 # Question class and parser
 
@@ -27,7 +24,8 @@ class Question(tuple):
 
 def listofliterals(sexp_str):
     # returns a list of literals from a given s-expression string
-    x = parse.variablize(parse.sexp(sexp_str))
+    #x = parse.variablize(parse.sexp(sexp_str))
+    x = etc.parse.parse(sexp_str)[1][0]
     if (x[0] == 'and'):
         return x[1:]
     else:
@@ -38,7 +36,7 @@ def tcparse(question_file, answer_file):
     qlines = question_file.readlines()
     alines = answer_file.readlines()
     lineno = 0
-    for i in xrange(len(qlines)):
+    for i in range(len(qlines)):
         if (re.search("^[0-9]+\. ", qlines[i])): # e.g. "43. "
             qnum = int(qlines[i].split('.')[0])
             answer = alines[qnum - 1].split()[1]
@@ -49,7 +47,7 @@ def tcparse(question_file, answer_file):
 
 def contains(conj, lit): # where conj is the list of entailed, lit is an answer literal.
     for c in conj:
-        if unify.unify(lit, c):
+        if etc.unify.unify(lit, c):
             return True
     return False
 
@@ -63,7 +61,7 @@ def percentEntailed(entailed, alt): #percent of alt that is entailed
 def highestPercent(entailedlist, alt): #index of highest percentEntailed
     highest = len(entailedlist)
     percent = 0.0
-    for i in xrange(len(entailedlist)):
+    for i in range(len(entailedlist)):
         iperc = percentEntailed(entailedlist[i], alt)
         if iperc > percent:
             percent = iperc
@@ -71,10 +69,10 @@ def highestPercent(entailedlist, alt): #index of highest percentEntailed
     return highest, percent
 
 def entailedlist(obs, nbest, kb):
-    return [[pair[0] for pair in forward.forward(n, kb)] for n in nbest]
+    return [[pair[0] for pair in etc.forward.forward(n, kb)] for n in nbest]
 
 def score1q(q, kb, depth, n):
-    nbest = etcetera.nbest(q.given(), kb, depth, n)
+    nbest = etc.etcetera.nbest(q.given(), kb, depth, n)
     elist = entailedlist(q.given(), nbest, kb)
     altaIndex, altaPercent = highestPercent(elist, q.alta())
     altbIndex, altbPercent = highestPercent(elist, q.altb())
@@ -106,21 +104,21 @@ def scoreall(qlist, kb, depth, n):
     return(score)
 
 def workflow(q, kb, depth):
-    best = etcetera.nbest(q.given(), kb, depth, 1)[0]
-    return(forward.graph(best, forward.forward(best, kb), targets=q.given()))
+    best = etc.nbest(q.given(), kb, depth, 1)[0]
+    return(etc.graph(best, etc.forward.forward(best, kb), targets=q.given()))
 
 def xbestproof(q, kb, depth, x):
-    xbest = etcetera.nbest(q.given(), kb, depth, x + 1)[x]
-    return(forward.graph(xbest, forward.forward(xbest, kb), targets=q.given()))
+    xbest = etc.nbest(q.given(), kb, depth, x + 1)[x]
+    return(etc.graph(xbest, etc.forward.forward(xbest, kb), targets=q.given()))
 
 # command-line control
         
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
-    argparser.add_argument('-t', '--tricopa', nargs='?', type=argparse.FileType('r'), default="TriCOPA.txt")
-    argparser.add_argument('-a', '--answers', nargs='?', type=argparse.FileType('r'), default="TriCOPA-answers.txt")
-    argparser.add_argument('-k', '--kb', nargs='?', type=argparse.FileType('r'), default="tricopa-kb.lisp")
+    argparser.add_argument('-t', '--tricopa', nargs='?', type=argparse.FileType('r'), default=os.path.join(os.path.dirname(__file__), "TriCOPA.txt"))
+    argparser.add_argument('-a', '--answers', nargs='?', type=argparse.FileType('r'), default=os.path.join(os.path.dirname(__file__), "TriCOPA-answers.txt"))
+    argparser.add_argument('-k', '--kb', nargs='?', type=argparse.FileType('r'), default=os.path.join(os.path.dirname(__file__), "tricopa-kb.lisp"))
     argparser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
     argparser.add_argument('-q', '--question', type=int)
     argparser.add_argument('-d', '--depth', type=int, default=3)
@@ -129,7 +127,7 @@ if __name__ == "__main__":
     argparser.add_argument('-x', '--xbestproof', type=int)
     args = argparser.parse_args()
     questionlist = tcparse(args.tricopa, args.answers) # a list
-    kb, ignore = parse.definite_clauses(parse.parse("".join(args.kb.readlines())))
+    kb, ignore = etc.parse.parse("".join(args.kb.readlines()))
 
     if args.question:
         if args.graph:
@@ -141,17 +139,3 @@ if __name__ == "__main__":
             print(score1q(questionlist[args.question - 1], kb, args.depth, args.nbest))
     else:
         print(scoreall(questionlist, kb, args.depth, args.nbest))
-    
-                            
-
-
-
-
-            
-        
-        
-
-
-
-    
-    

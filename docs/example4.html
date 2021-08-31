@@ -35,7 +35,7 @@ For want of a battle the kingdom was lost.<br />
 </pre>
       <p>Because "x" and "y" in these axioms are <u>universally quantified</u> variables, these axioms state that anytime these <code>etc0</code> predicates are true for <u>any</u> entity in the domain, be it a kingdom "K" or a pepperoni pizza "P", then the consequent is true as well, e.g. the pepperoni pizza has collapsed. While it may be a bit disconcerting to be writing an axiom that might apply to a pepperoni pizza in this manner, remember that we're doing abductive reasoning here. These <code>etc0</code> literals are never going to be observed directly - they can only be assumed as antecedents when trying to explain a consequent. As long as we don't observe collapsing pizzas in the world, the <code>etc0_collapse</code> literal will never be considered as its explanation.</p>
       <p>If we execute our abduction program with these observables and these prior probability axioms, we get something interesting:</p>
-      <pre>$ python etcabductionpy -i nail-collapse.lisp 
+      <pre>$ python -m etcabductionpy -i nail-collapse.lisp 
 ((etc0_collapse 0.001 K) (etc0_missing_nail 0.001 $1 S))
 1 solutions.
 </pre>
@@ -196,7 +196,7 @@ For want of a battle the kingdom was lost.<br />
 
       <p>Ok, now its time for the moment of truth. Is your sloppy horseshoeing the cause of the collapse of the kingdom? Let's graph the top interpretation:</p>
 
-      <pre>$ python etcabductionpy -i nail-collapse.lisp -g | util/dot2safari </pre>
+      <pre>$ python -m etcabductionpy -i nail-collapse.lisp -g | util/dot2safari </pre>
 
 
 
@@ -241,14 +241,14 @@ For want of a battle the kingdom was lost.<br />
 
       <p>Phew! The best interpretation is still the priors. Hopefully that will help you sleep better at night.</p>
       <p>Let's use the "grep" command to find interpretations further down the list where the missing nail plays a role in the collapse of the kingdom.</p>
-      <pre>$ python etcabductionpy -i nail-collapse.lisp -a | grep "etc1_missing_shoe"
+      <pre>$ python -m etcabductionpy -i nail-collapse.lisp -a | grep "etc1_missing_shoe"
 $
 </pre>
       <p>Uh oh. That is not good. There are no interpretations that involve the missing nail. Did we mess up the axioms in some way? No, they are all syntactically correct. What is the problem?</p>
       
       <p>The problem is the length of the causal chain that links missing nails to the collapse of the kingdom. Beginning from the collapse, we need to backchain on 6 successive axioms to get to a missing nail, and one more to get to the prior probability of that missing nail. That is <u>seven</u> steps of backchaining, but the Etcetera Abduction engine has a default depth of only <u>five</u> steps. Given the default setting, the engine never considers explanations deeper than a missing horse, and therefore never makes the connection to the missing nail.</p>
       <p>What happens if we set the depth to seven, using the "--depth" (or "-d") flag, and graph the top result.</p>
-      <pre>$ python etcabductionpy -d 7 -i nail-collapse.lisp -g | util/dot2safari</pre>
+      <pre>$ python -m etcabductionpy -d 7 -i nail-collapse.lisp -g | util/dot2safari</pre>
       
 <svg width="540pt"
  viewBox="0.00 0.00 806.07 556.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -427,7 +427,7 @@ $
 
       <p>We should really fix the numbers in the other axioms via a similar analysis, but even with this change we have a new order in our interpretations:</p>
 
-      <pre>$ python etcabductionpy -d 7 -i nail-collapse.lisp -a
+      <pre>$ python -m etcabductionpy -d 7 -i nail-collapse.lisp -a
 ((etc0_missing_nail 0.001 $1 S) (etc1_battle_lost_to 0.5 K $3 $2) (etc1_collapse 0.5 K $3) (etc1_missing_horse 0.5 $4 S $5) (etc1_missing_message_about 0.5 $5 $2 $3) (etc1_missing_rider 0.5 $4 $5 $2) (etc1_missing_shoe 0.5 $1 S $4))
 ((etc0_collapse 0.001 K) (etc0_missing_nail 0.001 $1 S))
 ((etc0_battle_lost_to 0.001 K $2) (etc0_missing_nail 0.001 $1 S) (etc1_collapse 0.5 K $2))

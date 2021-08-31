@@ -24,12 +24,12 @@
       <p>The actual probabilities are included as constants (real numbered values) in the first argument position of the antecedent - the "etcetera literal" in these two axioms. Here, the prior probability of observing a chicken is given as 0.001 (p=0.1%), and an egg as 0.002 (p=0.2%). By convention, the predicates used in all etcetera literals in a knowledgebase begin with "etc", followed by an integer, an underscore "_", and then the predicate of the consequent. By further convention, all prior probabilities encoded in etcetera literals use the integer "0". With these conventions, we can readily guess that "etc0_chicken" and "etc0_egg" are encoding the prior probabilities of chickens and eggs.</p>
       <p>If you'd like to use a different convention for naming your predications, go ahead. Required, however, is that the first argument in an etcetera literal is a real valued number between 0.0 and 1.0 -- the quantified probability. As well, you must include as arguments (in any order) all of the other universally quantified variables that appear anywhere else in the axiom. In these two cases, this is only the "x" variable, which appears in both consequents. If you leave one out by mistake, you can get some extremely hard-to-debug reasoning errors.</p>
       <p>With just these axioms in place, we can already try to come up with some explanation for the observables. Let's evoke the program on our input file ("chicken-egg.lisp") and see what we get:
-        <pre>$ python etcabductionpy -i chicken-egg.lisp
+        <pre>$ python -m etcabductionpy -i chicken-egg.lisp
 ((etc0_chicken 0.001 C) (etc0_egg 0.002 E))
         </pre>
       <p>The output is exactly one explanation, i.e., one set of assumptions that wholly entails the two observations. The explanation, however, is not very exciting: the best explanation given the knowledge base is to assume the etcetera literals that encode the prior probabilities, with the constants properly unified. And sure enough, if we assert these two literals as true and forward-chain through our knowledge base, we'll deduce the two observations exactly.</p>
       <p>Our tool provides a nice way to visualize these proofs of the observables as ".dot" files, which can easily be converted to visual graphs using the "graphviz" utility. To output a .dot file for the most-probable solution, just provide the "-g" flag (or "--graph") on the command line.</p>
-      <pre>$ python etcabductionpy -i chicken-egg.lisp -g
+      <pre>$ python -m etcabductionpy -i chicken-egg.lisp -g
 digraph proof {
 graph [rankdir="TB"]
 n0 [label="etc0_chicken 0.001"];
@@ -42,7 +42,7 @@ n1 -> n3
 }
       </pre>
       <p>If you are on a mac, and you have the graphviz library installed, then you can pipe this output to a utility that opens it up as an .svg file in Safari, like this:</p>
-      <pre>$ python etcabductionpy -i chicken-egg.lisp -g | ./util/dot2safari </pre>
+      <pre>$ python -m etcabductionpy -i chicken-egg.lisp -g | ./util/dot2safari </pre>
       <svg width="312pt" height="124pt"
            viewBox="0.00 0.00 312.00 124.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 120)">
@@ -103,7 +103,7 @@ n1 -> n3
 (if (etc0_hen 0.0005 x) (hen x))
         </pre>
       <p>With these three new axioms inserted into "chicken-egg.lisp", we're ready to run the interpretation again. This time, we end up with 5 solutions, and a new and different one is on top:</p>
-      <pre>$ python etcabductionpy -i chicken-egg.lisp
+      <pre>$ python -m etcabductionpy -i chicken-egg.lisp
 ((etc0_hen 0.0005 C) (etc1_chicken 1.0 C) (etc1_egg 0.1 C E))
 ((etc0_chicken 0.001 C) (etc0_egg 0.002 E))
 ((etc0_egg 0.002 E) (etc0_hen 0.0005 C) (etc1_chicken 1.0 C))
@@ -113,7 +113,7 @@ n1 -> n3
       </pre>
 
       <p>Let's graph the most-probable solution to see what it looks like.</p>
-      <pre>$ python etcabductionpy -i chicken-egg.lisp -g | ./util/dot2safari </pre>
+      <pre>$ python -m etcabductionpy -i chicken-egg.lisp -g | ./util/dot2safari </pre>
 
       <svg width="352pt" height="196pt"
            viewBox="0.00 0.00 352.31 196.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
