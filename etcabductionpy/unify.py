@@ -182,12 +182,12 @@ def no_functions(x, y, theta = {}):
         while t in theta: 
             t = theta[t]
         if s != t:
-            if s.startswith('?'): # cheaper var test
-                if t.startswith('?') and s < t: # deal with standardized/non-standardized var ordering
+            if variablep(s):
+                if variablep(t) and s < t: # deal with standardized/non-standardized var ordering
                     theta[t] = s
                 else:
                     theta[s] = t
-            elif t.startswith('?'): # cheaper var test
+            elif variablep(t): 
                 theta[t] = s
             else:
                 return None
