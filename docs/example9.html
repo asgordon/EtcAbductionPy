@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <a href="index.html" class="menu">home</a>
+      <h1>Example 9: Interpreting Two Tests</h1>
+      <span class="date">February 18, 2022</span>
+
+
+      <p>In the previous example, we looked at how etcetera abduction relates to standard probabilistic inference methods. Specifically, we looked at examples taken from the Wikipedia page for "Base Rate Fallacy" (<a href="https://en.wikipedia.org/wiki/Base_rate_fallacy">link</a>). With these examples, we calculated the probability that a person was infected, given that they tested positive for infection, in both high-incidence and low-incidence populations. As described in the example in the Wikipedia article, a person who receives a positive result on a test in a low-incidence population would only give the 29% confidence that they actually were infected.</p>
+
+      <p>So what should this person do when they receive the positive test result? Should they cancel their vacation to Bora Bora? Postpone their wedding? Isolate from their friends and family? The smart thing to do would be to take another test, preferably a different test with a high <u>specificity</u> (low probability of false positives). More information would help resolve the ambiguity.</p>
+
+      <p>Consider the case where this person simply takes the same test over again, and gets the same result: positive, again. With only one test result, the probability of infection was only 29%, but what about now, after two positive results? Let's see what etcetera abduction would do in this case.<p>
+
+      <p>First, we represent the two observations, this time with constants (T1 and T2) signifying which test provided the result (so that the two observations are not logically equivalent).</p>
+
+      <pre>(positive T1 P)
+(positive T2 P)</pre>
+
+      <p>Second, we write the axioms that express the true positive rate, the false positive rate, the heathy base rate, the infected base rate, and the test positivity rate, all with numbers straight from the Wikipedia article.</p>
+
+      <pre>(if (and (infected x)
+         (etc_true_positive 1.0 t x))
+    (positive t x))
+
+(if (and (healthy x)
+         (etc_false_positive 0.05 t x))
+    (positive t x))
+
+(if (etc_healthy 0.98 x)
+    (healthy x))
+
+(if (etc_infected 0.02 x)
+    (infected x))
+
+(if (etc_positive 0.069 t x)
+    (positive t x))</pre>
+
+      
+      <p>Finally, send it all off to etcetera abduction for interpretation:</p>
+
+<pre>python -m etcabductionpy -i infection2x2.lisp
+((etc_infected 0.02 P) (etc_true_positive 1.0 T1 P) (etc_true_positive 1.0 T2 P))
+((etc_positive 0.069 T1 P) (etc_positive 0.069 T2 P))
+((etc_false_positive 0.05 T1 P) (etc_healthy 0.98 P) (etc_positive 0.069 T2 P))
+((etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P) (etc_positive 0.069 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P))
+((etc_infected 0.02 P) (etc_positive 0.069 T2 P) (etc_true_positive 1.0 T1 P))
+((etc_infected 0.02 P) (etc_positive 0.069 T1 P) (etc_true_positive 1.0 T2 P))
+((etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T2 P))
+9 solutions.</pre>      
+	
+      <p>Interesting! With the addition of a second observation, we have increased the number of possible interpretations from 3 to 9. Every one of these interpretations provides some insight into how etcetera abduction works, so let's consider each one, from most-probable to least-probable (top to bottom).</p>
+
+      <h2>Interpretation 1: Infected!</h2>
+
+      <pre>((etc_infected 0.02 P) (etc_true_positive 1.0 T1 P) (etc_true_positive 1.0 T2 P))</pre>
+
+      <p>Pr(interpretation1) = 0.02 * 1.0 * 1.0 = 0.02</p>
+
+      <p>Bad news for person P! The most probable interpretation of two positive test results is that person P is infected, even in this low-incidence environment. As the most-probable interpretation, we also know something about the probability of the observations: the true joint probability of two positive test is at least 2%.</p>
+
+      <p>Every one of the remaining interpretations underestimates the joint probability of the same person receiving two positive tests. They all make assumptions that are increasingly less likely as we go down the list.</p>
+
+      <h2>Interpretation 2: The priors</h2>
+
+      <pre>((etc_positive 0.069 T1 P) (etc_positive 0.069 T2 P))</pre>
+
+      <p>Pr(interpretation2) = 0.69 * 0.69 = 0.004761</p>
+
+      <p>The second interpretation makes the assumptions that the two tests are independent events, neither one dependent on the health status of person P. That is, the prior probabilities of positive results account for them both.</p>
+      
+      <p>The important thing to note is that this interpretation - consisting only of prior probabilities - is not in the top position. Previously, we had shown that when there is only one observation, the prior probability of the observation will ALWAYS be the most likely interpretation. With two observations, we've "<u>beat the priors</u>", i.e. found some interpretation that is more probable than the priors of each observation. With only one positive test, the safest bet is to make no assumptions whatsoever. With two positives, though, the safest bet is to assume that person P is infected (interpretation 1).</p>
+
+      <h2>Interpretations 3 and 4: Healthy with a prior</h2>
+
+      <pre>((etc_false_positive 0.05 T1 P) (etc_healthy 0.98 P) (etc_positive 0.069 T2 P))
+((etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P) (etc_positive 0.069 T1 P))</pre>
+
+      <p>Pr(interpretation3) = Pr(interpretation4) = 0.05 * 0.98 * 0.069 = 0.003381</p>
+
+      <p>Interpretations 3 and 4 both assume that one of the tests was actually a false positive, and the other positive result is totally independent of person P's health status, explained by its prior probability. The two interpretations differ only in which of the two tests gave the false positive.</p>
+
+      <h2>Interpretation 5: Healthy!</h2>
+
+      <pre>((etc_false_positive 0.05 T1 P) (etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P))</pre>
+
+      <p>Pr(interpretation5) = 0.05 * 0.05 * 0.98 = 0.00245</p>
+
+      <p>It is certainly possible that both of the positive test results are false positives, and that person P is actually healthy. Improbable, but possible! Just like interpretation 1, this interpretation identifies a common factor that establishes some inter-dependence of the two observations, namely that its the same healthy person P that might yield two false positives. </p>
+      
+      <h2>Interpretations 6 and 7: Infected with a prior</h2>
+      
+      <pre>((etc_infected 0.02 P) (etc_positive 0.069 T2 P) (etc_true_positive 1.0 T1 P))
+((etc_infected 0.02 P) (etc_positive 0.069 T1 P) (etc_true_positive 1.0 T2 P))</pre>
+	
+      <p>Pr(interpretation5) = Pr(interpretation6) = 0.02 * 0.069 * 1.0 = 0.00138</p>
+
+      <p>Interpretations 6 and 7 are the converse of 3 and 4, except that instead of assuming one of the tests is a false positive, the assumption is that it was a true positive. The positive result on the other test continues to treated as an independent event, explained by its prior probability. </p>
+
+      <h2>Interpretations 8 and 9: Both Healthy and Infected!</h2>
+
+      <pre>((etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T2 P))</pre>
+
+      <p>Pr(interpretation8) = Pr(interpretation9) = 0.05 * 0.98 * 0.02 * 1.0 = 0.00098</p>
+
+      <p>The least likely interpretations are that person P is simultaneously healthy and infected! Again, we are reminded that interpretation is not the same thing as classification. In interpretation 2, we saw that etcetera abduction is perfectly happy to consider interpretations that make no assumptions about the health status of person P. In interpretations 8 and 9, we see that etcetera abduction is also perfectly happy to classify person P as both healthy AND infected, and furthermore factor in the base rates for BOTH of these possibilities.</p>
+
+      <p>It would be super handy if we could tell etcetera abduction to disallow these sorts of interpretations. Specifically, it would be great to use the logical XOR connective to state that P is either healthy or infected, but not both. Unfortunately, implementing XOR requires the ability to correctly handle logical negation (healthy P implies NOT infected P, and infected P implies NOT healthy P). Etcetera abduction can only handle definite clauses in its knowledge base at this time. Maybe one day someone will figure out how to expand this approach to handle full first-order logic axioms, as done in other abductive reasoning frameworks (<a href="https://doi.org/10.1007/978-3-642-33353-8_22">link</a>). </p>
+
+      <h2>The joint probability of the observations</h2>
+
+      <p>So what is the likelihood that any one of these interpretations is correct? We only need one more number to make the calculation, according to Bayes' Theorem:</p>
+
+      <p>Pr(interpretation | observations) = Pr(observations | interpretation) * Pr(interpretation) / Pr(observations)</p>
+
+      <p>We know probability of any given interpretation, we know that Pr(observations | interpretation) = 1.0, since the interpretation logically entails the observations. The only thing we don't know is the probability of the observations, which is the true joint probability of the two positive test results. In an ideal world, we could rely on empirical data for this number: what is the liklihood that people in population B in the Wikipedia article receive two positive results when taking two tests. In this example problem, we don't have any data to guide us.</p>
+
+      <p>What information do the interpretations provide? Looking at interpretation 1, we know that the true joint probability of person P receiving two positive test results is AT LEAST 2%. This is somewhat informative, in that it let's us know that a naive estimate of joint probability (assuming the observations are independent, as in interpretation 2) greatly underestimates the true joint probability. </p>
+
+      <p>Does the Law of Total Probability help here? Can we just sum up the probability of all interpretations to estimate the probability of the observations? Absolutely NOT! The Law of Total Probability requires that each interpretation be a distinct partition of the probability space, and the interpretations that we found for this problem are definitely NOT distinct. Some pairs of interpretations include exactly the same assumptions, e.g. interpretation 1 and 8 both include the likelihood that person P is infected. Furthermore, the prior probability of a second positive test in interpretation 2 includes the probability that this is a false positive, as seen in interpretation 4.</p>
+
+      <p>There is, however, a combinations of interpretations that could reasonably be viewed as truly distinct partitions of the probability space. Interpretation 1 and interpretation 5 provide us with two competing, non-overlapping alternative explanations: either person P is infected and has received two true positives, or person P is healthy and received two false positives. In this Wikipedia example, that does seem to cover all of the possibilities.</p>
+
+      <p>Pr( 2_positives ) = Pr( 2_positives, interpretation1) + Pr( 2_positives, interpretation5)<br />
+	= Pr(interpretation1) + Pr(interpretation5)   <i>...because both interpretations entail the observations</i><br />
+	= 0.02 + 0.00245<br />
+	= 0.02245</p>
+
+      <p>If we are sure that these two interpretations distinctly partition the entire sample space, then our estimate estimate of the true joint probability is 2.245%. With this number, we can compute likelihood that interpretation 1 given the observations using Bayes' Theorem:</p>
+
+      <p>Pr( interpretation1 | observations ) = Pr(observations | interpretation1) * Pr(interpretation1) / Pr(observations)<br />
+	= 1.0 * 0.02 / 0.02245<br />
+	= 0.8908685969</p>
+
+      <p>If person P in receives two positive tests results, then we would be over 89% confident that they are infected, despite the low infection base rate.</p>
+
+      <p>Unfortunately, this method of using the Law of Total Probability to compute the joint probability of the observations is not particularly useful when applied outside of strict classification-type problems, where there are clear partitions evident across all of our knowledge base axioms. In any interesting interpretation problem, the probability of the observations is unknowable without empirical data. Lacking this knowledge, we cannot know the probability of the top interpretation given the observations, only that that it is the most probable one that we were able to imagine, given what we know.</p>
+
+      <h2>Conditional independence of the observations</h2>
+
+      <p>A friend of mine is a professor who teaches probability theory, and when I asked him to verify the correctness of my probability estimates for this Wikipedia example, he immediately asked me a very important question: Are the test results independent or might they be correlated, i.e., does it fail randomly or could it be something about the individual being tested or the test facility that leads to a false reading?</p>
+
+      <p>Great question! In our problem, we're certainly not dealing with two completely independent observed events; after all, it is the same person being tested in both events. Indeed, our best interpretation takes this important fact into account. But that is not what my friend is asking. He wants to know if these observations are <u>conditionally independent</u> from each other. Is the following equation true? </p>
+
+      <p>Pr( positive_test2 | healthy, positive_test1 ) = pr( positive_test2 | healthy )</p>
+
+      <p>We only encoded the right-hand side of this equation in our knowledge base, the false positive rate (0.05). We used that number in interpretations 3,4,5,8 and 9, and used it to account for both positives in interpretation 5. We've assumed conditional independence, and if we're wrong about that, would this change the way we interpreted the problem? Absolutely!</p>
+
+      <p>Consider what would happen if the second positive test results was entirely dependent on the first. Imagine that the testing facility that is used in this problem has a standard procedure for all tests. A nurse collects fluid samples from each person, inserts them into vials with the name of each person, and passes them off to a lab technician. The lab technician excutes the test, then enters the result into a database. The nurse looks up the test result in the database, and informs the person of the result. What could go wrong?! The nurse is a fantastic health-care professional, but not so great at executing database queries. Each time the nurse executes a query using the name of the person, only the result in the first database row is returned. Once ANY result is in the database for a person, they will always get the same result on subsequent tests. This isn't a huge problem for the infected people in the population, as the true positive rate was already 100% in this example. For the healthy people, though, the bug in this procedure removes all of the information provided by the second test.</p>
+
+      <p>Let's encode this conditional probability, and see how it affects our interpretation of two positive test results.</p>
+
+      <pre>(if (and (healthy x)
+	 (positive T1 x)
+	 (etc_false_positive_2 1.0 x))
+    (positive T2 x))</pre>
+
+      <pre>> python -m etcabductionpy -i infection2x2b.lisp -a
+((etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_positive 0.069 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_false_positive_2 1.0 P) (etc_healthy 0.98 P))
+((etc_infected 0.02 P) (etc_true_positive 1.0 T1 P) (etc_true_positive 1.0 T2 P))
+((etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T1 P))
+((etc_positive 0.069 T1 P) (etc_positive 0.069 T2 P))
+((etc_false_positive 0.05 T1 P) (etc_healthy 0.98 P) (etc_positive 0.069 T2 P))
+((etc_false_positive 0.05 T1 P) (etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_positive 0.069 T1 P))
+((etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P) (etc_positive 0.069 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_positive 0.069 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P))
+((etc_infected 0.02 P) (etc_positive 0.069 T2 P) (etc_true_positive 1.0 T1 P))
+((etc_infected 0.02 P) (etc_positive 0.069 T1 P) (etc_true_positive 1.0 T2 P))
+((etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_positive 0.069 T1 P) (etc_true_positive 1.0 T1 P))
+((etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_positive 0.069 T1 P) (etc_true_positive 1.0 T1 P))
+((etc_false_positive 0.05 T2 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T1 P))
+((etc_false_positive 0.05 T1 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T2 P))
+((etc_false_positive 0.05 T1 P) (etc_false_positive_2 1.0 P) (etc_healthy 0.98 P) (etc_infected 0.02 P) (etc_true_positive 1.0 T1 P))
+18 solutions.</pre>
+
+      <p>The top interpretation is that the first result positive test result not dependent on person P's health status whatsoever. Person P is likely healthy, however, and healthy people receive a second positive test 100% of the time. Pr(interpretation1) = 1.0 * 0.98 * 0.069 = 0.06762. </p>
+      
+      <p>If we were health care professionals, we might not value this interpretation, because it doesn't doesn't fall completely into one of the two partitions of the sample space that we care about. We want to classify person P as either healthy or infected, and this interpretation makes no assumptions about whether test 1 is a false positive or a true positive. Still, this is the most probable interpretation, and we've learned that the joint probability of two positive tests is now at least 0.06762.</p>
+
+      <p>The second interpretation is what we are looking for: the first positive test was a false positive result, as person P is overwhelmingly likely to be healthy. The second positive test was also a false positive, as healthy people will get a second positive result 100% of the time. Pr(interretation2) = 0.05 * 1.0 * 0.98 = 0.049.</p>
+
+      <p>The third interpretation is the opposite case: both tests are true positives, because this person P is infected, even though that is very rare in this population. Pr(interpretation3) = 0.02 * 1.0 * 1.0 = 0.02. If the second test is conditionally dependent on the first, then it is nearly two and a half times more likely that person P is healthy (interpretation 2) than infected (interpreatation3).</p>
+
+      <p>If we're willing to assert that interpretation 2 and 3 are distinct partitions that account for the entire sample space, then P(observations) = 0.069 (0.049 + 0.02), and Pr(interpreation2 | observations) = 0.7101449275 (0.049 / 0.069).
+
+      <h2>Take-away lessons</h2>
+
+      <ol>
+	<li>Etcetera abduction estimates the joint probability of the observations, given a knowledge base, by identifying the largest known partition of the sample space.</li>
+	<li>If this knowledge base includes axioms that encode conditional dependencies, then etcetera abduction will use them in its search.</li>
+	<li>Computing the true joint probability using the Law of Total Probability requires distinct partitions of the entire sample space, but most solutions found using etcetera abduction are NOT distinct from each other.</li>
+	<li>Lacking negation, etcetera abduction cannot explicitly express the logical XOR connective, making it cumbersome to use it as a tool for classification.</li> 
+      </ol>
+	  
+      
+    </div>
+  </body>
+</html>

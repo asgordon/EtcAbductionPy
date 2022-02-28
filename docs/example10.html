@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <a href="index.html" class="menu">home</a>
+      <h1>Example 10: Coin Flips, Confidence, and Classifiers</h1>
+      <span class="date">February 25, 2022</span>
+
+      <p>As we learned previously, etcetera abduction lacks the ability to reason about negation, which prohibits us from expressing "exclusive or" (XOR) relationships, e.g., the same person can be infected and healthy in the same interpretation.</p>
+
+      <p>However, there is a handy trick that you can use to approximate an XOR relationship using etcetera abduction, which we'll call the "<u>XOR trick</u>". This trick capitalizes on the fact that etcetera abduction uses exactly one axiom from the knowledge base to directly prove an observable in any given interpretation. If we craft our axioms just right, we can use the XOR trick to force etcetera abduction to pick exactly one from a set of options in a given interpretation.</p>
+      
+      <h2>Coin flips and snowstorms</h2>
+
+      <p>Imagine you observe a coin being flipped:</p>
+
+      <pre>(coinflip' E1 Coin1)</pre>
+
+      <p>The probability of any such observation is its prior, and coin flips are very rare. But that is not what we're interested in. We'd like to interpret two possible worlds.</p>
+
+      <p>In World 1:</p>
+
+      <pre>(coinflip' E1 Coin1) (heads' E2 Coin1)</pre>
+
+      <p>In World 2:</p>
+
+      <pre>(coinflip' E1 Coin1) (tails' E2 Coin1)</pre>
+
+      <p>We have a bit of knowledge about this domain. Heads and tails each happen 50% of the time when there is a coin flip. Coin flips are pretty rare.</p>
+
+      <pre>(if (etc0_coinflip 0.01 e coin)
+    (coinflip' e coin))
+
+(if (and (coinflip' e1 coin)
+	 (etc1_heads' 0.5 e e1 coin))
+    (heads' e coin))
+
+(if (and (coinflip' e1 coin)
+	 (etc1_tails' 0.5 e e1 coin))
+    (tails' e coin))</pre>
+
+      <p>These are two different interpretation problems, but they both have similar top interpretations. The most likely interpretation of World 1 is that the heads is explained by the coin flip, which is explained by its prior, and etcetera of 50%. Similarly for World 2.</p>
+
+      <p>We can force etcetera abduction to reason about both of these possibilities in a single interpretation problem by observing an XOR, where the only explanations for the XOR are the two options:</p>
+
+      <pre>(coinflip' E1 Coin1) (xor_heads_tails' E2 Coin1)
+
+(if (and (heads' e1 coin)
+	 (etc1_xor_heads_tails 1.0 e e1 coin))
+    (xor_heads_tails' e coin))
+
+(if (and (tails' e1 coin)
+    	 (etc2_xor_heads_tails 1.0 e e1 coin))
+    (xor_heads_tails' e coin))</pre>
+
+	<pre>> python -m etcabductionpy -i coinflips.lisp
+((etc0_coinflip 0.01 E1 Coin1) (etc1_heads' 0.5 $1 E1 Coin1) (etc1_xor_heads_tails 1.0 E2 $1 Coin1))
+((etc0_coinflip 0.01 E1 Coin1) (etc1_tails' 0.5 $1 E1 Coin1) (etc2_xor_heads_tails 1.0 E2 $1 Coin1))
+((etc0_coinflip 0.01 $2 Coin1) (etc0_coinflip 0.01 E1 Coin1) (etc1_heads' 0.5 $1 $2 Coin1) (etc1_xor_heads_tails 1.0 E2 $1 Coin1))
+((etc0_coinflip 0.01 $1 Coin1) (etc0_coinflip 0.01 E1 Coin1) (etc1_tails' 0.5 $2 $1 Coin1) (etc2_xor_heads_tails 1.0 E2 $2 Coin1))
+4 solutions.</pre>
+
+      <p> Now when we interpret the coin flip and the XOR, the top 2 interpretations, equally likely, are that the heads was due to chance and the coin flip, and likewise for tails. The assumptions entail the coin flip, one of either heads or tails, and the XOR observation as well.</p>
+
+      <p>Similarly, we can force etcetera abduction to simultaneously interpret mutually exclusive observations that are not equally likely.</p>
+
+      <pre>(xor_sunny_snowstorm' E1)
+
+(if (etc0_sunny 0.6 e)
+    (sunny' e))
+
+(if (etc0_snowstorm 0.2 e)
+    (snowstorm' e))
+  
+(if (and (sunny' e1)
+	 (etc1_xor_sunny_snowstorm 1.0 e e1 coin))
+    (xor_sunny_snowstorm' e))
+
+(if (and (snowstorm' e1)
+	 (etc2_xor_sunny_snowstorm 1.0 e e1 coin))
+    (xor_sunny_snowstorm' e))</pre>
+
+
+
+      <p>Notice the 1.0 probabilities in these axioms assigned to the etcetera literals. By our previous definitions, this is the conditional probability that it is one of either sunny or a snowstorm, given that it is sunny (and implicitly, sunny implies not snowstorm). Not super informative, but logically correct. </p>
+
+      <p>What is the best interpretation of this single observation? It will be dependent on the prior probabilities of sunny and snowstorm. Whichever one is more likely will be the top interpretation. The top interpretation of a single xor will always be the option with the largest prior probability. If more is known, an option with a lesser probability might be in the top interpretation.</p>
+
+      <pre>> python -m etcabductionpy -i sunny-snowstorm.lisp
+((etc0_sunny 0.6 $1) (etc1_xor_sunny_snowstorm 1.0 E1 $1 $2))
+((etc0_snowstorm 0.2 $1) (etc2_xor_sunny_snowstorm 1.0 E1 $1 $2))
+2 solutions.</pre>
+
+      <h2>A flash of light, maybe</h2>
+
+      <p>What if we're uncertain about some observation? For example, you might have seen a flash of light in the dark, but maybe you imagined it. These are actually two different interpretation problems.</p>
+
+      <p>In World 1:</p>
+
+      <pre>(dark' E1) (flash_of_light' E2 L)</pre>
+
+      <p>In World 2:</p>
+
+      <pre>(dark' E1)</pre>
+
+      <p>You have some knowledge of this domain. You know that darkness sometimes happens. You konw a bit about flashes of light and how they might be due to fireflies. Plus you know that fireflies come out at night, but are otherwise very rare.</p>
+
+      <pre>(if (etc0_dark 0.3 e)
+    (dark' e))
+
+(if (etc0_flash_of_light 0.01 e l)
+    (flash_of_light' e l))
+
+(if (and (firefly' e1 f)
+	 (etc1_flash_of_light 0.8 e e1 l f))
+    (flash_of_light' e l))
+
+(if (etc0_firefly 0.01 e f)
+    (firefly' e f))
+
+(if (and (dark' e1)
+	 (etc1_firefly 0.7 e e1 f))
+    (firefly' e f))</pre>
+      
+      <p>In World 1, the flash of light might be a firefly (.8), because fireflies often come out in the dark (.7), and its occasionally dark (.3). In World 2, the best interpretation is that it is occasionally dark (.3), and so the probability of this interpretation is going to beat the best interpretation of World 1.</p>
+
+      <p>Can we force etcetera abduction to consider both worlds simultaneously? Yes, by using the XOR trick.</p>
+
+      <pre>(dark' E1) (xor_flash_of_light' E2 L)
+
+(if (and (flash_of_light' e1 l)
+	 (etc1_xor_flash_of_light 1.0 e e1 l))
+    (xor_flash_of_light' e l))
+
+(if (etc2_xor_flash_of_light 1.0 e l)
+    (xor_flash_of_light' e l))</pre>
+
+      <pre>> python -m etcabductionpy -i flashoflight.lisp
+((etc0_dark 0.3 E1) (etc2_xor_flash_of_light 1.0 E2 L))
+((etc0_dark 0.3 E1) (etc1_firefly 0.7 $3 E1 $1) (etc1_flash_of_light 0.8 $2 $3 L $1) (etc1_xor_flash_of_light 1.0 E2 $2 L))
+((etc0_dark 0.3 $4) (etc0_dark 0.3 E1) (etc1_firefly 0.7 $3 $4 $1) (etc1_flash_of_light 0.8 $2 $3 L $1) (etc1_xor_flash_of_light 1.0 E2 $2 L))
+((etc0_dark 0.3 E1) (etc0_flash_of_light 0.01 $1 L) (etc1_xor_flash_of_light 1.0 E2 $1 L))
+((etc0_dark 0.3 E1) (etc0_firefly 0.01 $3 $1) (etc1_flash_of_light 0.8 $2 $3 L $1) (etc1_xor_flash_of_light 1.0 E2 $2 L))
+5 solutions.</pre>
+
+      <p>The best explanation of the darkness and the xor is going to be the prior probability of dark (.3). </p>
+
+      <p>But what if you are really, really, really confident that you saw a flash of light? Maybe not 100% confident, but at least 99% confident? We would like some way of factoring in this confidence into the interpretation problem.</p>
+
+      <p>We need some way of tipping the scales of our interpretations in favor of World 1, but still allow for that 1% chance that we are wrong. We want some way of saying that the likelihood of World 1 is 99%, and World 2 is 1%, as follows:</p>
+
+      <p>In World 1:</p>
+
+      <pre>(dark' E1) (flash_of_light' E2 L) (likelihood' E3 0.99)</pre>
+
+      <p>In World 2:</p>
+
+      <pre>(dark' E1) (likelihood' E3 0.01)</pre>
+
+      <p>This looks promising, but we need some way of interpreting the likelihood observation with a prior probability that is exactly the same magnitude as the value in the likelihood literal. Fortunately we can do this with a simple variable substitution, as follows:</p>
+
+      <pre>(if (etc0_likelihood pr e)
+    (likelihood' e pr))</pre>
+
+      <p>But how do we construct the XOR version, to force etcetera abduction to reason about both possible worlds as a single interpretation problem? We need the specific values representing our confidence to appear in antecedents of our axioms, but we don't necessarily want to hard-code these numbers into our knowledge base axioms, directly. One solution is include the confidence values in the XOR observation itself:</p>
+
+      <pre>(dark' E1) (xor_flash_of_light' E2 L 0.99 0.01)</pre>
+
+      <p>Then these confidence values can be substituted in the right places in each of the explanations for the XOR:</p>
+
+      <pre>(if (and (flash_of_light' e1 l)
+	 (likelihood' e2 pr1)
+	 (etc1_xor_flash_of_light 1.0 e e1 e2 l pr1 pr2))
+    (xor_flash_of_light' e l pr1 pr2))
+
+(if (and (likelihood' e1 pr2)
+	 (etc2_xor_flash_of_light 1.0 e e1 l pr1 pr2))
+    (xor_flash_of_light' e l pr1 pr2))</pre>
+
+
+
+
+      <pre>> python -m etcabductionpy -i flashoflight2.lisp
+((etc0_dark 0.3 E1) (etc0_likelihood 0.99 $4) (etc1_firefly 0.7 $3 E1 $2) (etc1_flash_of_light 0.8 $1 $3 L $2) (etc1_xor_flash_of_light 1.0 E2 $1 $4 L 0.99 0.01))
+((etc0_dark 0.3 $3) (etc0_dark 0.3 E1) (etc0_likelihood 0.99 $5) (etc1_firefly 0.7 $2 $3 $4) (etc1_flash_of_light 0.8 $1 $2 L $4) (etc1_xor_flash_of_light 1.0 E2 $1 $5 L 0.99 0.01))
+((etc0_dark 0.3 E1) (etc0_likelihood 0.01 $1) (etc2_xor_flash_of_light 1.0 E2 $1 L 0.99 0.01))
+((etc0_dark 0.3 E1) (etc0_flash_of_light 0.01 $1 L) (etc0_likelihood 0.99 $2) (etc1_xor_flash_of_light 1.0 E2 $1 $2 L 0.99 0.01))
+((etc0_dark 0.3 E1) (etc0_firefly 0.01 $2 $3) (etc0_likelihood 0.99 $4) (etc1_flash_of_light 0.8 $1 $2 L $3) (etc1_xor_flash_of_light 1.0 E2 $1 $4 L 0.99 0.01))
+5 solutions.</pre>
+
+      
+      
+      <p> Now this single interpretation problem factors in the confidence in the two worlds, and the top interpretation is that there was a flash of light, because it has a high likelihood and because of a firefly, because fireflies come out in the dark, because dark happens from time to time.</p>
+
+      <svg width="540pt" 
+ viewBox="0.00 0.00 591.34 340.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 336)">
+<title>proof</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-336 587.34,-336 587.34,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node">
+<title>n0</title>
+<ellipse fill="none" stroke="black" cx="59.14" cy="-242" rx="59.29" ry="18"/>
+<text text-anchor="middle" x="59.14" y="-238.3" font-family="Times,serif" font-size="14.00">etc0_dark 0.3</text>
+</g>
+<!-- n5 -->
+<g id="node6" class="node">
+<title>n5</title>
+<polygon fill="none" stroke="black" points="94.64,-184 23.64,-184 23.64,-148 94.64,-148 94.64,-184"/>
+<polygon fill="none" stroke="black" points="98.64,-188 19.64,-188 19.64,-144 98.64,-144 98.64,-188"/>
+<text text-anchor="middle" x="59.14" y="-162.3" font-family="Times,serif" font-size="14.00">(dark&#39; E1)</text>
+</g>
+<!-- n0&#45;&gt;n5 -->
+<g id="edge1" class="edge">
+<title>n0&#45;&gt;n5</title>
+<path fill="none" stroke="black" d="M59.14,-223.84C59.14,-216.16 59.14,-206.88 59.14,-198.05"/>
+<polygon fill="black" stroke="black" points="62.64,-198.03 59.14,-188.03 55.64,-198.03 62.64,-198.03"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node">
+<title>n1</title>
+<ellipse fill="none" stroke="black" cx="500.14" cy="-314" rx="83.39" ry="18"/>
+<text text-anchor="middle" x="500.14" y="-310.3" font-family="Times,serif" font-size="14.00">etc0_likelihood 0.99</text>
+</g>
+<!-- n6 -->
+<g id="node7" class="node">
+<title>n6</title>
+<polygon fill="none" stroke="black" points="564.14,-260 436.14,-260 436.14,-224 564.14,-224 564.14,-260"/>
+<text text-anchor="middle" x="500.14" y="-238.3" font-family="Times,serif" font-size="14.00">(likelihood&#39; $2 0.99)</text>
+</g>
+<!-- n1&#45;&gt;n6 -->
+<g id="edge2" class="edge">
+<title>n1&#45;&gt;n6</title>
+<path fill="none" stroke="black" d="M500.14,-295.7C500.14,-287.98 500.14,-278.71 500.14,-270.11"/>
+<polygon fill="black" stroke="black" points="503.64,-270.1 500.14,-260.1 496.64,-270.1 503.64,-270.1"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node">
+<title>n2</title>
+<ellipse fill="none" stroke="black" cx="181.14" cy="-166" rx="64.19" ry="18"/>
+<text text-anchor="middle" x="181.14" y="-162.3" font-family="Times,serif" font-size="14.00">etc1_firefly 0.7</text>
+</g>
+<!-- n7 -->
+<g id="node8" class="node">
+<title>n7</title>
+<polygon fill="none" stroke="black" points="185.64,-108 90.64,-108 90.64,-72 185.64,-72 185.64,-108"/>
+<text text-anchor="middle" x="138.14" y="-86.3" font-family="Times,serif" font-size="14.00">(firefly&#39; $4 $1)</text>
+</g>
+<!-- n2&#45;&gt;n7 -->
+<g id="edge3" class="edge">
+<title>n2&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M171.17,-147.84C165.85,-138.68 159.2,-127.23 153.26,-117.01"/>
+<polygon fill="black" stroke="black" points="156.11,-114.96 148.06,-108.07 150.06,-118.47 156.11,-114.96"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node">
+<title>n3</title>
+<ellipse fill="none" stroke="black" cx="296.14" cy="-90" rx="92.08" ry="18"/>
+<text text-anchor="middle" x="296.14" y="-86.3" font-family="Times,serif" font-size="14.00">etc1_flash_of_light 0.8</text>
+</g>
+<!-- n8 -->
+<g id="node9" class="node">
+<title>n8</title>
+<polygon fill="none" stroke="black" points="362.14,-36 230.14,-36 230.14,0 362.14,0 362.14,-36"/>
+<text text-anchor="middle" x="296.14" y="-14.3" font-family="Times,serif" font-size="14.00">(flash_of_light&#39; $3 L)</text>
+</g>
+<!-- n3&#45;&gt;n8 -->
+<g id="edge5" class="edge">
+<title>n3&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M296.14,-71.7C296.14,-63.98 296.14,-54.71 296.14,-46.11"/>
+<polygon fill="black" stroke="black" points="299.64,-46.1 296.14,-36.1 292.64,-46.1 299.64,-46.1"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node">
+<title>n4</title>
+<ellipse fill="none" stroke="black" cx="309.14" cy="-242" rx="108.58" ry="18"/>
+<text text-anchor="middle" x="309.14" y="-238.3" font-family="Times,serif" font-size="14.00">etc1_xor_flash_of_light 1.0</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node">
+<title>n9</title>
+<polygon fill="none" stroke="black" points="522.64,-184 309.64,-184 309.64,-148 522.64,-148 522.64,-184"/>
+<polygon fill="none" stroke="black" points="526.64,-188 305.64,-188 305.64,-144 526.64,-144 526.64,-188"/>
+<text text-anchor="middle" x="416.14" y="-162.3" font-family="Times,serif" font-size="14.00">(xor_flash_of_light&#39; E2 L 0.99 0.01)</text>
+</g>
+<!-- n4&#45;&gt;n9 -->
+<g id="edge7" class="edge">
+<title>n4&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M333.16,-224.39C346.14,-215.42 362.48,-204.11 377.23,-193.91"/>
+<polygon fill="black" stroke="black" points="379.46,-196.63 385.69,-188.06 375.48,-190.87 379.46,-196.63"/>
+</g>
+<!-- n5&#45;&gt;n7 -->
+<g id="edge4" class="edge">
+<title>n5&#45;&gt;n7</title>
+<path fill="none" stroke="black" d="M81.57,-143.99C91.24,-134.94 102.6,-124.29 112.59,-114.93"/>
+<polygon fill="black" stroke="black" points="115.01,-117.46 119.92,-108.07 110.23,-112.35 115.01,-117.46"/>
+</g>
+<!-- n6&#45;&gt;n9 -->
+<g id="edge8" class="edge">
+<title>n6&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M480.66,-223.84C470.91,-215.25 458.86,-204.63 447.83,-194.91"/>
+<polygon fill="black" stroke="black" points="449.84,-192.02 440.02,-188.03 445.21,-197.27 449.84,-192.02"/>
+</g>
+<!-- n7&#45;&gt;n8 -->
+<g id="edge6" class="edge">
+<title>n7&#45;&gt;n8</title>
+<path fill="none" stroke="black" d="M176.8,-71.88C198.4,-62.31 225.5,-50.3 248.41,-40.15"/>
+<polygon fill="black" stroke="black" points="249.89,-43.32 257.62,-36.07 247.06,-36.92 249.89,-43.32"/>
+</g>
+<!-- n8&#45;&gt;n9 -->
+<g id="edge9" class="edge">
+<title>n8&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M348.91,-36.06C366.69,-44.28 385.07,-55.93 397.14,-72 410.34,-89.56 414.95,-114.05 416.33,-133.49"/>
+<polygon fill="black" stroke="black" points="412.84,-133.87 416.8,-143.7 419.84,-133.55 412.84,-133.87"/>
+</g>
+</g>
+      </svg>
+
+      <p>There is one simplification we can make in XOR trick axioms, in order to clean up our formulation and avoid unnecessary backchaining. Since there is only one possible explanation for likelihood literals, and that probability is already specified, we can remove it as an antecedent and factor its uncertainty into the etcetera literals directly, swapping 1.0 for the likelihood value (1.0 * likelihood = likelihood). Our two XOR axioms are thus simplified as follows:</p>
+
+      <pre>(if (and (flash_of_light' e1 l)
+	 (etc1_xor_flash_of_light pr1 e e1 l pr2))
+    (xor_flash_of_light' e l pr1 pr2))
+
+(if (etc2_xor_flash_of_light pr2 e l pr1)
+    (xor_flash_of_light' e l pr1 pr2))</pre>
+      
+      <h2>Classifiers</h2>
+
+      <p>With these preliminaries out of the way, we can now use the XOR trick to let us use etcetera abduction to intrepret the output of <u>classifiers</u>. A classifier assigns to an input a label from a set of mutually exclusive options. These assignments can be encoded as observations, as follows:</p>
+
+<pre>(assignment' E1 Classifier1 Input1 Label2)
+(assignment' E2 Classifier1 Input2 Label4)
+(assignment' E2 Classifier1 Input3 Label1)</pre>
+
+      <p>A well-calibrated classifier can alternatively provide a confidence distribution over the set of possible labels for a given input. For example, a four-class classifier might provide the following distributions:</p>
+
+<pre>(four_class_distribution' E4 Classifier1 Input1 0.2 0.6 0.1 0.1)
+(four_class_distribution' E5 Classifier1 Input2 0.1 0.1 0.1 0.7)
+(four_class_distribution' E6 Classifier1 Input3 0.4 0.3 0.2 0.1)</pre>
+
+      <p>Etcetera abduction can be forced to simultaneously consider all four possibilities for each input using the XOR trick, i.e., by treating each classification as a mutually exclusive explanation with its own likelihood.</p>
+
+<pre>(if (and (assignment' e1 classifier input Label1)
+	 (etc1_four_class_distribution pr1 e e1 classifier input pr2 pr3 pr4))
+    (four_class_distribution' e classifier input pr1 pr2 pr3 pr4))
+
+(if (and (assignment' e1 classifier input Label2)
+	 (etc2_four_class_distribution pr2 e e1 classifier input pr1 pr3 pr4))
+    (four_class_distribution' e classifier input pr1 pr2 pr3 pr4))
+
+(if (and (assignment' e1 classifier input Label3)
+	 (etc3_four_class_distribution pr3 e e1 classifier input pr1 pr2 pr4))
+    (four_class_distribution' e classifier input pr1 pr2 pr3 pr4))
+
+(if (and (assignment' e1 classifier input Label4)
+	 (etc4_four_class_distribution pr4 e e1 classifier input pr1 pr2 pr3))
+    (four_class_distribution' e classifier input pr1 pr2 pr3 pr4))</pre>
+
+      <p>The XOR trick also works if only a portion of the confidence distribution is observed, e.g. only the likelihoods of the top few class labels.</p>
+
+<pre>(top_two_distribution' E7 Classifier1 Input1 Label2 0.6 Label1 0.2)
+(top_two_distribution' E8 Classifier1 Input2 Label4 0.7 Label1 0.1)
+(top_two_distribution' E9 Classifier1 Input3 Label1 0.4 Label2 0.3)
+
+(if (and (assignment' e1 classifier input firstlabel)
+	 (etc1_top_two_distribution pr1 e e1 classifier input firstlabel secondlabel pr2))
+    (top_two_distribution' e classifier input firstlabel pr1 secondlabel pr2))
+
+(if (and (assignment' e1 classifier input secondlabel)
+	 (etc2_top_two_distribution pr2 e e1 classifier input firstlabel pr1 secondlabel))
+    (top_two_distribution' e classifier input firstlabel pr1 secondlabel pr2))</pre>
+
+      <p>The explanation for any given assignment depends on the classifier. For example, maybe Classifier1 has been trained to classify the suit of a card drawn from a deck of poker cards, based on its photograph.</p>
+
+<pre>(if (and (spade' e1 input)
+	 (etc1_Classifier1_assignment 1.0 e e1 input))
+    (assignment' e Classifier1 input Label1))
+
+(if (and (club' e1 input)
+	 (etc2_Classifier1_assignment 1.0 e e1 input))
+    (assignment' e Classifier1 input Label2))
+
+(if (and (heart' e1 input)
+	 (etc3_Classifier1_assignment 1.0 e e1 input))
+    (assignment' e Classifier1 input Label3))
+
+(if (and (diamond' e1 input)
+	 (et4_Classifier1_assignment 1.0 e e1 input))
+    (assignment' e Classifier1 input Label4))</pre>
+
+      <p>Above, all of the conditional probabilities are 1.0, e.g. the probability that Classifier1 assigns Label1 to an input given that the input is a spade is 100%. However, they need not be all 100%, and if the actual confusion matrix is known for a particular classifier, then these probabilities should be used instead. For example, there is some small probability that a club is misclassified as a spade.</p>
+
+<pre>(if (and (club' e1 input)
+	 (etc_Classifier1_club_mislabeled_as_spade 0.024 e e1 input))
+    (assignment' e Classifier1 input Label2))</pre>
+
+<p>If the input is drawn from a complete deck of cards, the prior probability of each suit is equal. If some of the cards are missing, then the priors may be different.</p>
+
+<pre>(if (etc0_spade 0.26 e input)
+    (spade' e input))
+
+(if (etc0_club 0.24 e input)
+    (club' e input))
+
+(if (etc0_heart 0.27 e input)
+    (heart' e input))
+
+(if (etc0_diamond 0.23 e input)
+    (diamond' e input))</pre>
+
+      <p>For a single four_class_distribution observation, the probability of any given interpretation would be the product of the prior of the suit, the conditional probability of the label given the suit, and the confidence of the classifier. </p>
+
+      <svg width="540pt"
+ viewBox="0.00 0.00 1926.97 268.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 264)">
+<title>proof</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-264 1922.97,-264 1922.97,4 -4,4"/>
+<!-- n0 -->
+<g id="node1" class="node">
+<title>n0</title>
+<ellipse fill="none" stroke="black" cx="174.83" cy="-170" rx="174.67" ry="18"/>
+<text text-anchor="middle" x="174.83" y="-166.3" font-family="Times,serif" font-size="14.00">(et4_Classifier1_assignment 1.0 $1 $6 Input2)</text>
+</g>
+<!-- n13 -->
+<g id="node14" class="node">
+<title>n13</title>
+<polygon fill="none" stroke="black" points="427.83,-116 179.83,-116 179.83,-80 427.83,-80 427.83,-116"/>
+<text text-anchor="middle" x="303.83" y="-94.3" font-family="Times,serif" font-size="14.00">(assignment&#39; $1 Classifier1 Input2 Label4)</text>
+</g>
+<!-- n0&#45;&gt;n13 -->
+<g id="edge6" class="edge">
+<title>n0&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M205.73,-152.23C223.03,-142.85 244.8,-131.04 263.43,-120.93"/>
+<polygon fill="black" stroke="black" points="265.17,-123.96 272.29,-116.12 261.83,-117.81 265.17,-123.96"/>
+</g>
+<!-- n1 -->
+<g id="node2" class="node">
+<title>n1</title>
+<ellipse fill="none" stroke="black" cx="897.83" cy="-242" rx="63.09" ry="18"/>
+<text text-anchor="middle" x="897.83" y="-238.3" font-family="Times,serif" font-size="14.00">etc0_club 0.24</text>
+</g>
+<!-- n9 -->
+<g id="node10" class="node">
+<title>n9</title>
+<polygon fill="none" stroke="black" points="951.33,-188 844.33,-188 844.33,-152 951.33,-152 951.33,-188"/>
+<text text-anchor="middle" x="897.83" y="-166.3" font-family="Times,serif" font-size="14.00">(club&#39; $5 Input1)</text>
+</g>
+<!-- n1&#45;&gt;n9 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n9</title>
+<path fill="none" stroke="black" d="M897.83,-223.7C897.83,-215.98 897.83,-206.71 897.83,-198.11"/>
+<polygon fill="black" stroke="black" points="901.33,-198.1 897.83,-188.1 894.33,-198.1 901.33,-198.1"/>
+</g>
+<!-- n2 -->
+<g id="node3" class="node">
+<title>n2</title>
+<ellipse fill="none" stroke="black" cx="433.83" cy="-242" rx="79.09" ry="18"/>
+<text text-anchor="middle" x="433.83" y="-238.3" font-family="Times,serif" font-size="14.00">etc0_diamond 0.23</text>
+</g>
+<!-- n10 -->
+<g id="node11" class="node">
+<title>n10</title>
+<polygon fill="none" stroke="black" points="499.83,-188 367.83,-188 367.83,-152 499.83,-152 499.83,-188"/>
+<text text-anchor="middle" x="433.83" y="-166.3" font-family="Times,serif" font-size="14.00">(diamond&#39; $6 Input2)</text>
+</g>
+<!-- n2&#45;&gt;n10 -->
+<g id="edge2" class="edge">
+<title>n2&#45;&gt;n10</title>
+<path fill="none" stroke="black" d="M433.83,-223.7C433.83,-215.98 433.83,-206.71 433.83,-198.11"/>
+<polygon fill="black" stroke="black" points="437.33,-198.1 433.83,-188.1 430.33,-198.1 437.33,-198.1"/>
+</g>
+<!-- n3 -->
+<g id="node4" class="node">
+<title>n3</title>
+<ellipse fill="none" stroke="black" cx="1360.83" cy="-242" rx="67.69" ry="18"/>
+<text text-anchor="middle" x="1360.83" y="-238.3" font-family="Times,serif" font-size="14.00">etc0_spade 0.26</text>
+</g>
+<!-- n11 -->
+<g id="node12" class="node">
+<title>n11</title>
+<polygon fill="none" stroke="black" points="1418.33,-188 1303.33,-188 1303.33,-152 1418.33,-152 1418.33,-188"/>
+<text text-anchor="middle" x="1360.83" y="-166.3" font-family="Times,serif" font-size="14.00">(spade&#39; $3 Input3)</text>
+</g>
+<!-- n3&#45;&gt;n11 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n11</title>
+<path fill="none" stroke="black" d="M1360.83,-223.7C1360.83,-215.98 1360.83,-206.71 1360.83,-198.11"/>
+<polygon fill="black" stroke="black" points="1364.33,-198.1 1360.83,-188.1 1357.33,-198.1 1364.33,-198.1"/>
+</g>
+<!-- n4 -->
+<g id="node5" class="node">
+<title>n4</title>
+<ellipse fill="none" stroke="black" cx="1561.83" cy="-170" rx="125.38" ry="18"/>
+<text text-anchor="middle" x="1561.83" y="-166.3" font-family="Times,serif" font-size="14.00">etc1_Classifier1_assignment 1.0</text>
+</g>
+<!-- n14 -->
+<g id="node15" class="node">
+<title>n14</title>
+<polygon fill="none" stroke="black" points="1652.83,-116 1404.83,-116 1404.83,-80 1652.83,-80 1652.83,-116"/>
+<text text-anchor="middle" x="1528.83" y="-94.3" font-family="Times,serif" font-size="14.00">(assignment&#39; $2 Classifier1 Input3 Label1)</text>
+</g>
+<!-- n4&#45;&gt;n14 -->
+<g id="edge8" class="edge">
+<title>n4&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M1553.68,-151.7C1549.92,-143.73 1545.38,-134.1 1541.22,-125.26"/>
+<polygon fill="black" stroke="black" points="1544.33,-123.66 1536.9,-116.1 1538,-126.64 1544.33,-123.66"/>
+</g>
+<!-- n5 -->
+<g id="node6" class="node">
+<title>n5</title>
+<ellipse fill="none" stroke="black" cx="1794.83" cy="-98" rx="124.28" ry="18"/>
+<text text-anchor="middle" x="1794.83" y="-94.3" font-family="Times,serif" font-size="14.00">etc1_four_class_distribution 0.4</text>
+</g>
+<!-- n17 -->
+<g id="node18" class="node">
+<title>n17</title>
+<polygon fill="none" stroke="black" points="1839.83,-40 1483.83,-40 1483.83,-4 1839.83,-4 1839.83,-40"/>
+<polygon fill="none" stroke="black" points="1843.83,-44 1479.83,-44 1479.83,0 1843.83,0 1843.83,-44"/>
+<text text-anchor="middle" x="1661.83" y="-18.3" font-family="Times,serif" font-size="14.00">(four_class_distribution&#39; E6 Classifier1 Input3 0.4 0.3 0.2 0.1)</text>
+</g>
+<!-- n5&#45;&gt;n17 -->
+<g id="edge14" class="edge">
+<title>n5&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M1764.99,-80.39C1748.4,-71.16 1727.39,-59.48 1708.67,-49.06"/>
+<polygon fill="black" stroke="black" points="1710.13,-45.87 1699.69,-44.06 1706.73,-51.98 1710.13,-45.87"/>
+</g>
+<!-- n6 -->
+<g id="node7" class="node">
+<title>n6</title>
+<ellipse fill="none" stroke="black" cx="1094.83" cy="-170" rx="125.38" ry="18"/>
+<text text-anchor="middle" x="1094.83" y="-166.3" font-family="Times,serif" font-size="14.00">etc2_Classifier1_assignment 1.0</text>
+</g>
+<!-- n12 -->
+<g id="node13" class="node">
+<title>n12</title>
+<polygon fill="none" stroke="black" points="1054.83,-116 806.83,-116 806.83,-80 1054.83,-80 1054.83,-116"/>
+<text text-anchor="middle" x="930.83" y="-94.3" font-family="Times,serif" font-size="14.00">(assignment&#39; $4 Classifier1 Input1 Label2)</text>
+</g>
+<!-- n6&#45;&gt;n12 -->
+<g id="edge4" class="edge">
+<title>n6&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M1056.8,-152.76C1033.99,-143.03 1004.75,-130.55 980.18,-120.06"/>
+<polygon fill="black" stroke="black" points="981.24,-116.71 970.67,-116 978.49,-123.15 981.24,-116.71"/>
+</g>
+<!-- n7 -->
+<g id="node8" class="node">
+<title>n7</title>
+<ellipse fill="none" stroke="black" cx="1196.83" cy="-98" rx="124.28" ry="18"/>
+<text text-anchor="middle" x="1196.83" y="-94.3" font-family="Times,serif" font-size="14.00">etc2_four_class_distribution 0.6</text>
+</g>
+<!-- n15 -->
+<g id="node16" class="node">
+<title>n15</title>
+<polygon fill="none" stroke="black" points="1156.83,-40 800.83,-40 800.83,-4 1156.83,-4 1156.83,-40"/>
+<polygon fill="none" stroke="black" points="1160.83,-44 796.83,-44 796.83,0 1160.83,0 1160.83,-44"/>
+<text text-anchor="middle" x="978.83" y="-18.3" font-family="Times,serif" font-size="14.00">(four_class_distribution&#39; E4 Classifier1 Input1 0.2 0.6 0.1 0.1)</text>
+</g>
+<!-- n7&#45;&gt;n15 -->
+<g id="edge10" class="edge">
+<title>n7&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M1150.34,-81.22C1121.31,-71.36 1083.36,-58.48 1050.54,-47.34"/>
+<polygon fill="black" stroke="black" points="1051.58,-44 1040.98,-44.1 1049.33,-50.63 1051.58,-44"/>
+</g>
+<!-- n8 -->
+<g id="node9" class="node">
+<title>n8</title>
+<ellipse fill="none" stroke="black" cx="569.83" cy="-98" rx="124.28" ry="18"/>
+<text text-anchor="middle" x="569.83" y="-94.3" font-family="Times,serif" font-size="14.00">etc4_four_class_distribution 0.7</text>
+</g>
+<!-- n16 -->
+<g id="node17" class="node">
+<title>n16</title>
+<polygon fill="none" stroke="black" points="699.83,-40 343.83,-40 343.83,-4 699.83,-4 699.83,-40"/>
+<polygon fill="none" stroke="black" points="703.83,-44 339.83,-44 339.83,0 703.83,0 703.83,-44"/>
+<text text-anchor="middle" x="521.83" y="-18.3" font-family="Times,serif" font-size="14.00">(four_class_distribution&#39; E5 Classifier1 Input2 0.1 0.1 0.1 0.7)</text>
+</g>
+<!-- n8&#45;&gt;n16 -->
+<g id="edge12" class="edge">
+<title>n8&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M558.7,-79.84C553.45,-71.75 547.04,-61.86 541.05,-52.62"/>
+<polygon fill="black" stroke="black" points="543.86,-50.52 535.48,-44.03 537.98,-54.33 543.86,-50.52"/>
+</g>
+<!-- n9&#45;&gt;n12 -->
+<g id="edge5" class="edge">
+<title>n9&#45;&gt;n12</title>
+<path fill="none" stroke="black" d="M905.99,-151.7C909.75,-143.73 914.29,-134.1 918.45,-125.26"/>
+<polygon fill="black" stroke="black" points="921.67,-126.64 922.77,-116.1 915.34,-123.66 921.67,-126.64"/>
+</g>
+<!-- n10&#45;&gt;n13 -->
+<g id="edge7" class="edge">
+<title>n10&#45;&gt;n13</title>
+<path fill="none" stroke="black" d="M402.03,-151.88C384.72,-142.55 363.11,-130.92 344.58,-120.94"/>
+<polygon fill="black" stroke="black" points="346.22,-117.85 335.76,-116.19 342.9,-124.01 346.22,-117.85"/>
+</g>
+<!-- n11&#45;&gt;n14 -->
+<g id="edge9" class="edge">
+<title>n11&#45;&gt;n14</title>
+<path fill="none" stroke="black" d="M1401.93,-151.88C1425,-142.26 1453.97,-130.19 1478.4,-120.01"/>
+<polygon fill="black" stroke="black" points="1479.99,-123.15 1487.87,-116.07 1477.29,-116.68 1479.99,-123.15"/>
+</g>
+<!-- n12&#45;&gt;n15 -->
+<g id="edge11" class="edge">
+<title>n12&#45;&gt;n15</title>
+<path fill="none" stroke="black" d="M941.97,-79.84C947.21,-71.75 953.63,-61.86 959.62,-52.62"/>
+<polygon fill="black" stroke="black" points="962.69,-54.33 965.19,-44.03 956.81,-50.52 962.69,-54.33"/>
+</g>
+<!-- n13&#45;&gt;n16 -->
+<g id="edge13" class="edge">
+<title>n13&#45;&gt;n16</title>
+<path fill="none" stroke="black" d="M354.12,-79.93C382.61,-70.26 418.73,-58 450.14,-47.34"/>
+<polygon fill="black" stroke="black" points="451.38,-50.61 459.73,-44.08 449.13,-43.98 451.38,-50.61"/>
+</g>
+<!-- n14&#45;&gt;n17 -->
+<g id="edge15" class="edge">
+<title>n14&#45;&gt;n17</title>
+<path fill="none" stroke="black" d="M1559.68,-79.84C1576.17,-70.66 1596.81,-59.18 1615.21,-48.94"/>
+<polygon fill="black" stroke="black" points="1617,-51.95 1624.03,-44.03 1613.59,-45.84 1617,-51.95"/>
+</g>
+</g>
+</svg>
+
+
+      <p>In the case where the priors are all equal and the classifier is never confused, then the top interpretation will always make the label assignment with the highest confidence. If there are more observations, to include additional information about the situational context, then a less likely classifier assignment may be seen in the top interpretation.</p>
+
+      <p>Indeed, the only reason we would want to go through all of this trouble is to provide a mechanism for promoting lower-confidence class labels, when we know more about the situational context than the output of a single classifier. If you don't have any other information, just multiply a few numbers and be done with it! The opportunity here is to use etcetera abduction to interpret classifier output in knowledge-rich contexts.</p>
+
+	 
+ 
+
+
+
+
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/tutorial.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="content">
+      <a href="index.html" class="menu">home</a>
+      <h1>Example 8: Interpreting Test Results</h1>
+      <span class="date">February 10, 2022</span>
+
+
+      <p>The central idea of etcetera abduction is that conditional probabilities can be reified as first-order literals with equivalent prior probabilities. We assume conditional independence between these literals, and estimate the joint probability of a set of literals as the product of these priors.</p>
+
+      <p>That all sounds well and good, but it can be hard to grasp the nuances and implications of this approach, and how it relates to traditional probability theory. I found that there are some good intuitions to be gained about etcetera abduction by modeling simple textbook examples of probabilistic inference.</p>
+
+<p>Here's an example that I found on the Wikipedia page for "Base Rate Fallacy" (<a href="https://en.wikipedia.org/wiki/Base_rate_fallacy">link</a>).</p>
+
+<p>A test for an infectious disease is run on a population of 1000 persons, in which 40% are infected. The test has a false positive rate of 5%, and a 0% false negative rate. The expected outcome of the 1000 tests would be that 400 infected people would receive a true positive result (1000 * 0.4 * 1.0) and 30 healthy people would receive a false positive result (1000 * 0.6 * 0.05). If a person receives a positive test result, what is the probability that they are actually infected?</p>
+
+<p>Bayes' Theorem provides us with the answer:</p>
+
+<p>Pr( infected | positive ) = Pr( positive | infected ) * Pr( infected ) / Pr( positive ) <br />
+ = true_positive_rate * infected_base_rate / positive_rate <br />
+ = 1.0 * 0.4 / 0.43 <br />
+ = 0.930232558139535</p>
+
+<p>If a person receives a positive result, they can be over 93% confident that the test correctly indicates infection. </p>
+
+<p>The wikipedia article further shows how a positive result from this same test, applied in a different population with a very low infection rate, would indicate infection with much less confidence, e.g. a positive result in a population with 2% infection rate would have a confidence of only 29% of correctly indicating infection.</p>
+
+<p>Let's translate the first example into logic, and see how to apply Etcetera Abduction to compute these same numbers.</p>
+
+<p>First, let's start with the observation: A person (P) receives a positive test result.</p>
+
+<pre>(positive P)</pre>
+
+<p>Second, we encode the conditional probability P( positive | infected ) as a definite clause. This represents the true positive rate of the test, which in this example is 100%.</p>
+
+<pre>(if (and (infected x)
+         (etc_true_positive 1.0 x))
+    (positive x))</pre>
+
+<p>Second, we encode the conditional probability for the false positive case, P( positive | healthy ), which is known to be 5%.</p>
+
+<pre>(if (and (healthy x)
+         (etc_false_positive 0.05 x))
+    (positive x))</pre>
+
+<p>Third, we need to include the base rates, encoding them as etcetera literals that are the priors for being healthy (60%) or infected (40%).</p>
+
+<pre>(if (etc_healthy 0.6 x)
+    (healthy x))
+
+(if (etc_infected 0.4 x)
+    (infected x))</pre>
+
+<p>Finally, we can include the prior probability of getting a positive test result, irrespective of whether you are healthy or infected. In this example, that prior probability is 43% (400 + 30 / 1000).</p>
+
+<pre>(if (etc_positive 0.43 x)
+    (positive x))</pre>
+
+<p>Now let's ask Etcetera Abduction to interpret the observation (positive P), and see what it comes up with:</p>
+
+<pre>> python -m etcabductionpy -i infection1.lisp
+((etc_positive 0.43 P))
+((etc_infected 0.4 P) (etc_true_positive 1.0 P))
+((etc_false_positive 0.05 P) (etc_healthy 0.6 P))
+3 solutions.</pre>
+
+<p>Interesting! There are actually three ways to interpret the observation. The first, most probable interpretation of a positive test result is to make no assumptions at all as to whether person P is healthy or infected. This reminds us that interpretation is not the same thing as classification. The best, most-probable explanation for why someone would receive a positive test result is that, indeed, that sort of thing happens exactly 43% of the time.</p>
+
+<p>Now let's ask the question: What is the exact probability that this first interpretation is correct? For this, we again turn to Bayes' Theorem:</p>
+
+<p>Pr( interpretation | observations ) = Pr( observations | interpretation ) * Pr( interpretation ) / Pr( observations )</p>
+
+<p>The probability of the interpretation is the product of its etcetera literals, Pr( interpretation ) = 0.43.</p>
+
+<p>The probability of the observations is also known in this example: positive results happen 43% of the time: Pr(observations) = 0.43.</p>
+
+<p>The final term is Pr( observations | interpretation ), and here is the most important concept to grasp when using etcetera abduction: The probability of the observations given the interpretation is always 100%. Why? Because we are using logic as our reasoning mechanism: we accept that our axioms are always true, and the set of assumptions in any solution found by etcetera abduction always fully entails the input observations. If the interpretation is true, then the observations are true, 100% of the time.</p>
+
+<p>Essentially, etcetera abduction moves all of the uncertainty that is represented by the conditional probability term Pr( observations | interpretation ) in Bayes' Theorem over to the Pr( interpretation ) term. To reiterate the central idea, etcetera abduction reifies conditional probabilities as first-order literals with equivalent prior probabilities. The math is the same, but where we factor in the uncertainty is slightly different.</p>
+
+<p>With the conditional probability term always equal to 1 in etcetera abduction, we can write a new version of Bayes' Theorem that applies to etcetera abduction, as well as any other reasoning framework where an interpretation logically entails the observations:</p>
+
+<p>If (interpretaiton => observations), Pr( interpretation | observations ) = 1 * Pr( interpretation ) / Pr( observations )</p>
+
+<p>When we plug in the numbers for the first interpretation, we get 0.43 / 0.43 = 1.0. What does this mean? Basically, it is saying that if we make no assumptions as to whether person P is infected or healthy, then we are guaranteed to be correct. The safest bet is not to bet at all.</p>
+
+<p>Now let's look at the second most probable interpretation: </p>
+
+<pre>((etc_infected 0.4 P) (etc_true_positive 1.0 P))</pre>
+
+<p>As with all solutions, forward-chaining on these literals fully entails the observation, given our knowledge-base axioms. Importantly, this interpretation entails something else of interest as well: (infected P). </p>
+
+<p>What is the probability of this interpretation? Pr( interpretation ) is the joint probability of these two etcetera literals. In etcetera abduction, we always make the assumption that etcetera literals are conditionally independent, and compute joint probability naively as the product of their priors, so Pr( interpretation ) = 0.4 * 1.0 = 0.4</p>
+
+<p>Plugging in these numbers, we compute the likelihood of this interpretation as 0.4 / 0.43 = 0.930232558139535. This is exactly the result obtained in the Wikipedia example. A positive test result in this population indicates infection over 93% of the time.</p>
+
+<p>What about the third interpretation? This solution describes the other interpretation of a positive test result, namely that it is a false positive. Forward chaining on these two etcetera literals also entails the observation (positive P), as well as another important literal, (healthy P). What is the likelihood that this interpretation is correct? </p>
+
+<p>Pr( interpretation | observations ) = 1 * Pr( interpretation ) / Pr( observations )<br />
+ = (0.05 * 0.6) / 0.43 <br />
+ = 0.06976744186046512</p>
+
+<p>Great! We could interpret a positive result as a false-positive, but our confidence in this interpretation is under 7%, exactly the result obtained by traditional probabilistic reasoning methods.</p>
+
+<p>Just for completeness, let's change the base rate of infection in our population, and see if we can replicate the second example in the Wikipedia article.</p>
+
+<pre>(if (etc_healthy 0.98 x)
+    (healthy x))
+
+(if (etc_infected 0.02 x)
+    (infected x))
+
+(if (etc_positive 0.069 x)
+    (positive x))</pre>
+
+<pre>> python -m etcabductionpy -i infection2.lisp
+((etc_positive 0.069 P))
+((etc_false_positive 0.05 P) (etc_healthy 0.98 P))
+((etc_infected 0.02 P) (etc_true_positive 1.0 P))
+3 solutions.</pre>
+
+<p>Here we see that a false positive is much more likely than a true positive if we apply this test in a population with low incidence of infection. It is still the safest bet to assume nothing (interpretation #1), but if you had to make a choice, the likelihood of interpretation #2 is around 71% (0.05 * 0.98 / 0.069), while interpretation #3 is around 29% (0.02 * 1.0 / 0.069).</p>
+
+<p>It is reassuring that etcetera abduction gives the correct probabilities in these two simple textbook examples. Things get a lot more interesting when there are multiple observations, and when the true joint probability of these multiple observations isn't known. For now, though, a couple of important facts about etcetera abduction can be underscored:</p>
+
+<ol>
+<li>If there is only one observation, the best interpretation should ALWAYS be its prior probability.</li>
+
+<p>When presented with a positive test result in these textbook examples, the safest bet is to make no assumptions whatsoever. The best explanation for positive results is that they do occur some percent of the time, as that is the way the universe works. If somehow we were able to discover some set of antecedents that logically entailed the single observation that were collectively MORE PROBABLE than the prior probability, then we would have to admit that our estimate of this prior probability was too low all along.</p>
+
+<li>The probability of the best interpretation should NEVER be greater than the true probability of the observations.</li>
+
+<p>In these examples, the probability of best interpretation (assuming nothing) is equal to the probability of the observation. If it were any bigger, than Bayes' Theorem would give us a Pr( interpretation | observations ) that was greater than 1.0. We would have to admit that our estimate of the probability of the observation was too low all along.</p>
+
+<p>This second fact becomes super-important when we have multiple observations, and we don't know their true joint probability - as is routinely the case in real-world probabilistic reasoning problems. We could, of course, naively assume that the joint probability of the observations is the product of their priors, but we would run the risk of under-estimating their true joint probability. This is precisely where etcetera abduction can help: given a knowledge base, we can search for some interpretation(s) of multiple observations that can used to compute a better estimate of their true joint probability, compared to the naive estimate. More on that next.</p>
+
+     
+
+    </div>
+  </body>
+</html>
