@@ -66,7 +66,7 @@ def node_label(expression):
         else:
             return "(" + " ".join(node_label(i) for i in expression) + ")"
     else:
-        return str(expression)
+        return str(expression).replace('"', '\\"')
                                            
 # todo:
 # 1. When do we need to standardize variables?

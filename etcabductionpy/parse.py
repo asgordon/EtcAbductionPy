@@ -2,58 +2,13 @@
 A simple parser for definite clauses in first order logic
 Andrew S. Gordon
 '''
-
 from __future__ import print_function
+from . import sexp
 
 def parse(src):
-    '''Parse a source file into a tuple of (axioms, literals)'''
-    return(definite_clauses(variablize(sexp(wrap(src)))))
-
-def parse_old(src):
-    '''Parse multiple expressions in src text into a list of python list s-expressions'''
-    return(variablize(sexp(wrap(src))))
-
-def sexp(src):
-    '''Convert src text into a python list s-expressions'''
-    return read_from_tokens(tokenize(decomment(src)))
-
-def decomment(src):
-    '''Ignore anything on a line following a semicolon'''
-    lines = src.split('\n')
-    lines = [l.partition(';')[0] for l in lines]
-    return " ".join(lines)
-
-def tokenize(chars):
-    '''split src into tokens on whitespace or parentheses'''
-    return decomment(chars).replace('(', ' ( ').replace(')', ' ) ').split()
-
-def wrap(src):
-    '''Wrap an outer list around your src file'''
-    return '(' + src + ')'
-
-def read_from_tokens(tokens):
-    '''Read an expression from a sequence of tokens.'''
-    if not tokens:
-        raise SyntaxError('unexpected EOF while reading')
-    token = tokens.pop(0)
-    if '(' == token:
-        L = []
-        while tokens[0] != ')':
-            L.append(read_from_tokens(tokens))
-        tokens.pop(0) # pop off ')'
-        return L
-    elif ')' == token:
-        raise SyntaxError('unexpected )')
-    else:
-        return cast(token)
-
-def cast(token):
-    '''Numbers become numbers; every other token is a symbol.'''
-    try: return int(token)
-    except ValueError:
-        try: return float(token)
-        except ValueError:
-            return token
+    '''Parses input source string and creates definite clauses and observed literals
+    returns a tuple: ([definite_clauses], [observed_literals])'''
+    return(definite_clauses(variablize(sexp.Parser(src).parse_all().to_list())))
 
 def definite_clauses(expressions):
     '''Separates definite clauses from everything else in a list of expressions'''
@@ -62,6 +17,9 @@ def definite_clauses(expressions):
     for e in expressions:
         if isinstance(e, list) and len(e) == 3 and e[0] == 'if':
             yes.append(e)
+        elif isinstance(e, list) and e[0] == 'and':
+            for conjunct in e[1:]:
+                no.append(conjunct)
         else:
             no.append(e)
     return (yes,no)

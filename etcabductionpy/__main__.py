@@ -7,6 +7,7 @@ from __future__ import print_function
 import argparse
 import sys
 
+from . import sexp
 from . import parse
 from . import etcetera
 from . import forward
