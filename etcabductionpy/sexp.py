@@ -3,9 +3,6 @@ An S-expression parser in Python
 Andrew S Gordon
 July 2022'''
 
-from pymysql import NULL
-
-
 class Sexp:
     # a list, a symbol, a number, or a string
     __slots__ = ('type', 'value')
