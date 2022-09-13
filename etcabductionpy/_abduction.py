@@ -5,8 +5,8 @@ Andrew S. Gordon
 
 import itertools
 
-from . import parse
-from . import unify
+from . import _parse
+from . import _unify
 
 def abduction(obs, kb, maxdepth, skolemize = True):
     '''Logical abduction: returns a list of all sets of assumptions that entail the observations given the kb'''
@@ -17,14 +17,14 @@ def abduction(obs, kb, maxdepth, skolemize = True):
         u = list(itertools.chain.from_iterable(u))
         res.extend(crunch(u))
     if skolemize:
-        return [unify.skolemize(r) for r in res]
+        return [_unify.skolemize(r) for r in res]
     else:
         return res
 
 def index_by_consequent_predicate(kb):
     res = {}
     for dc in kb:
-        predicate = parse.consequent(dc)[0]
+        predicate = _parse.consequent(dc)[0]
         if predicate in res:
             res[predicate].append(dc)
         else:
@@ -48,16 +48,16 @@ def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions
         else:
             revisions = [] 
             for rule in indexed_kb[predicate]: # indexed by predicate of literal
-                theta = unify.unify(literal, parse.consequent(rule))
+                theta = _unify.unify(literal, _parse.consequent(rule))
                 if theta != None:
                     if depth == 0: # no depth for revision
                         return [] # (empty) list of lists
-                    revisions.append([unify.subst(theta, remaining[1:]), # new remaining with substitutions
+                    revisions.append([_unify.subst(theta, remaining[1:]), # new remaining with substitutions
                                       indexed_kb,
                                       depth,
-                                      unify.standardize(unify.subst(theta, parse.antecedent(rule))) +
-                                      unify.subst(theta, antecedents),  # new antecedents with substitutions
-                                      unify.subst(theta, assumptions)]) # new assumptions with substitutions
+                                      _unify.standardize(_unify.subst(theta, _parse.antecedent(rule))) +
+                                      _unify.subst(theta, antecedents),  # new antecedents with substitutions
+                                      _unify.subst(theta, assumptions)]) # new assumptions with substitutions
             return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
 
 def crunch(conjunction):
@@ -70,10 +70,10 @@ def cruncher(conjunction, idx = 0):
     else:
         res = []
         for subsequent in range(idx + 1,len(conjunction)): 
-            theta = unify.unify(conjunction[idx], conjunction[subsequent])
+            theta = _unify.unify(conjunction[idx], conjunction[subsequent])
             if theta:
 
-                new_conjunction = unify.subst(theta,
+                new_conjunction = _unify.subst(theta,
                                               conjunction[0:subsequent] +
                                               conjunction[(subsequent + 1):len(conjunction)])
                 res.extend(cruncher(new_conjunction, idx))

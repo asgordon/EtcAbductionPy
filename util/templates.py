@@ -8,7 +8,7 @@ import argparse
 import sys
 
 from context import etcabductionpy
-from etcabductionpy import parse
+from etcabductionpy import _parse
 
 # spit out a template for each one
 
@@ -34,7 +34,7 @@ args = argparser.parse_args()
 
 inlines = args.infile.readlines()
 intext = "".join(inlines)
-kb, obs = parse.parse(intext)
+kb, obs = _parse.parse(intext)
 
 # iterate through axioms to find etc literals in antecednets
 
@@ -42,10 +42,10 @@ outtext = ""
 for dc in kb:
     # find etc literal in antecedent
     etcliteral = []
-    for literal in parse.antecedent(dc):
+    for literal in _parse.antecedent(dc):
         if literal[0][:3] == 'etc':
             # write out new dc template
-            outtext += "(if " + parse.display(literal) + "\n" + "    (text \"" + literal[0] + " template\"))\n\n"
+            outtext += "(if " + _parse.display(literal) + "\n" + "    (text \"" + literal[0] + " template\"))\n\n"
 
 print(outtext, file=args.outfile)
 sys.exit()

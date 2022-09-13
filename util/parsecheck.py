@@ -8,7 +8,7 @@ import argparse
 import sys
 
 from context import etcabductionpy
-from etcabductionpy import parse, unify
+from etcabductionpy import _parse, _unify
 
 argparser = argparse.ArgumentParser(description='Utility for ensuring well-formulated knowledge base axioms')
 
@@ -47,12 +47,12 @@ def arity_warnings(obs, kb):
     arity = {}
     ls = []
     for dc in kb:
-        ls.extend(parse.literals(dc))
+        ls.extend(_parse.literals(dc))
     ls.extend(obs)
     all = []
     for l in ls:
         all.append(l)
-        all.extend(parse.functions(l))
+        all.extend(_parse.functions(l))
     for i in all:
         if i[0] in arity:
             if arity[i[0]] != len(i):
@@ -68,11 +68,11 @@ def existential_warnings(definite_clauses):
     '''Definite clauses where there are existential variables in the consequent (not found in antecedent)'''
     warnings = ""
     for dc in definite_clauses:
-        va = parse.all_variables(parse.antecedent(dc))
-        vc = parse.all_variables(parse.consequent(dc))
+        va = _parse.all_variables(_parse.antecedent(dc))
+        vc = _parse.all_variables(_parse.consequent(dc))
         for v in vc:
             if v not in va:
-                warnings += "\n  existential variables in the consequent: " + parse.display(dc)
+                warnings += "\n  existential variables in the consequent: " + _parse.display(dc)
                 break;
     if len(warnings) == 0:
         return "none"
@@ -87,23 +87,23 @@ def etcetera_warnings(definite_clauses):
     warnings = ""
     seen_etcs = []
     for dc in definite_clauses:
-        etcs = [l for l in parse.literals(dc) if l[0][0:3] == 'etc']
+        etcs = [l for l in _parse.literals(dc) if l[0][0:3] == 'etc']
         if len(etcs) < 1:
-            warnings += "\n  definite clause without etcetera literal: " + parse.display(dc)
+            warnings += "\n  definite clause without etcetera literal: " + _parse.display(dc)
         elif len(etcs) > 1:
-            warnings += "\n  definite clause with multiple etcetera literals: " + parse.display(dc)
+            warnings += "\n  definite clause with multiple etcetera literals: " + _parse.display(dc)
         elif etcs[0][0] in seen_etcs:
-            warnings += "\n  etcetera literal previous seen elsewhere: " + parse.display(dc)
+            warnings += "\n  etcetera literal previous seen elsewhere: " + _parse.display(dc)
         elif len(etcs[0]) < 2:
-            warnings += "\n  too few arguments in etcetera literal: " + parse.display(dc)
+            warnings += "\n  too few arguments in etcetera literal: " + _parse.display(dc)
         elif not isinstance(etcs[0][1], float):
-            warnings += "\n  first argument of etcetera literal is not a floating-point number: " + parse.display(dc)
+            warnings += "\n  first argument of etcetera literal is not a floating-point number: " + _parse.display(dc)
         elif etcs[0][1] > 1.0 or etcs[0][1] < 0.0:
-            warnings += "\n  probability of etcetera literal is out of range: " + parse.display(dc)
-        elif len(parse.all_variables(etcs[0])) != len(parse.all_variables(dc)):
-            warnings += "\n  etcetera literal missing variables founds elsewhere in definite clause: " + parse.display(dc)
-        elif len(parse.all_variables([l for l in parse.literals(dc) if l != etcs[0]])) < len(parse.all_variables(etcs[0])):
-            warnings += "\n  etcetera literal includes variables not found elsewhere in definite clause: " + parse.display(dc)
+            warnings += "\n  probability of etcetera literal is out of range: " + _parse.display(dc)
+        elif len(_parse.all_variables(etcs[0])) != len(_parse.all_variables(dc)):
+            warnings += "\n  etcetera literal missing variables founds elsewhere in definite clause: " + _parse.display(dc)
+        elif len(_parse.all_variables([l for l in _parse.literals(dc) if l != etcs[0]])) < len(_parse.all_variables(etcs[0])):
+            warnings += "\n  etcetera literal includes variables not found elsewhere in definite clause: " + _parse.display(dc)
         else:
             seen_etcs.append(etcs[0][0])
     if len(warnings) == 0:
@@ -118,8 +118,8 @@ def missing_axiom_warnings(definite_clauses):
     seen_antecedent_predicates = set()
     seen_consequent_predicates = set()
     for dc in definite_clauses:
-        seen_consequent_predicates.add(parse.consequent(dc)[0])
-        for literal in parse.antecedent(dc):
+        seen_consequent_predicates.add(_parse.consequent(dc)[0])
+        for literal in _parse.antecedent(dc):
             if literal[0][0:3] != 'etc':
                 seen_antecedent_predicates.add(literal[0])
     for predicate in seen_consequent_predicates:
@@ -151,8 +151,8 @@ args = argparser.parse_args()
 
 inlines = args.infile.readlines()
 intext = "".join(inlines)
-kb, obs = parse.parse(intext)
-obs = unify.standardize(obs)
+kb, obs = _parse.parse(intext)
+obs = _unify.standardize(obs)
 
 if args.text: # text flag is set, so ignore text literals and axioms
     obs = [o for o in obs if not is_text_literal(o)]

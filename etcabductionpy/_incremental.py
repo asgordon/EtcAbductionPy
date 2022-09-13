@@ -7,11 +7,11 @@ Andrew S. Gordon
 import bisect
 import itertools
 
-from . import unify
-from . import abduction
-from . import etcetera
-from . import forward
-from . import parse
+from . import _unify
+from . import _abduction
+from . import _etcetera
+from . import _forward
+from . import _parse
 
 def incremental(obs, kb, maxdepth, n, w, b, skolemize = True):
     '''Incremental method for etcetera abduction for handling lengthy lists of input observations'''
@@ -31,12 +31,12 @@ def incremental1(obs, kb, maxdepth, n, w, b, skolemize = True):
     # n = n-best
     # w = window size
     # b = beam of running candidate interpretations
-    indexed_kb = abduction.index_by_consequent_predicate(kb)
+    indexed_kb = _abduction.index_by_consequent_predicate(kb)
     previous = [] # proofs of the previous
     while obs:
         window = obs[0:w]
         obs = obs[w:]
-        listoflists = [abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in window]
+        listoflists = [_abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in window]
         if previous:
             listoflists.append(previous)
         pr2beat = 0.0
@@ -44,9 +44,9 @@ def incremental1(obs, kb, maxdepth, n, w, b, skolemize = True):
         nbestPr = [] # probabilities
         for u in itertools.product(*listoflists):
             u = list(itertools.chain.from_iterable(u))
-            if etcetera.best_case_probability(u) > pr2beat:
-                for solution in abduction.crunch(u):
-                    jpr = etcetera.joint_probability(solution)
+            if _etcetera.best_case_probability(u) > pr2beat:
+                for solution in _abduction.crunch(u):
+                    jpr = _etcetera.joint_probability(solution)
                     if jpr > pr2beat:
                         insertAt = bisect.bisect_left(nbestPr, jpr)
                         nbest.insert(insertAt, solution)
@@ -58,7 +58,7 @@ def incremental1(obs, kb, maxdepth, n, w, b, skolemize = True):
         nbest.reverse() # [0] is now highest
         previous = nbest
     if skolemize:
-        return [unify.skolemize(r) for r in previous[0:n]] # only skolemize nbest
+        return [_unify.skolemize(r) for r in previous[0:n]] # only skolemize nbest
     else:
         return previous[0:n]
 
@@ -74,22 +74,22 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
     # w = window size
     # b = beam of running candidate interpretations
     iteration = 1 # count for skolem constants
-    indexed_kb = abduction.index_by_consequent_predicate(kb)
+    indexed_kb = _abduction.index_by_consequent_predicate(kb)
     previous = [] # proofs of the previous
     remaining  = obs[:] # obs yet to be interpretated
 
     # first, interpret the first window as normal
     window = remaining[0:w]
     remaining = remaining[w:]
-    listoflists = [abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in window]
+    listoflists = [_abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in window]
     pr2beat = 0.0
     nbest = [] # solutions
     nbestPr = [] # probabilities
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
-        if etcetera.best_case_probability(u) > pr2beat:
-            for solution in abduction.crunch(u):
-                jpr = etcetera.joint_probability(solution)
+        if _etcetera.best_case_probability(u) > pr2beat:
+            for solution in _abduction.crunch(u):
+                jpr = _etcetera.joint_probability(solution)
                 if jpr > pr2beat:
                     insertAt = bisect.bisect_left(nbestPr, jpr)
                     nbest.insert(insertAt, solution)
@@ -101,7 +101,7 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
     nbest.reverse() # [0] is now highest
     previous = nbest
     pre = "$" + str(iteration) + ":"
-    previous = [unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
+    previous = [_unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
     
     # next, interpret remaining windows in a special way
     while remaining:
@@ -112,15 +112,15 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
         nbest = [] # solutions
         nbestPr = [] # probabilities
         for previousSolution in previous:
-            previousSolutionJpr = etcetera.joint_probability(previousSolution)
+            previousSolutionJpr = _etcetera.joint_probability(previousSolution)
             context = get_context(previousSolution, obs, kb)
             listoflists = [contextual_and_or_leaflists([ob], indexed_kb, maxdepth, context) for ob in window]
 
             for u in itertools.product(*listoflists):
                 u = list(itertools.chain.from_iterable(u))
-                if etcetera.best_case_probability(u) * previousSolutionJpr > pr2beat:
-                    for solution in abduction.crunch(u):
-                        jpr = etcetera.joint_probability(solution) * previousSolutionJpr
+                if _etcetera.best_case_probability(u) * previousSolutionJpr > pr2beat:
+                    for solution in _abduction.crunch(u):
+                        jpr = _etcetera.joint_probability(solution) * previousSolutionJpr
                         if jpr > pr2beat:
                             insertAt = bisect.bisect_left(nbestPr, jpr)
                             nbest.insert(insertAt, previousSolution + solution) # joined
@@ -132,11 +132,11 @@ def incremental2(obs, kb, maxdepth, n, w, b, skolemize = True):
         nbest.reverse() # [0] is now highest
         previous = nbest
         pre = "$" + str(iteration) + ":"
-        previous = [unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
+        previous = [_unify.skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
     return previous[0:n]
     
 def get_context(solution, obs, kb):
-    withDuplicates = [item[0] for item in forward.forward(solution, kb)] # why contains duplicates?
+    withDuplicates = [item[0] for item in _forward.forward(solution, kb)] # why contains duplicates?
     res = []
     for item in withDuplicates:
         if item not in res and item not in obs:
@@ -165,26 +165,26 @@ def contextual_and_or_leaflists(remaining, indexed_kb, depth, context, anteceden
         else:
             revisions = [] 
             for rule in indexed_kb[predicate]: # indexed by predicate of literal
-                theta = unify.unify(literal, parse.consequent(rule))
+                theta = _unify.unify(literal, _parse.consequent(rule))
                 if theta != None:
                     if depth == 0: # no depth for revision
                         return [] # (empty) list of lists
-                    revisions.append([unify.subst(theta, remaining[1:]), # new remaining with substitutions
+                    revisions.append([_unify.subst(theta, remaining[1:]), # new remaining with substitutions
                                       indexed_kb,
                                       depth,
                                       context,
-                                      unify.standardize(unify.subst(theta, parse.antecedent(rule))) +
-                                      unify.subst(theta, antecedents),  # new antecedents with substitutions
-                                      unify.subst(theta, assumptions)]) # new assumptions with substitutions
+                                      _unify.standardize(_unify.subst(theta, _parse.antecedent(rule))) +
+                                      _unify.subst(theta, antecedents),  # new antecedents with substitutions
+                                      _unify.subst(theta, assumptions)]) # new assumptions with substitutions
             for contextliteral in context:
-                theta = unify.unify(literal, contextliteral)
+                theta = _unify.unify(literal, contextliteral)
                 if theta != None: # literal unifies with context
-                    revisions.append([unify.subst(theta, remaining[1:]), # new remaining with substitutions
+                    revisions.append([_unify.subst(theta, remaining[1:]), # new remaining with substitutions
                                       indexed_kb,
                                       depth,
                                       context, # not revised
-                                      unify.subst(theta, antecedents), # antecedents
-                                      unify.subst(theta, assumptions) # assumptions
+                                      _unify.subst(theta, antecedents), # antecedents
+                                      _unify.subst(theta, assumptions) # assumptions
                     ])
                     # should we "break" here now that we've found one?
             return itertools.chain(*[contextual_and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)

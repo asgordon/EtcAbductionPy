@@ -7,20 +7,20 @@ import bisect
 import itertools
 import functools
 
-from . import unify
-from . import abduction
+from . import _unify
+from . import _abduction
 
 def etcetera(obs, kb, maxdepth, skolemize = True):
     '''Exhuastive search for conjunctions of etctera literals that logically entail the observations'''
-    indexed_kb = abduction.index_by_consequent_predicate(kb)
+    indexed_kb = _abduction.index_by_consequent_predicate(kb)
     res = []
-    listoflists = [abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
+    listoflists = [_abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
-        res.extend(abduction.crunch(u))
+        res.extend(_abduction.crunch(u))
     res.sort(key=lambda item: joint_probability(item), reverse=True)
     if skolemize:
-        return [unify.skolemize(r) for r in res]
+        return [_unify.skolemize(r) for r in res]
     else:
         return res
 
@@ -42,15 +42,15 @@ def best_case_probability(etcs):
 
 def nbest(obs, kb, maxdepth, n, skolemize = True):
     '''Returns n-best conjunctions of etcetera literals that logically entail the observations'''
-    indexed_kb = abduction.index_by_consequent_predicate(kb)
+    indexed_kb = _abduction.index_by_consequent_predicate(kb)
     pr2beat = 0.0
     nbest = [] # solutions
     nbestPr = [] # probabilities
-    listoflists = [abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
+    listoflists = [_abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
         if best_case_probability(u) > pr2beat:
-            for solution in abduction.crunch(u):
+            for solution in _abduction.crunch(u):
                 jpr = joint_probability(solution)
                 if jpr > pr2beat:
                     insertAt = bisect.bisect_left(nbestPr, jpr)
@@ -62,6 +62,6 @@ def nbest(obs, kb, maxdepth, n, skolemize = True):
                         pr2beat = nbestPr[0] # only if full
     nbest.reverse() # [0] is now highest
     if skolemize:
-        return [unify.skolemize(r) for r in nbest]
+        return [_unify.skolemize(r) for r in nbest]
     else:
         return nbest

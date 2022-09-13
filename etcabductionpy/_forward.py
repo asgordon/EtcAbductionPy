@@ -3,22 +3,22 @@ An exhaustive forward chaining algorithm with graph file output (.dot)
 Andrew S. Gordon
 '''
 
-from . import parse
-from . import unify
+from . import _parse
+from . import _unify
 
 def forward(facts, kb):
     '''An exhaustive forward chaining algorithm for first-order definite clauses'''
     # each production is [antecedent_list, consequent_literal, triggers]
     stack = list(facts)
-    productions = [[parse.antecedent(k), parse.consequent(k), []] for k in kb]
+    productions = [[_parse.antecedent(k), _parse.consequent(k), []] for k in kb]
     entailed = []
     while stack:
         current = stack.pop(0)
         for prod in productions:
             for ant in prod[0]:
-                theta = unify.unify(current, ant)
+                theta = _unify.unify(current, ant)
                 if theta != None:
-                    new_consequent = unify.subst(theta, prod[1])
+                    new_consequent = _unify.subst(theta, prod[1])
                     new_triggers = prod[2] + [current]
                     if len(prod[0]) == 1: # last one
                         entailed.append([new_consequent,
@@ -27,7 +27,7 @@ def forward(facts, kb):
                     else:
                         new_antecedent = list(prod[0])
                         new_antecedent.remove(ant)
-                        new_antecedent = [unify.subst(theta, x) for x in new_antecedent]
+                        new_antecedent = [_unify.subst(theta, x) for x in new_antecedent]
                         productions.append([new_antecedent,
                                             new_consequent,
                                             new_triggers])

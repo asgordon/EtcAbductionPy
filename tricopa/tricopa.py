@@ -25,7 +25,7 @@ class Question(tuple):
 def listofliterals(sexp_str):
     # returns a list of literals from a given s-expression string
     #x = parse.variablize(parse.sexp(sexp_str))
-    x = etc.parse.parse(sexp_str)[1][0]
+    x = etc._parse.parse(sexp_str)[1][0]
     if (x[0] == 'and'):
         return x[1:]
     else:
@@ -47,7 +47,7 @@ def tcparse(question_file, answer_file):
 
 def contains(conj, lit): # where conj is the list of entailed, lit is an answer literal.
     for c in conj:
-        if etc.unify.unify(lit, c):
+        if etc._unify.unify(lit, c):
             return True
     return False
 
@@ -69,10 +69,10 @@ def highestPercent(entailedlist, alt): #index of highest percentEntailed
     return highest, percent
 
 def entailedlist(obs, nbest, kb):
-    return [[pair[0] for pair in etc.forward.forward(n, kb)] for n in nbest]
+    return [[pair[0] for pair in etc._forward.forward(n, kb)] for n in nbest]
 
 def score1q(q, kb, depth, n):
-    nbest = etc.etcetera.nbest(q.given(), kb, depth, n)
+    nbest = etc._etcetera.nbest(q.given(), kb, depth, n)
     elist = entailedlist(q.given(), nbest, kb)
     altaIndex, altaPercent = highestPercent(elist, q.alta())
     altbIndex, altbPercent = highestPercent(elist, q.altb())
@@ -105,11 +105,11 @@ def scoreall(qlist, kb, depth, n):
 
 def workflow(q, kb, depth):
     best = etc.nbest(q.given(), kb, depth, 1)[0]
-    return(etc.graph(best, etc.forward.forward(best, kb), targets=q.given()))
+    return(etc.graph(best, etc._forward.forward(best, kb), targets=q.given()))
 
 def xbestproof(q, kb, depth, x):
     xbest = etc.nbest(q.given(), kb, depth, x + 1)[x]
-    return(etc.graph(xbest, etc.forward.forward(xbest, kb), targets=q.given()))
+    return(etc.graph(xbest, etc._forward.forward(xbest, kb), targets=q.given()))
 
 # command-line control
         
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     argparser.add_argument('-x', '--xbestproof', type=int)
     args = argparser.parse_args()
     questionlist = tcparse(args.tricopa, args.answers) # a list
-    kb, ignore = etc.parse.parse("".join(args.kb.readlines()))
+    kb, ignore = etc._parse.parse("".join(args.kb.readlines()))
 
     if args.question:
         if args.graph:

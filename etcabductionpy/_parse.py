@@ -3,12 +3,12 @@ A simple parser for definite clauses in first order logic
 Andrew S. Gordon
 '''
 from __future__ import print_function
-from . import sexp
+from . import _sexp
 
 def parse(src):
     '''Parses input source string and creates definite clauses and observed literals
     returns a tuple: ([definite_clauses], [observed_literals])'''
-    return(definite_clauses(variablize(sexp.Parser(src).parse_all().to_list())))
+    return(definite_clauses(variablize(_sexp.Parser(src).parse_all().to_list())))
 
 def definite_clauses(expressions):
     '''Separates definite clauses from everything else in a list of expressions'''
