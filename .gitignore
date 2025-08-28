@@ -1,9 +1,13 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-
-# C extensions
-*.so
-
-# Operating System - Mac OS X
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.venv/
+.python-version
+*.log
 .DS_Store
+Thumbs.db
+uv.lock
