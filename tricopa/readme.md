@@ -1,13 +1,7 @@
 # Solving Triangle-COPA questions with Etcetera Abduction
 
-All questions, summative score:
+Use `uv` for modern Python environments and ease of use: Installation instructions [here](https://docs.astral.sh/uv/getting-started/installation/)
 
-    python tricopa.py
-
-One question, graph of best solution:
-
-    python tricopa.py -q 83 -g  | ../util/dot2safari 
-
-One question, graph of the x-best solution:
-
-    python tricopa.py -q 83 -g -x 3 | ../util/dot2safari 
+```
+uv run tricopa/tricopa.py 
+```
