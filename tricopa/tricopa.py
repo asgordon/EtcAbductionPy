@@ -1,141 +1,150 @@
-# tricopa.py : Use etcabductionpy to solve tricopa problems
-# Andrew S. Gordon
-# November 2015
+# Use etcetera abduction to solve TriCOPA problems
+# Andrew S. Gordon October 2025
 
-from __future__ import print_function
-import argparse
-import sys
-import os
-import re
+from pathlib import Path
+import etcabductionpy as etc
+import signal
 
-from context import etcabductionpy as etc
+# Verify that these required files exist
+script_directory = Path(__file__).parent
+question_file = script_directory / "TriCOPA.txt"
+answer_file = script_directory / "TriCOPA-answers.txt"
+default_kb_file = script_directory / "tricopa-kb.lisp"
 
-# Question class and parser
+for required in [question_file, answer_file, default_kb_file]:
+    if not required.exists():
+        raise RuntimeError(f"Required file not found: {required}")
 
-class Question(tuple):
-    # consider adding natural language text in the future
-    def __new__(cls, number, given, alta, altb, answer):
-        return tuple.__new__(Question, (number, given, alta, altb, answer))
-    def number(self): return self[0]
-    def given(self): return self[1]
-    def alta(self): return self[2]
-    def altb(self): return self[3]
-    def answer(self): return self[4]
+class Question:
+    def __init__(self, number, given_text, question_text, given, alta_text, alta, altb_text, altb, answer):
+        self.number = number
+        self.given_text = given_text
+        self.question_text = question_text
+        self.given = given
+        self.alta_text = alta_text
+        self.alta = alta
+        self.altb_text = altb_text
+        self.altb = altb
+        self.answer = answer
 
-def listofliterals(sexp_str):
-    # returns a list of literals from a given s-expression string
-    #x = parse.variablize(parse.sexp(sexp_str))
-    x = etc._parse.parse(sexp_str)[1][0]
-    if (x[0] == 'and'):
-        return x[1:]
+
+# Load the answers
+with open(answer_file) as f:
+    answers = []
+    lines = f.readlines()
+    if len(lines) != 100:
+        raise RuntimeError(f"Answer file is not 100 lines!")
+    for line in lines:
+        parts = line.strip().split("\t")
+        if len(parts) != 2:
+            raise RuntimeError(f"Answer in answer not formatted correctly: {line.strip()}")
+        answers.append(parts[1])
+
+# Load the questions
+with open(question_file) as f:
+    questions = []
+    lines = f.readlines()
+    if len(lines) < 703:
+        raise RuntimeError(f"Question file is not at least 703 lines long") # 3 header, then 100 * 7
+    for index in range(100):
+        number = index + 1
+
+        blank_line = lines[3 + (index * 7)]
+        if blank_line.strip() != '':
+            raise RuntimeError(f"This line in the question file should be blank: {blank_line}")
+        
+        question_line = lines[3 + (index * 7) + 1]
+        question_line_number = question_line.split(".")[0]
+        if str(number) != question_line_number:
+            raise RuntimeError(f"{str(number)} does not match this line: {question_line}")
+        question_text = question_line.split(".")[-1].strip()
+        given_text = question_line.split(question_text)[0].split('.', 1)[1].strip()
+        
+        given_line = lines[3 + (index * 7) + 2]
+        _, given = etc.parse(given_line)
+        
+        alta_text_line = lines[3 + (index * 7) + 3]
+        if alta_text_line[:3] != 'a. ':
+            raise RuntimeError(f"This alternative is formatted incorrectly: {alta_text_line}")
+        alta_text = alta_text_line[3:].strip()
+
+        alta_line = lines[3 + (index * 7) + 4]
+        _, alta = etc.parse(alta_line)
+
+        altb_text_line = lines[3 + (index * 7) + 5]
+        if altb_text_line[:3] != 'b. ':
+            raise RuntimeError(f"This alternative is formatted incorrectly: {altb_text_line}")
+        altb_text = altb_text_line[3:].strip()
+
+        altb_line = lines[3 + (index * 7) + 6]
+        _, altb = etc.parse(altb_line)
+
+        answer = answers[index]
+
+        questions.append(Question(number, given_text, question_text, given, alta_text, alta, altb_text, altb, answer))
+
+
+# Load the default knowledgebase
+with open(default_kb_file) as f:
+    kb_text = f.read()
+    default_kb, _ = etc.parse(kb_text)
+
+# score 1 question
+def score1q(number, kb, depth):
+    if number < 1 or number > 100: 
+        raise RuntimeError(f"Question out of range 1-100: {number}")
+    question = questions[number - 1]
+    # Which is more probable, combined_a or combined_b?
+    combined_a = question.given + question.alta
+    combined_a_best = etc.nbest(combined_a, kb, depth, 1)[0]
+    combined_a_probability = etc.joint_probability(combined_a_best)
+    combined_b = question.given + question.altb
+    combined_b_best = etc.nbest(combined_b, kb, depth, 1)[0]
+    combined_b_probability = etc.joint_probability(combined_b_best)
+    if question.answer == 'a' and combined_a_probability > combined_b_probability:
+        score = 1.0
+    elif question.answer == 'b' and combined_b_probability > combined_a_probability:
+        score = 1.0
+    elif combined_a_probability == combined_a_probability:
+        score = 0.5
     else:
-        return [x]
-
-def tcparse(question_file, answer_file):
-    result = [] # list of Question objects
-    qlines = question_file.readlines()
-    alines = answer_file.readlines()
-    lineno = 0
-    for i in range(len(qlines)):
-        if (re.search("^[0-9]+\. ", qlines[i])): # e.g. "43. "
-            qnum = int(qlines[i].split('.')[0])
-            answer = alines[qnum - 1].split()[1]
-            result.append(Question(qnum, listofliterals(qlines[i+1]), listofliterals(qlines[i+3]), listofliterals(qlines[i+5]), answer))
-    return result
-
-# Evaluation functions
-
-def contains(conj, lit): # where conj is the list of entailed, lit is an answer literal.
-    for c in conj:
-        if etc._unify.unify(lit, c):
-            return True
-    return False
-
-def percentEntailed(entailed, alt): #percent of alt that is entailed
-    count = 0
-    for a in alt:
-        if contains(entailed, a):
-            count +=1
-    return(float(count) / float(len(alt)))
-
-def highestPercent(entailedlist, alt): #index of highest percentEntailed
-    highest = len(entailedlist)
-    percent = 0.0
-    for i in range(len(entailedlist)):
-        iperc = percentEntailed(entailedlist[i], alt)
-        if iperc > percent:
-            percent = iperc
-            highest = i
-    return highest, percent
-
-def entailedlist(obs, nbest, kb):
-    return [[pair[0] for pair in etc._forward.forward(n, kb)] for n in nbest]
-
-def score1q(q, kb, depth, n):
-    nbest = etc._etcetera.nbest(q.given(), kb, depth, n)
-    elist = entailedlist(q.given(), nbest, kb)
-    altaIndex, altaPercent = highestPercent(elist, q.alta())
-    altbIndex, altbPercent = highestPercent(elist, q.altb())
-    score = 0
-    if q.answer() == 'a':
-        if altaPercent > altbPercent:
-            score = 1
-        elif altaIndex < altbIndex:
-            score = 1
-        elif altaIndex == altbIndex and altaPercent == altbPercent and altaPercent == 1.0 and len(q.alta()) > len(q.altb()):
-            score = 1
-    elif q.answer() == 'b':
-        if altbPercent > altaPercent:
-            score = 1
-        elif altbIndex < altaIndex:
-            score = 1
-        elif altaIndex == altbIndex and altaPercent == altbPercent and altaPercent == 1.0 and len(q.altb()) > len(q.alta()):
-            score = 1
-    else:
-        print("big problem")
-    print(q.number(), q.answer(), altaIndex, altaPercent, altbIndex, altbPercent, score)
+        score = 0.0
+    print(f"{number} {question.answer} {combined_a_probability:.15f} {combined_b_probability:.15f} {score}")
     return score
 
-def scoreall(qlist, kb, depth, n):
-    score = 0
-    for q in qlist:
-        if q.number() not in [68]:
-            score += score1q(q, kb, depth, n)
+# score all questions
+def scoreall(kb, depth):
+    score = 0.0
+    for q in range(1, 101):
+        score += score1q(q, kb, depth)
     return(score)
 
-def workflow(q, kb, depth):
-    best = etc.nbest(q.given(), kb, depth, 1)[0]
-    return(etc.graph(best, etc._forward.forward(best, kb), targets=q.given()))
+# score all with timeout
+def timeout_handler(signum, frame):
+    raise TimeoutError("timeout")
 
-def xbestproof(q, kb, depth, x):
-    xbest = etc.nbest(q.given(), kb, depth, x + 1)[x]
-    return(etc.graph(xbest, etc._forward.forward(xbest, kb), targets=q.given()))
+def scoreall2(kb, depth, timeout=10):
+    score = 0.0
+    correct = 0
+    equal = 0
+    timeouts = 0
+    for q in range(1, 101):
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(timeout)
+        try:
+            value = score1q(q, kb, depth)
+            score += value
+            if value == 1: correct += 1
+            if value == 0.5: equal += 1
+        except TimeoutError as e:
+            print(f"{q} {e} 0.5")
+            score += 0.5
+            timeouts += 1
+        finally:
+            signal.alarm(0)
+    print(f"score={score} correct={correct} equal={equal} timeouts={timeouts}")
+    return(score)
+    
 
-# command-line control
-        
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument('-i', '--infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
-    argparser.add_argument('-t', '--tricopa', nargs='?', type=argparse.FileType('r'), default=os.path.join(os.path.dirname(__file__), "TriCOPA.txt"))
-    argparser.add_argument('-a', '--answers', nargs='?', type=argparse.FileType('r'), default=os.path.join(os.path.dirname(__file__), "TriCOPA-answers.txt"))
-    argparser.add_argument('-k', '--kb', nargs='?', type=argparse.FileType('r'), default=os.path.join(os.path.dirname(__file__), "tricopa-kb.lisp"))
-    argparser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
-    argparser.add_argument('-q', '--question', type=int)
-    argparser.add_argument('-d', '--depth', type=int, default=3)
-    argparser.add_argument('-n', '--nbest', type=int, default=10)
-    argparser.add_argument('-g', '--graph', action="store_true")
-    argparser.add_argument('-x', '--xbestproof', type=int)
-    args = argparser.parse_args()
-    questionlist = tcparse(args.tricopa, args.answers) # a list
-    kb, ignore = etc._parse.parse("".join(args.kb.readlines()))
-
-    if args.question:
-        if args.graph:
-            if args.xbestproof:
-                print(xbestproof(questionlist[args.question -1], kb, args.depth, args.xbestproof))
-            else:
-                print(workflow(questionlist[args.question -1], kb, args.depth))
-        else:
-            print(score1q(questionlist[args.question - 1], kb, args.depth, args.nbest))
-    else:
-        print(scoreall(questionlist, kb, args.depth, args.nbest))
+# go
+scoreall2(default_kb, 3) # scores 88.5 with default kb and 10-second timeout # score=88.5 correct=77 equal=16 timeouts=7

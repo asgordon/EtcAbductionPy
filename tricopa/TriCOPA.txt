@@ -338,11 +338,11 @@ a. The triangle is upset to see the circle.
 b. The triangle is excited to see the circle.
 (excited' e6 BT)
 
-49. The circle nods at the triangle? Why?
+49. The circle nods at the triangle. Why?
 (and (nod' E1 C))
-a. The circle disagrees with the triangle.
+a. The circle agrees with the triangle.
 (agree' e2 C x)
-b. The circle agrees with the triangle.
+b. The circle disagrees with the triangle.
 (disagree' e3 C x)
 
 50. The triangle creeps into the house. A circle moves in the corner. The triangle bolts out of the house. Why does the triangle bolt out of the house?
@@ -493,11 +493,11 @@ b. The small triangle and the circle were waiting for the big triangle to join t
 (and (waitFor' e10 LT E3) (waitFor' e11 C E3))
 
 71. A circle is in the room. A triangle knocks on the door and the circle runs to the corner of the room. The triangle pushes the door open and the circle is in the corner of the room shaking. How does the circle feel? 
-(and (inside' E1 C) (knock' E2 LT D) (outside' E3 LT) (moveTo' E4 C CORNER) (open' E5 LT D) (shake' E6 C) (seq E1 E2 E3 E4))
+(and (inside' E1 C) (knock' E2 LT D) (outside' E3 LT) (moveTo' E4 C CORNER) (open' E5 LT D) (shake' E6 C) (seq E1 E2 E3 E4 E5 E6))
 a. The circle is very scared.
-(afraid' e5 C)
+(afraid' e7 C)
 b. The circle is excited.
-(excited' e6 C)
+(excited' e8 C)
 
 72. A big triangle and little triangle are strolling together. A circle runs towards them, picks up the little triangle and runs away. How does the big triangle feel? 
 (and (stroll' E1 BT) (accompany' E2 LT BT) (par' E3 E1 E2) (approach' E4 C LT) (pull' E5 C LT) (seq E3 E4 E5))
