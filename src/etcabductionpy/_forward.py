@@ -6,6 +6,8 @@ Andrew S. Gordon
 from . import _parse
 from . import _unify
 
+__all__ = ['forward', 'graph']
+
 def forward(facts, kb):
     '''An exhaustive forward chaining algorithm for first-order definite clauses'''
     # each production is [antecedent_list, consequent_literal, triggers]

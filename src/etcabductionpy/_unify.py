@@ -3,6 +3,8 @@ A most-general-unifier unification algorithm for arbitrary s-expressions
 Andrew S. Gordon
 '''
 
+__all__ = ['unify', 'standardize', 'skolemize']
+
 def unify(x, y, theta = {}, functions = False):
     '''attempt to unify two firt-order literals, with support for existing substitutions and function terms'''
     if functions:

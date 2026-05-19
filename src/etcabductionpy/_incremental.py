@@ -3,7 +3,6 @@ Incremental Etcetera Abduction for solving large interpretation problems
 Andrew S. Gordon
 '''
 
-
 import bisect
 import itertools
 
@@ -12,6 +11,8 @@ from . import _abduction
 from . import _etcetera
 from . import _forward
 from . import _parse
+
+__all__ = ['incremental']
 
 def incremental(obs, kb, maxdepth, n, w, b, skolemize = True):
     '''Incremental method for etcetera abduction for handling lengthy lists of input observations'''

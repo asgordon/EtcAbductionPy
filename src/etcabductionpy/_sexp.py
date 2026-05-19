@@ -1,7 +1,8 @@
 '''sexp.py
 An S-expression parser in Python
-Andrew S Gordon
-July 2022'''
+Andrew S Gordon'''
+
+__all__ = ['Sexp', 'Parser']
 
 class Sexp:
     # a list, a symbol, a number, or a string

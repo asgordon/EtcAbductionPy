@@ -4,6 +4,8 @@ Andrew S. Gordon
 '''
 from . import _sexp
 
+__all__ = ['parse']
+
 def parse(src):
     '''Parses input source string and creates definite clauses and observed literals
     returns a tuple: ([definite_clauses], [observed_literals])'''

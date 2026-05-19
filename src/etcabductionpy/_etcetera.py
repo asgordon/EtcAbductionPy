@@ -10,6 +10,8 @@ import functools
 from . import _unify
 from . import _abduction
 
+__all__ = ['etcetera', 'nbest', 'joint_probability']
+
 def etcetera(obs, kb, maxdepth, skolemize = True):
     '''Exhuastive search for conjunctions of etcetera literals that logically entail the observations'''
     indexed_kb = _abduction.index_by_consequent_predicate(kb)

@@ -4,9 +4,10 @@ Andrew S. Gordon
 '''
 
 import itertools
-
 from . import _parse
 from . import _unify
+
+__all__ = ['abduction']
 
 def abduction(obs, kb, maxdepth, skolemize = True):
     '''Logical abduction: returns a list of all sets of assumptions that entail the observations given the kb'''
