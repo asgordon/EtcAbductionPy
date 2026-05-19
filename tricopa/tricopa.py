@@ -105,7 +105,7 @@ def score1q(number, kb, depth):
         score = 1.0
     elif question.answer == 'b' and combined_b_probability > combined_a_probability:
         score = 1.0
-    elif combined_a_probability == combined_a_probability:
+    elif combined_a_probability == combined_b_probability:
         score = 0.5
     else:
         score = 0.0
