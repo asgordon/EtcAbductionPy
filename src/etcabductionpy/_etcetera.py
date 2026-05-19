@@ -11,7 +11,7 @@ from . import _unify
 from . import _abduction
 
 def etcetera(obs, kb, maxdepth, skolemize = True):
-    '''Exhuastive search for conjunctions of etctera literals that logically entail the observations'''
+    '''Exhuastive search for conjunctions of etcetera literals that logically entail the observations'''
     indexed_kb = _abduction.index_by_consequent_predicate(kb)
     res = []
     listoflists = [_abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
@@ -25,7 +25,7 @@ def etcetera(obs, kb, maxdepth, skolemize = True):
         return res
 
 def joint_probability(etcs):
-    '''Product of probabitilies of etctera literals, and 1.0 for empty list'''
+    '''Product of probabitilies of etcetera literals, and 1.0 for empty list'''
     if not etcs: return 1.0 # needed for incremental
     return functools.reduce(lambda x, y: x*y, [l[1] for l in etcs])
 
