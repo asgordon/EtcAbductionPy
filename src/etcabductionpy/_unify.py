@@ -131,7 +131,7 @@ def robinson(x, y, theta = {}):
                     else:
                         return None
             elif variablep(t):
-                if robinson_occurs_check(t,s,theta):
+                if not robinson_occurs_check(t,s,theta):
                     theta[t] = s
                 else:
                     return None
@@ -144,16 +144,16 @@ def robinson(x, y, theta = {}):
                 return None
     return theta
 
-def robinson_occurs_check(var, target, theta):
+def robinson_occurs_check(var, target, theta): # true if occurs
     stack = [target]
     while stack:
         t = stack.pop()
         for z in all_vars(t):
             if var == z:
-                return False
+                return True
             if z in theta:
                 stack.append(theta[z])
-    return True
+    return False
 
 def all_vars(term):
     res = []
