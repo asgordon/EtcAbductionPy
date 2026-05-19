@@ -2,7 +2,6 @@
 A simple parser for definite clauses in first order logic
 Andrew S. Gordon
 '''
-from __future__ import print_function
 from . import _sexp
 
 def parse(src):
