@@ -35,7 +35,7 @@ def countup(prefix = "_"):
         yield prefix + str(n)
         n += 1
 
-standardized_universals = countup('?#') # use next(standardized_universals) to get the next one
+standardized_universals = countup('?#') 
 
 def all_variables(sexp):
     '''returns the set of all ?variables'''
@@ -56,7 +56,7 @@ def standardize(sexp):
 
 def skolemize(sexp, prefix="$"):
     '''Turns variables in an s-expression into unique Skolem constants'''
-    skolem_constants = countup(prefix) # use skolem_constants.next() to get the next one
+    skolem_constants = countup(prefix) 
     all_vars = all_variables(sexp)
     instances = {}
     for var in all_vars:
@@ -170,7 +170,7 @@ def no_functions(x, y, theta = {}):
     lx = len(x)
     if lx != len(y):
         return None
-    for i in range(lx): # was xrange
+    for i in range(lx): 
         s = x[i]
         t = y[i]
         while s in theta:

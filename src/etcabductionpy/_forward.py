@@ -42,7 +42,7 @@ def graph(facts, entailed, targets=[]):
     samestr = ""
     # nodes
     nodes = facts + [x[0] for x in entailed]
-    for n in range(len(nodes)): # was xrange
+    for n in range(len(nodes)): 
         if nodes[n] in facts:
             res += " n" + str(n) + " [label=\"" + node_label(nodes[n]) + "\"];\n"
         elif nodes[n] in targets:

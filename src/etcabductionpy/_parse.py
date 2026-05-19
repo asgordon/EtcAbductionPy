@@ -71,7 +71,7 @@ def variablize(sexp):
         return sexp
     else:
         res = []
-        for i in range(len(sexp)): # was xrange
+        for i in range(len(sexp)): 
             if isinstance(sexp[i], list):
                 res.append(variablize(sexp[i]))
             elif (i > 0 and isinstance(sexp[i], str) and sexp[i][0].islower()):
