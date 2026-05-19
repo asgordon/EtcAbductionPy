@@ -53,7 +53,7 @@ class Parser:
             if self.eof() or self.starts_with(')'):
                 break
             sexps.append(self.parse_sexp())
-        if self.eof() & self.depth > 0: raise ValueError("Unexpected end in input line " + str(self.lineno()))
+        if self.eof() and self.depth > 0: raise ValueError("Unexpected end in input line " + str(self.lineno()))
         if self.starts_with(')') and self.depth == 0: raise ValueError("Unexpeceted close parenthesis in input line " + str(self.lineno()))
         return sexps
 
