@@ -128,7 +128,7 @@ class Parser:
 
     def lineno(self):
         r = 1
-        for c in self.input:
+        for c in self.input[:self.pos]:
             if c == '\n': r += 1
         return r
 
@@ -148,3 +148,7 @@ if __name__ == "__main__": # run tests
     assert Parser("(one two three :four -5.01 \"six and some more\")").parse_first().to_list()[4] == -5.01
 
     assert str(Parser("(if(and(one)(two))(three))").parse_first()) == "(if (and (one) (two)) (three))"
+
+    p = Parser("one\ntwo\nthree\nfour")
+    p.parse_all()
+    assert p.lineno() == 4, f"Expected line 4 after parsing all lines, got {p.lineno()}"
