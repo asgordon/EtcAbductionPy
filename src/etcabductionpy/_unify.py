@@ -5,8 +5,8 @@ Andrew S. Gordon
 
 __all__ = ['unify', 'standardize', 'skolemize']
 
-def unify(x, y, theta = {}, functions = False):
-    '''attempt to unify two firt-order literals, with support for existing substitutions and function terms'''
+def unify(x, y, functions = False):
+    '''attempt to unify two first-order literals, with support for existing substitutions and function terms'''
     if functions:
         return robinson(x, y, {})
     else:
