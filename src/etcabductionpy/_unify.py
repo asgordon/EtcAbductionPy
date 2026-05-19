@@ -5,7 +5,6 @@ Andrew S. Gordon
 
 def unify(x, y, theta = {}, functions = False):
     '''attempt to unify two firt-order literals, with support for existing substitutions and function terms'''
-    # return unify1(x, y, theta) # old
     if functions:
         return robinson(x, y, {})
     else:
@@ -34,7 +33,7 @@ def countup(prefix = "_"):
         yield prefix + str(n)
         n += 1
 
-standardized_universals = countup('?#') # use standardized_universals.next() to get the next one
+standardized_universals = countup('?#') # use next(standardized_universals) to get the next one
 
 def all_variables(sexp):
     '''returns the set of all ?variables'''
@@ -50,7 +49,6 @@ def standardize(sexp):
     foreigners = [x for x in all_variables(sexp) if not x.startswith("?#")]
     aliases = {}
     for f in foreigners:
-        #aliases[f] = standardized_universals.next()
         aliases[f] = next(standardized_universals)
     return subst(aliases, sexp)
 
@@ -60,7 +58,6 @@ def skolemize(sexp, prefix="$"):
     all_vars = all_variables(sexp)
     instances = {}
     for var in all_vars:
-        # instances[var] = skolem_constants.next()
         instances[var] = next(skolem_constants)
     return subst(instances, sexp)
 
@@ -92,8 +89,6 @@ def unify_var(var, x, theta):
         theta_copy = theta.copy()
         theta_copy[var] = x
         return theta_copy
-#        theta[var] = x
-#        return theta
         
 def occur_check(var, x):
     if var == x:
@@ -120,7 +115,6 @@ def robinson(x, y, theta = {}):
         if s != t:
             if variablep(s):
                 if variablep(t):
-                    #theta[s] = t
                     if s < t: # deal with standardized/non-standardized var ordering
                         theta[t] = s
                     else:
