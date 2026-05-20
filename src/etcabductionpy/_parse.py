@@ -4,7 +4,7 @@ Andrew S. Gordon
 '''
 from . import _sexp
 
-__all__ = ['parse']
+__all__ = ['parse', 'display']
 
 def parse(src):
     '''Parses input source string and creates definite clauses and observed literals

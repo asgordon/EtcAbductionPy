@@ -10,7 +10,7 @@ from ._etcetera import etcetera, nbest, joint_probability
 from ._forward import forward, graph
 from ._incremental import incremental
 from ._sexp import Sexp, Parser
-from ._parse import parse
+from ._parse import parse, display
 from ._unify import unify, standardize, skolemize
 
 __all__ = [
@@ -19,6 +19,6 @@ __all__ = [
     'forward', 'graph',
     'incremental',
     'Sexp', 'Parser',
-    'parse',
+    'parse', 'display',
     'unify', 'standardize', 'skolemize'
 ]

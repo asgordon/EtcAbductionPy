@@ -6,12 +6,9 @@ Andrew S. Gordon
 import argparse
 import sys
 
-#from . import _sexp
-from . import _parse
-from . import _etcetera
-from . import _forward
-from . import _incremental
-from . import _unify
+from . import (
+    parse, display, etcetera, nbest, forward, graph, incremental, standardize
+)
 
 argparser = argparse.ArgumentParser(description='Etcetera Abduction in Python')
 
@@ -84,46 +81,46 @@ args = argparser.parse_args()
 
 inlines = args.infile.readlines()
 intext = "".join(inlines)
-kb, obs = _parse.parse(intext)
-obs = _unify.standardize(obs)
+kb, obs = parse(intext)
+obs = standardize(obs)
 
-skolemize = not args.variables
+_skolemize = not args.variables
 
 if args.kb:
     kblines = args.kb.readlines()
     kbtext = "".join(kblines)
-    kbkb, kbobs = _parse.parse(kbtext)
+    kbkb, kbobs = parse(kbtext)
     kb.extend(kbkb)
 
 # Handle forward
 
 if args.forward:
-    entailed = _forward.forward(obs, kb)
+    entailed = forward(obs, kb)
     if args.graph:
-        print(_forward.graph(obs, entailed), file=args.outfile)
+        print(graph(obs, entailed), file=args.outfile)
     else:
         for e in entailed:
-            print(_parse.display(e[0]), file=args.outfile)
+            print(display(e[0]), file=args.outfile)
     sys.exit()
 
 # Handle abduction
 
 if args.all:
-    solutions = _etcetera.etcetera(obs, kb, args.depth, skolemize = skolemize)
+    solutions = etcetera(obs, kb, args.depth, skolemize = _skolemize)
 else:
     if args.incremental:
-        solutions = _incremental.incremental(obs, kb, args.depth, args.nbest,
-                                            args.window, args.beam, skolemize = skolemize)
+        solutions = incremental(obs, kb, args.depth, args.nbest,
+                                            args.window, args.beam, skolemize = _skolemize)
     else:
-        solutions = _etcetera.nbest(obs, kb, args.depth, args.nbest, skolemize = skolemize)
+        solutions = nbest(obs, kb, args.depth, args.nbest, skolemize = _skolemize)
 
 if args.graph:
     solution = solutions[args.solution - 1]
-    print(_forward.graph(solution, _forward.forward(solution, kb), targets=obs),
+    print(graph(solution, forward(solution, kb), targets=obs),
           file=args.outfile)
 else:
     for solution in solutions:
-        print(_parse.display(solution), file=args.outfile)
+        print(display(solution), file=args.outfile)
     print(str(len(solutions)) + " solutions.")
 
 
