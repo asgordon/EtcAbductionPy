@@ -1,14 +1,13 @@
-'''etcabductionpy.__main__
-Command line interface
+'''
+__main__.py 
+Command line interface for etcabductionpy
 Andrew S. Gordon
 '''
 
 import argparse
 import sys
 
-from . import (
-    parse, display, etcetera, nbest, forward, graph, incremental, standardize
-)
+from . import KnowledgeBase, etcetera, nbest, forward, graph, incremental
 
 argparser = argparse.ArgumentParser(description='Etcetera Abduction in Python')
 
@@ -81,16 +80,15 @@ args = argparser.parse_args()
 
 inlines = args.infile.readlines()
 intext = "".join(inlines)
-kb, obs = parse(intext)
-obs = standardize(obs)
+kb, obs = KnowledgeBase.from_src(intext)
+obs = kb.standardize_literals(obs)
 
 _skolemize = not args.variables
 
 if args.kb:
     kblines = args.kb.readlines()
     kbtext = "".join(kblines)
-    kbkb, kbobs = parse(kbtext)
-    kb.extend(kbkb)
+    kb.add_src(kbtext)
 
 # Handle forward
 
@@ -100,19 +98,19 @@ if args.forward:
         print(graph(obs, entailed), file=args.outfile)
     else:
         for e in entailed:
-            print(display(e[0]), file=args.outfile)
+            print(str(e[0]), file=args.outfile)
     sys.exit()
 
 # Handle abduction
 
 if args.all:
-    solutions = etcetera(obs, kb, args.depth, skolemize = _skolemize)
+    solutions = etcetera(obs, kb, args.depth, skolemize_solutions= _skolemize)
 else:
     if args.incremental:
         solutions = incremental(obs, kb, args.depth, args.nbest,
-                                            args.window, args.beam, skolemize = _skolemize)
+                                            args.window, args.beam, skolemize_solutions = _skolemize)
     else:
-        solutions = nbest(obs, kb, args.depth, args.nbest, skolemize = _skolemize)
+        solutions = nbest(obs, kb, args.depth, args.nbest, skolemize_solutions = _skolemize)
 
 if args.graph:
     solution = solutions[args.solution - 1]
@@ -120,7 +118,7 @@ if args.graph:
           file=args.outfile)
 else:
     for solution in solutions:
-        print(display(solution), file=args.outfile)
+        print(str(solution), file=args.outfile)
     print(str(len(solutions)) + " solutions.")
 
 

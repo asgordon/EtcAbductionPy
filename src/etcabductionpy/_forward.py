@@ -1,75 +1,75 @@
-'''forward.py
-An exhaustive forward chaining algorithm with graph file output (.dot)
+'''
+forward.py
+forward chaining in first-order logic and proof graphs
 Andrew S. Gordon
 '''
 
-from . import _parse
-from . import _unify
-
 __all__ = ['forward', 'graph']
 
-def forward(facts, kb):
-    '''An exhaustive forward chaining algorithm for first-order definite clauses'''
-    # each production is [antecedent_list, consequent_literal, triggers]
-    stack = list(facts)
-    productions = [[_parse.antecedent(k), _parse.consequent(k), []] for k in kb]
-    entailed = []
-    while stack:
-        current = stack.pop(0)
-        for prod in productions:
-            for ant in prod[0]:
-                theta = _unify.unify(current, ant)
-                if theta != None:
-                    new_consequent = _unify.subst(theta, prod[1])
-                    new_triggers = prod[2] + [current]
-                    if len(prod[0]) == 1: # last one
-                        entailed.append([new_consequent,
-                                         new_triggers])
-                        stack.append(new_consequent)
-                    else:
-                        new_antecedent = list(prod[0])
-                        new_antecedent.remove(ant)
-                        new_antecedent = [_unify.subst(theta, x) for x in new_antecedent]
-                        productions.append([new_antecedent,
-                                            new_consequent,
-                                            new_triggers])
+from . import KnowledgeBase, EtceteraLiteral, Literal, unify
+
+def forward(facts: list[Literal], kb: KnowledgeBase) -> 'list[tuple[Literal,list[Literal]]]':
+    # an exhaustive forward-chaining. Returns list of (entailed_literal, triggers) tuples
+    entailed: list[tuple[Literal, list[Literal]]] = []
+    # queue of facts to try against all rules (makes a copy)
+    queue = list(facts)
+    # each production: (remaining_antecedents, consequent, triggers_so_far)
+    productions: list[tuple[list[Literal], Literal, list[Literal]]] = []
+    for dc in kb: # uses __iter__
+        productions.append((list(dc.antecedents), dc.consequent, []))
+    while queue:
+        fact = queue.pop(0)
+        i = 0
+        while i < len(productions):
+            ants, cons, triggers = productions[i]
+            if ants:
+                for j, target in enumerate(ants):
+                    theta = unify(fact, target)          
+                    if theta is not None:
+                        new_triggers = triggers + [fact]
+                        if len(ants) == 1:
+                            # all antecedents satisfied: fire the rule
+                            result = cons.subst(theta)
+                            entailed.append((result, new_triggers))
+                            queue.append(result)
+                        else:
+                            # partial match, keep going
+                            remaining = [a.subst(theta) for k, a in enumerate(ants) if k != j]
+                            cons_so_far = cons.subst(theta)
+                            productions.append((remaining, cons_so_far, new_triggers))
+            i += 1
     return entailed
 
-def graph(facts, entailed, targets=[]):
-    '''.dot format graph representation of proof, highlighting targets if provided'''
-    #res = "digraph proof {\n graph [rankdir=\"RL\"]\n"
-    res = "digraph proof {\n graph [rankdir=\"TB\"]\n"
+
+def graph(facts: list[Literal], entailed: list[tuple[Literal, list[Literal]]], targets: list[Literal] = None) -> str:
+    # .dot format graph representation of proof, highlighting targets if provided
+    targets = targets or []
+    res = 'digraph proof {\n graph [rankdir="TB"]\n'
     samestr = ""
-    # nodes
-    nodes = facts + [x[0] for x in entailed]
-    for n in range(len(nodes)): 
-        if nodes[n] in facts:
-            res += " n" + str(n) + " [label=\"" + node_label(nodes[n]) + "\"];\n"
-        elif nodes[n] in targets:
-            res += " n" + str(n) + " [shape=box peripheries=2 label=\"" + node_label(nodes[n]) + "\"];\n"
-            samestr += " n" + str(n)
+    nodes = list(facts) + [e[0] for e in entailed]
+    for i, node in enumerate(nodes):
+        label = node_label(node)
+        if node in facts:
+            res += f' n{i} [label="{label}"]\n'
+        elif node in targets:
+            res += f' n{i} [shape=box peripheries=2 label="{label}"];\n'
+            samestr += f' n{i}'
         else:
-            res += " n" + str(n) + " [shape=box label=\"" + node_label(nodes[n]) + "\"];\n"
-    # arcs
-    for e in entailed:
-        for a in e[1]:
-            res += " n" + str(nodes.index(a)) + " -> n" + str(nodes.index(e[0])) + "\n"
-    # rank=same
-    if samestr: # not ""
-        res += " {rank=same" + samestr + "}\n"
-    res += "}\n"
+            res += f' n{i} [shape=box label="{label}"];\n'
+    for ent_consequent, ent_triggers in entailed:
+        for trigger in ent_triggers:
+            src = nodes.index(trigger)
+            dst = nodes.index(ent_consequent)
+            res += f' n{src} -> n{dst}\n'
+    if samestr:
+        res += f' {{rank=same{samestr}}}\n'
+    res += '}\n'
     return res
 
-def node_label(expression):
-    '''Turns a s-expression literal into a nice string, with special case for etc'''
-    if isinstance(expression, list):
-        if True and expression[0].startswith('etc'): # for nicer graphs # change to False for debugging
-            return expression[0] + " " + str(expression[1])
-        else:
-            return "(" + " ".join(node_label(i) for i in expression) + ")"
+def node_label(literal: Literal) -> str:
+    # creates a nice string for a literal, with a special case for etc literals
+    if isinstance(literal, EtceteraLiteral):
+        return f'{literal.predicate} {literal.probability}'
     else:
-        return str(expression).replace('"', '\\"')
-                                           
-# todo:
-# 1. When do we need to standardize variables?
-# 2. Handle universal variables in the observations
+        return str(literal)[1:-1] # str representation removing parentheses
+    

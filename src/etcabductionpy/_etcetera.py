@@ -1,69 +1,76 @@
-'''etcetera.py
-Probability-ordered logical abduction for a Knowledge Base of definite clauses 
+'''
+etcetera.py
+probability-ordered logical abduction
 Andrew S. Gordon
 '''
 
-import bisect
-import itertools
-import functools
+__all__ = ['etcetera', 'nbest', 'joint_log_probability']
 
-from . import _unify
 from . import _abduction
+from . import skolemize
+from . import EtceteraLiteral, Literal, KnowledgeBase
 
-__all__ = ['etcetera', 'nbest', 'joint_probability']
+import itertools
+import bisect
 
-def etcetera(obs, kb, maxdepth, skolemize = True):
-    '''Exhuastive search for conjunctions of etcetera literals that logically entail the observations'''
-    indexed_kb = _abduction.index_by_consequent_predicate(kb)
-    res = []
-    listoflists = [_abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
+def etcetera(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, skolemize_solutions: bool = True):
+    # Exhuastive search for conjunctions of etcetera literals that logically entail the observations
+    if not obs:
+        return [] # no obs, no solutions
+    for ob in obs:
+        if ob.predicate not in kb._cpindex: return [] # kb can't handle these obs
+    solutions = []
+    listoflists = [_abduction.and_or_leaflists([ob], kb, maxdepth, [], []) for ob in obs]
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
-        res.extend(_abduction.crunch(u))
-    res.sort(key=lambda item: joint_probability(item), reverse=True)
-    if skolemize:
-        return [_unify.skolemize(r) for r in res]
+        solutions.extend(_abduction.crunch(u))
+    solutions.sort(key=lambda item: joint_log_probability(item), reverse=True)
+    if skolemize_solutions:
+        return [skolemize(r) for r in solutions]
     else:
-        return res
+        return solutions    
 
-def joint_probability(etcs):
-    '''Product of probabitilies of etcetera literals, and 1.0 for empty list'''
-    if not etcs: return 1.0 # needed for incremental
-    return functools.reduce(lambda x, y: x*y, [l[1] for l in etcs])
+def joint_log_probability(solution: list[EtceteraLiteral]) -> float:
+    if not solution: return 0.0 # needed for incremental, log(1.0) = 0
+    return sum(lit.log_probability for lit in solution)
 
-def best_case_probability(etcs):
-    '''If we were wildly successful at unifing all literals, what would the joint probability be?'''
-    predicateSet = set()
-    pr = 1.0
-    for literal in etcs:
-        # if literal[0][0:3] != 'etc': raise ValueError('Not an etcetera literal: ' + str(literal))
-        if literal[0] not in predicateSet:
-            predicateSet.add(literal[0])
-            pr = pr * literal[1]
-    return pr
+def best_case_log_probability(solution: list[EtceteraLiteral]) -> float:
+    # if we were wildly successful at unifiying all literals, what would the joint log prbability be?
+    seen = set()
+    total = 0.0
+    for lit in solution:
+        if lit.predicate not in seen:
+            seen.add(lit.predicate)
+            total += lit.log_probability
+    return total
 
-def nbest(obs, kb, maxdepth, n, skolemize = True):
-    '''Returns n-best conjunctions of etcetera literals that logically entail the observations'''
-    indexed_kb = _abduction.index_by_consequent_predicate(kb)
-    pr2beat = 0.0
+def nbest(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, n: int, skolemize_solutions: bool = True):
+    # returns n-best conjunctions of etcetera literals that logically entail the observations
+    if not obs:
+        return [] # no obs, no solutions
+    for ob in obs:
+        if ob.predicate not in kb._cpindex: return [] # kb can't handle these obs
+    lpr2beat = -float('inf') # log probability to beat 
     nbest = [] # solutions
-    nbestPr = [] # probabilities
-    listoflists = [_abduction.and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
+    nbest_lpr = [] # probabilities
+    listoflists = [_abduction.and_or_leaflists([ob], kb, maxdepth, [], []) for ob in obs]
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
-        if best_case_probability(u) > pr2beat:
+        bc = best_case_log_probability(u)
+        if bc > lpr2beat:
             for solution in _abduction.crunch(u):
-                jpr = joint_probability(solution)
-                if jpr > pr2beat:
-                    insertAt = bisect.bisect_left(nbestPr, jpr)
+                jlpr = joint_log_probability(solution)
+                if jlpr > lpr2beat:
+                    insertAt = bisect.bisect_left(nbest_lpr, jlpr)
                     nbest.insert(insertAt, solution)
-                    nbestPr.insert(insertAt, jpr)
+                    nbest_lpr.insert(insertAt, jlpr)
                     if len(nbest) > n:
                         nbest.pop(0)
-                        nbestPr.pop(0)
-                        pr2beat = nbestPr[0] # only if full
-    nbest.reverse() # [0] is now highest
-    if skolemize:
-        return [_unify.skolemize(r) for r in nbest]
+                        nbest_lpr.pop(0)
+                        lpr2beat = nbest_lpr[0] # only if full
+    nbest.reverse() # highest first
+    if skolemize_solutions:
+        return [skolemize(solution) for solution in nbest]
     else:
         return nbest
+

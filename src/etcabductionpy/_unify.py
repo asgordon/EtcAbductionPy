@@ -1,32 +1,44 @@
-'''unify.py
-A most-general-unifier unification algorithm for arbitrary s-expressions
+'''
+unify.py
+Fast and simple unification of first-order logic literals
 Andrew S. Gordon
 '''
+__all__ = ['unify', 'skolemize']
 
-__all__ = ['unify', 'standardize', 'skolemize']
+from . import Literal, Term
 
-def unify(x, y, functions = False):
-    '''attempt to unify two first-order literals, with support for existing substitutions and function terms'''
-    if functions:
-        return robinson(x, y, {})
-    else:
-        return no_functions(x, y, {})
+def unify(x: Literal, y: Literal) -> 'dict[Term, Term]':
+    return functionless_unify(x, y)
 
-# Support functions
-
-def subst(theta, x):
-    if listp(x):
-        return [subst(theta, z) for z in x]
-    elif x in theta and variablep(x): # redundant?
-        return subst(theta, theta[x])
-    else:
-        return x
-    
-def listp(item): # includes both literals and functions
-    return isinstance(item, list)
-
-def variablep(item): # a string that starts with a question mark
-    return isinstance(item, str) and len(item) > 1 and item.startswith('?')
+def functionless_unify(x: Literal, y: Literal) -> 'dict[Term, Term]':
+    # returns theta if success, returns None if not
+    if x == y:
+        return {}
+    if x.predicate != y.predicate:
+        return None
+    if len(x.arguments) != len(y.arguments):
+        return None
+    theta = {} # dict[Term, Term]
+    for termx, termy in zip(x.arguments, y.arguments):
+        while termx in theta:
+            termx = theta[termx]
+        while termy in theta:
+            termy = theta[termy]
+        if termx != termy:
+            if termx.is_variable:
+                if termy.is_variable and termx < termy: # deal with standardized/non-standardized var ordering
+                    theta[termy] = termx
+                else:
+                    theta[termx] = termy
+            elif termy.is_variable:
+                theta[termy] = termx
+            else:
+                return None
+    # remove indirects
+    for v in theta:
+        while theta[v] in theta:
+            theta[v] = theta[theta[v]]
+    return theta
 
 def countup(prefix = "_"):
     '''Unique symbol name generator'''
@@ -35,160 +47,17 @@ def countup(prefix = "_"):
         yield prefix + str(n)
         n += 1
 
-standardized_universals = countup('?#') 
-
-def all_variables(sexp):
-    '''returns the set of all ?variables'''
-    if variablep(sexp):
-        return set([sexp])
-    elif isinstance(sexp, list):
-        return set().union(*[all_variables(item) for item in sexp])
-    else:
-        return set()
-
-def standardize(sexp):
-    '''Ensures that all variable ?names in an s-expression are standardized variables'''
-    foreigners = [x for x in all_variables(sexp) if not x.startswith("?#")]
-    aliases = {}
-    for f in foreigners:
-        aliases[f] = next(standardized_universals)
-    return subst(aliases, sexp)
-
-def skolemize(sexp, prefix="$"):
-    '''Turns variables in an s-expression into unique Skolem constants'''
-    skolem_constants = countup(prefix) 
-    all_vars = all_variables(sexp)
-    instances = {}
-    for var in all_vars:
-        instances[var] = next(skolem_constants)
-    return subst(instances, sexp)
-
-
-# Version 1 : Classic style of old LISP programmers
-    
-def unify1(x, y, theta = {}):
-    if theta == None:
-        return None
-    elif x == y:
-        return theta
-    elif variablep(x):
-        return unify_var(x,y,theta)
-    elif variablep(y):
-        return unify_var(y,x,theta)
-    elif listp(x) and listp(y) and len(x) == len(y):
-        return unify1(x[1:], y[1:], unify1(x[0], y[0], theta))
-    else:
-        return None
-
-def unify_var(var, x, theta):
-    if variablep(x) and var < x: # prevents circularities
-        return unify_var(x, var, theta)
-    elif var in theta:
-        return unify1(theta[var], x, theta)
-    elif occur_check(var,x):
-        return None
-    else:
-        theta_copy = theta.copy()
-        theta_copy[var] = x
-        return theta_copy
-        
-def occur_check(var, x):
-    if var == x:
-        return True
-    elif listp(x):
-        for i in x:
-            if occur_check(var, i): return True
-    return False
+def skolemize(solution: list[Literal], prefix: str = "$") -> 'list[Literal]':
+    # converts any variables in a solution into Skolem constants
+    skolem_constants = countup(prefix)
+    theta = {} # dict{Term: Term}
+    all_vars = set()
+    for lit in solution:
+        all_vars.update(lit.all_variables())
+    for var in sorted(all_vars):
+        if var not in theta:
+            theta[var] = Term(next(skolem_constants))
+    return [lit.subst(theta) for lit in solution]
 
 
 
-# Version 2: Robinson's 1965 Unification Algorithm
-
-def robinson(x, y, theta = {}):
-    stack = [(x,y)]
-    while stack:
-        s, t = stack.pop()
-        while (variablep(s) and
-               (s in theta)):
-            s = theta[s]
-        while (variablep(t) and
-               (t in theta)):
-            t = theta[t]
-        if s != t:
-            if variablep(s):
-                if variablep(t):
-                    if s < t: # deal with standardized/non-standardized var ordering
-                        theta[t] = s
-                    else:
-                        theta[s] = t
-                else:
-                    if robinson_occurs_check(s,t,theta):
-                        theta[s] = t
-                    else:
-                        return None
-            elif variablep(t):
-                if not robinson_occurs_check(t,s,theta):
-                    theta[t] = s
-                else:
-                    return None
-            elif (isinstance(s, list) and
-                  isinstance(t, list) and
-                  len(s) == len(t) and
-                  s[0] == t[0]):
-                stack.extend(zip(s[1:], t[1:]))
-            else:
-                return None
-    return theta
-
-def robinson_occurs_check(var, target, theta): # true if occurs
-    stack = [target]
-    while stack:
-        t = stack.pop()
-        for z in all_vars(t):
-            if var == z:
-                return True
-            if z in theta:
-                stack.append(theta[z])
-    return False
-
-def all_vars(term):
-    res = []
-    stack = [term]
-    while stack:
-        t = stack.pop()
-        if isinstance(t, list):
-            stack.extend(t[1:])
-        elif variablep(t):
-            res.append(t)
-    return res
-
-
-# Version 3: Faster, but no functions
-
-def no_functions(x, y, theta = {}):
-    # unifies two lists not containing lists
-    lx = len(x)
-    if lx != len(y):
-        return None
-    for i in range(lx): 
-        s = x[i]
-        t = y[i]
-        while s in theta:
-            s = theta[s]
-        while t in theta: 
-            t = theta[t]
-        if s != t:
-            if variablep(s):
-                if variablep(t) and s < t: # deal with standardized/non-standardized var ordering
-                    theta[t] = s
-                else:
-                    theta[s] = t
-            elif variablep(t): 
-                theta[t] = s
-            else:
-                return None
-    return theta
-                
-        
-                
-# Todo: standardize and subst in single function (optimization)

@@ -1,82 +1,80 @@
-'''abduction.py
-Base functionality for logical abduction using a knowledge base of definite clauses
+'''
+abduction.py 
+Exhaustive tree-leaf logical abduction
 Andrew S. Gordon
 '''
 
-import itertools
-from . import _parse
-from . import _unify
-
 __all__ = ['abduction']
 
-def abduction(obs, kb, maxdepth, skolemize = True):
-    '''Logical abduction: returns a list of all sets of assumptions that entail the observations given the kb'''
-    indexed_kb = index_by_consequent_predicate(kb)
-    res = []
-    listoflists = [and_or_leaflists([ob], indexed_kb, maxdepth) for ob in obs]
+import itertools
+from . import unify, skolemize
+from . import Literal, KnowledgeBase
+
+def abduction(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, skolemize_solutions: bool = True):
+    # exhaustive search for sets of leaf assumptions that entail the observations given the kb
+    if not obs:
+        return [] # no obs, no solutions
+    for ob in obs:
+        if ob.predicate not in kb._cpindex: return [] # kb can't handle these obs
+    solutions = []
+    listoflists = [and_or_leaflists([ob], kb, maxdepth, [], []) for ob in obs]
     for u in itertools.product(*listoflists):
         u = list(itertools.chain.from_iterable(u))
-        res.extend(crunch(u))
-    if skolemize:
-        return [_unify.skolemize(r) for r in res]
+        solutions.extend(crunch(u))
+    if skolemize_solutions:
+        return [skolemize(solution) for solution in solutions]
     else:
-        return res
+        return solutions
 
-def index_by_consequent_predicate(kb):
-    res = {}
-    for dc in kb:
-        predicate = _parse.consequent(dc)[0]
-        if predicate in res:
-            res[predicate].append(dc)
-        else:
-            res[predicate] = [dc]
-    return res
-
-def and_or_leaflists(remaining, indexed_kb, depth, antecedents = [], assumptions = []):
-    '''Returns list of all entailing sets of leafs in the and-or backchaining tree'''
+def and_or_leaflists(remaining: list[Literal], kb: KnowledgeBase, depth: int, antecedents: list[Literal], assumptions: list[Literal]) -> 'list[list[Literal]]':
     if depth == 0 and antecedents: # fail
-        return [] # (empty) list of lists
-    elif not remaining: # done with this level
-        if not antecedents:  # found one
-            return [assumptions] # list of lists
+        return []
+    if not remaining: # done with this level
+        if not antecedents: # found one
+            return [assumptions]
         else:
-            return and_or_leaflists(antecedents, indexed_kb, depth - 1, [], assumptions)
-    else: # more to go on this level
-        literal = remaining[0] # first of remaining
-        predicate = literal[0]
-        if predicate not in indexed_kb:
-            return and_or_leaflists(remaining[1:], indexed_kb, depth, antecedents, [literal] + assumptions) # shift literal to assumptions
-        else:
-            revisions = [] 
-            for rule in indexed_kb[predicate]: # indexed by predicate of literal
-                theta = _unify.unify(literal, _parse.consequent(rule))
-                if theta != None:
-                    if depth == 0: # no depth for revision
-                        return [] # (empty) list of lists
-                    revisions.append([_unify.subst(theta, remaining[1:]), # new remaining with substitutions
-                                      indexed_kb,
-                                      depth,
-                                      _unify.standardize(_unify.subst(theta, _parse.antecedent(rule))) +
-                                      _unify.subst(theta, antecedents),  # new antecedents with substitutions
-                                      _unify.subst(theta, assumptions)]) # new assumptions with substitutions
-            return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
+            return and_or_leaflists(antecedents, kb, depth - 1, [], assumptions)
+    # more to go on this level
+    literal = remaining[0] # first of remaining
+    if literal.predicate not in kb._cpindex:
+        return and_or_leaflists(remaining[1:], kb, depth, antecedents, [literal] + assumptions) # shift literal to assumptions
+    revisions = []
+    for dc in kb._cpindex[literal.predicate]: # definite clause
+        theta = unify(literal, dc.consequent)
+        if theta != None:
+            if depth == 0: # no depth for revision
+                return [] # fail
+            revisions.append([
+                [lit.subst(theta) for lit in remaining[1:]],
+                 kb,
+                 depth,
+                 kb.standardize_literals([ant.subst(theta) for ant in dc.antecedents]) +
+                 [ant.subst(theta) for ant in antecedents], # new antecedents with substitutions
+                 [ass.subst(theta) for ass in assumptions] # new assumptions with substitutions
+                 ]) 
+    return itertools.chain(*[and_or_leaflists(*rev) for rev in revisions]) # list of lists (if any)
 
-def crunch(conjunction):
-    '''Returns all possible ways that literals in a conjunction could be unified'''
-    return [k for k,v in itertools.groupby(sorted(cruncher(conjunction, 0)))] # dedupe solutions
+def crunch(conjunction: list[Literal]) -> list[list[Literal]]:
+    # returns all possible ways that literals in a conjunction could be unified
+    seen = set()
+    results = []
+    for solution in cruncher(conjunction, 0): # dedupe solutions
+        key = frozenset(solution)
+        if key not in seen:
+            seen.add(key)
+            results.append(list(key))
+    return results
 
-def cruncher(conjunction, idx = 0):
+def cruncher(conjunction: list[Literal], idx: int = 0) -> list[list[Literal]]:
     if idx >= len(conjunction) - 1: # last one
-        return [[k for k,v in itertools.groupby(sorted(conjunction))]] # dedupe literals in solution
+        return [conjunction]
     else:
         res = []
-        for subsequent in range(idx + 1,len(conjunction)): 
-            theta = _unify.unify(conjunction[idx], conjunction[subsequent])
-            if theta:
-
-                new_conjunction = _unify.subst(theta,
-                                              conjunction[0:subsequent] +
-                                              conjunction[(subsequent + 1):len(conjunction)])
+        for subsequent in range(idx + 1, len(conjunction)):
+            theta = unify(conjunction[idx], conjunction[subsequent])
+            if theta != None:
+                new_conjunction = [lit.subst(theta) for lit in conjunction[0:subsequent] + conjunction[(subsequent + 1):len(conjunction)]]
                 res.extend(cruncher(new_conjunction, idx))
         res.extend(cruncher(conjunction, idx + 1))
         return res
+

@@ -1,24 +1,26 @@
-'''etcabductionpy package
-This package contains an implementation of Etcetera Abduction for Python.
+'''
+etcabductionpy package
+Referece implementation of Etcetera Abduction in Python.
+Andrew S. Gordon
 '''
 
 __author__ = 'Andrew S. Gordon'
-__version__ = "0"
+__version__ = "0.5.0"
 
+from ._sexp import Sexp, Parser
+from ._knowledgebase import Term, Literal, EtceteraLiteral, DefiniteClause, KnowledgeBase
+from ._unify import unify, skolemize
 from ._abduction import abduction
-from ._etcetera import etcetera, nbest, joint_probability
+from ._etcetera import etcetera, nbest, joint_log_probability
 from ._forward import forward, graph
 from ._incremental import incremental
-from ._sexp import Sexp, Parser
-from ._parse import parse, display
-from ._unify import unify, standardize, skolemize
 
 __all__ = [
-    'abduction',
-    'etcetera', 'nbest', 'joint_probability',
-    'forward', 'graph',
-    'incremental',
     'Sexp', 'Parser',
-    'parse', 'display',
-    'unify', 'standardize', 'skolemize'
+    'Term', 'Literal', 'EtceteraLiteral', 'DefiniteClause', 'KnowledgeBase',
+    'unify', 'skolemize',
+    'abduction',
+    'etcetera', 'nbest', 'joint_log_probability',
+    'forward', 'graph',
+    'incremental'
 ]
