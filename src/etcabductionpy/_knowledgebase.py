@@ -7,7 +7,7 @@ Andrew S. Gordon
 __all__ = ['Term', 'Literal', 'EtceteraLiteral', 'DefiniteClause', 'KnowledgeBase']
 
 import math
-from collections.abc import Iterator
+from collections.abc import Iterator, Generator
 
 from . import Sexp
 from . import Parser
@@ -188,7 +188,7 @@ class DefiniteClause:
     def __hash__(self) -> int:
         return hash((tuple(self.antecedents), self.consequent))
 
-def countup(prefix = "_"):
+def countup(prefix: str = "_") -> Generator[str, None, None]:
     '''Unique symbol name generator'''
     n = 1
     while True:

@@ -6,6 +6,7 @@ Andrew S. Gordon
 __all__ = ['unify', 'skolemize']
 
 from . import Literal, Term
+from ._knowledgebase import countup
 
 def unify(x: Literal, y: Literal) -> dict[Term, Term] | None:
     return functionless_unify(x, y)
@@ -39,13 +40,6 @@ def functionless_unify(x: Literal, y: Literal) -> dict[Term, Term] | None:
         while theta[v] in theta:
             theta[v] = theta[theta[v]]
     return theta
-
-def countup(prefix: str = "_"):
-    '''Unique symbol name generator'''
-    n = 1
-    while True:
-        yield prefix + str(n)
-        n += 1
 
 def skolemize(solution: list[Literal], prefix: str = "$") -> list[Literal]:
     # converts any variables in a solution into Skolem constants
