@@ -230,6 +230,8 @@ class KnowledgeBase:
                 raise ValueError(f"Not a literal or definite clause s-expression: {item}") 
             if item.value[0].value == 'if': # must be a definite clause
                 clauses.append(DefiniteClause.from_sexp(item))
+            elif item.value[0].value == 'and': # conjunction of literals
+                literals.extend(Literal.from_sexp(s) for s in item.value[1:])
             else:
                 literals.append(Literal.from_sexp(item))
         kb = KnowledgeBase(clauses)
@@ -245,6 +247,8 @@ class KnowledgeBase:
             if item.value[0].value == 'if': # must be a definite clause
                 dc = DefiniteClause.from_sexp(item)
                 self.add_definite_clause(dc)
+            elif item.value[0].value == 'and': # conjunction of literals
+                literals.extend(Literal.from_sexp(s) for s in item.value[1:])
             else:
                 literals.append(Literal.from_sexp(item))
         return literals

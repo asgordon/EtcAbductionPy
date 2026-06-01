@@ -61,7 +61,7 @@ with open(question_file) as f:
         given_text = question_line.split(question_text)[0].split('.', 1)[1].strip()
         
         given_line = lines[3 + (index * 7) + 2]
-        _, given = etc.parse(given_line)
+        _, given = etc.KnowledgeBase.from_src(given_line)
         
         alta_text_line = lines[3 + (index * 7) + 3]
         if alta_text_line[:3] != 'a. ':
@@ -69,7 +69,7 @@ with open(question_file) as f:
         alta_text = alta_text_line[3:].strip()
 
         alta_line = lines[3 + (index * 7) + 4]
-        _, alta = etc.parse(alta_line)
+        _, alta = etc.KnowledgeBase.from_src(alta_line)
 
         altb_text_line = lines[3 + (index * 7) + 5]
         if altb_text_line[:3] != 'b. ':
@@ -77,7 +77,7 @@ with open(question_file) as f:
         altb_text = altb_text_line[3:].strip()
 
         altb_line = lines[3 + (index * 7) + 6]
-        _, altb = etc.parse(altb_line)
+        _, altb = etc.KnowledgeBase.from_src(altb_line)
 
         answer = answers[index]
 
@@ -87,7 +87,7 @@ with open(question_file) as f:
 # Load the default knowledgebase
 with open(default_kb_file) as f:
     kb_text = f.read()
-    default_kb, _ = etc.parse(kb_text)
+    default_kb, _ = etc.KnowledgeBase.from_src(kb_text)
 
 # score 1 question
 def score1q(number, kb, depth):
@@ -97,10 +97,10 @@ def score1q(number, kb, depth):
     # Which is more probable, combined_a or combined_b?
     combined_a = question.given + question.alta
     combined_a_best = etc.nbest(combined_a, kb, depth, 1)[0]
-    combined_a_probability = etc.joint_probability(combined_a_best)
+    combined_a_probability = etc.joint_log_probability(combined_a_best)
     combined_b = question.given + question.altb
     combined_b_best = etc.nbest(combined_b, kb, depth, 1)[0]
-    combined_b_probability = etc.joint_probability(combined_b_best)
+    combined_b_probability = etc.joint_log_probability(combined_b_best)
     if question.answer == 'a' and combined_a_probability > combined_b_probability:
         score = 1.0
     elif question.answer == 'b' and combined_b_probability > combined_a_probability:
