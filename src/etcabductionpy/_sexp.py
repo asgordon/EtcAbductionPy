@@ -4,6 +4,8 @@ Andrew S Gordon'''
 
 __all__ = ['Sexp', 'Parser']
 
+from collections.abc import Callable
+
 class Sexp:
     # a list, a symbol, a number, or a string
     __slots__ = ('type', 'value')
@@ -112,7 +114,7 @@ class Parser:
     def consume_whitespace(self) -> None:
         self.consume_while(lambda x: x.isspace())
 
-    def consume_while(self, test) -> str:
+    def consume_while(self, test: Callable[[str], bool]) -> str:
         result = ""
         while not self.eof() and test(self.next_char()):
             result += self.consume_char()
