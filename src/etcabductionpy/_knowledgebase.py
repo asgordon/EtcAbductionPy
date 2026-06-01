@@ -7,6 +7,7 @@ Andrew S. Gordon
 __all__ = ['Term', 'Literal', 'EtceteraLiteral', 'DefiniteClause', 'KnowledgeBase']
 
 import math
+from collections.abc import Iterator
 
 from . import Sexp
 from . import Parser
@@ -14,7 +15,7 @@ from . import Parser
 class Term:
     __slots__ = ('value', 'is_variable')
 
-    def __init__(self, value):
+    def __init__(self, value: str | float):
         self.value = value
         self.is_variable = isinstance(value, str) and value and value[0] == '?'
     
@@ -83,7 +84,7 @@ class Literal:
             return EtceteraLiteral(self.predicate, new_args)
         return Literal(self.predicate, new_args)
 
-    def all_variables(self) -> 'set[Term]':
+    def all_variables(self) -> set[Term]:
         result = set()
         for arg in self.arguments:
             if arg.is_variable:
@@ -167,7 +168,7 @@ class DefiniteClause:
         new_cons = self.consequent.subst(theta)
         return DefiniteClause(new_ants, new_cons)
     
-    def all_variables(self) -> 'set[Term]':
+    def all_variables(self) -> set[Term]:
         result = set()
         for ant in self.antecedents:
             result.update(ant.all_variables())
@@ -197,13 +198,13 @@ def countup(prefix = "_"):
 class KnowledgeBase:
     __slots__ = ('_countup', '_cpindex')
 
-    def __init__(self, clauses: list['DefiniteClause']):
+    def __init__(self, clauses: list[DefiniteClause]):
         self._countup = countup('?#')
         self._cpindex = dict() # dict[str, [DefiniteClause] where str is DefiniteClause.consequent.predicate
         for dc in clauses:
             self.add_definite_clause(dc)
 
-    def standardize_literals(self, literals: list[Literal]) -> 'list[Literal]':
+    def standardize_literals(self, literals: list[Literal]) -> list[Literal]:
         theta: dict[Term, Term] = dict()
         for lit in literals: 
             for var in lit.all_variables():
@@ -220,7 +221,7 @@ class KnowledgeBase:
             self._cpindex[consequent_predicate] = [dc]
     
     @staticmethod
-    def from_sexp(sexp: Sexp) -> 'tuple[KnowledgeBase, list[Literal]]':
+    def from_sexp(sexp: Sexp) -> tuple['KnowledgeBase', list[Literal]]:
         if sexp.type != 'list':
             raise ValueError(f"Not a list s-expression: {sexp}")
         literals = []
@@ -237,7 +238,7 @@ class KnowledgeBase:
         kb = KnowledgeBase(clauses)
         return(kb, literals)
     
-    def add_sexp(self, sexp: Sexp) -> 'list[Literal]':
+    def add_sexp(self, sexp: Sexp) -> list[Literal]:
         if sexp.type != 'list':
             raise ValueError(f"Not a list s-expression: {sexp}")
         literals = []
@@ -254,18 +255,18 @@ class KnowledgeBase:
         return literals
 
     @staticmethod
-    def from_src(src: str) -> 'tuple[KnowledgeBase, list[Literal]]':
+    def from_src(src: str) -> tuple['KnowledgeBase', list[Literal]]:
         sexp = Parser(src).parse_all()
         return KnowledgeBase.from_sexp(sexp)
     
-    def add_src(self, src: str) -> 'list[Literal]':
+    def add_src(self, src: str) -> list[Literal]:
         sexp = Parser(src).parse_all()
         return self.add_sexp(sexp)
     
     def __len__(self) -> int:
         return sum(len(entries) for entries in self._cpindex.values())
     
-    def __iter__(self):
+    def __iter__(self) -> Iterator[DefiniteClause]:
         for entries in self._cpindex.values(): # entries is a list[DefiniteClause]
             for dc in entries: # dc is a Definite Clause
                 yield dc

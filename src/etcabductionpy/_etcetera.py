@@ -13,7 +13,7 @@ from . import EtceteraLiteral, Literal, KnowledgeBase
 import itertools
 import bisect
 
-def etcetera(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, skolemize_solutions: bool = True):
+def etcetera(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, skolemize_solutions: bool = True) -> list[list[Literal]]:
     # Exhuastive search for conjunctions of etcetera literals that logically entail the observations
     if not obs:
         return [] # no obs, no solutions
@@ -44,7 +44,7 @@ def best_case_log_probability(solution: list[EtceteraLiteral]) -> float:
             total += lit.log_probability
     return total
 
-def nbest(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, n: int, skolemize_solutions: bool = True):
+def nbest(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, n: int, skolemize_solutions: bool = True) -> list[list[Literal]]:
     # returns n-best conjunctions of etcetera literals that logically entail the observations
     if not obs:
         return [] # no obs, no solutions

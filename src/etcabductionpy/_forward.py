@@ -8,7 +8,7 @@ __all__ = ['forward', 'graph']
 
 from . import KnowledgeBase, EtceteraLiteral, Literal, unify
 
-def forward(facts: list[Literal], kb: KnowledgeBase) -> 'list[tuple[Literal,list[Literal]]]':
+def forward(facts: list[Literal], kb: KnowledgeBase) -> list[tuple[Literal,list[Literal]]]:
     # an exhaustive forward-chaining. Returns list of (entailed_literal, triggers) tuples
     entailed: list[tuple[Literal, list[Literal]]] = []
     # queue of facts to try against all rules (makes a copy)
@@ -41,7 +41,7 @@ def forward(facts: list[Literal], kb: KnowledgeBase) -> 'list[tuple[Literal,list
     return entailed
 
 
-def graph(facts: list[Literal], entailed: list[tuple[Literal, list[Literal]]], targets: list[Literal] = None) -> str:
+def graph(facts: list[Literal], entailed: list[tuple[Literal, list[Literal]]], targets: list[Literal] | None = None) -> str:
     # .dot format graph representation of proof, highlighting targets if provided
     targets = targets or []
     res = 'digraph proof {\n graph [rankdir="TB"]\n'

@@ -14,6 +14,7 @@ from . import forward
 from . import unify
 
 import itertools, bisect
+from collections.abc import Iterable
 
 # This version of incremental treats each previous
 # hypothesis in the beam as its own context, and regenerates the
@@ -22,7 +23,7 @@ import itertools, bisect
 # cruched with the solutions to the current window, which makes it
 # more amiable to very large problems.
 
-def incremental(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, n: int, w: int, b: int, skolemize_solutions = True):
+def incremental(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, n: int, w: int, b: int, skolemize_solutions: bool = True) -> list[list[Literal]]:
     
     if not obs:
         return [] # no obs, no solutions
@@ -92,7 +93,7 @@ def incremental(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, n: int, w:
         previous = [skolemize(r, prefix=pre) for r in previous] # skolemize the past (required)
     return previous[0:n]
 
-def get_context(solution: list[Literal], obs: list[Literal], kb: KnowledgeBase):
+def get_context(solution: list[Literal], obs: list[Literal], kb: KnowledgeBase) -> list[Literal]:
     withDuplicates = [item[0] for item in forward(solution, kb)] # why contains duplicates?
     res = []
     for item in withDuplicates:
@@ -102,7 +103,7 @@ def get_context(solution: list[Literal], obs: list[Literal], kb: KnowledgeBase):
 
 # todo: Write alternative to forward.forward that quickly produces unique, none observable inferences (?)
 
-def contextual_and_or_leaflists(remaining: list[Literal], kb: KnowledgeBase, depth: int, context: list[Literal], antecedents: list[Literal] = None, assumptions: list[Literal] = None) -> 'list[list[Literal]]':
+def contextual_and_or_leaflists(remaining: list[Literal], kb: KnowledgeBase, depth: int, context: list[Literal], antecedents: list[Literal] | None = None, assumptions: list[Literal] | None = None) -> Iterable[list[Literal]]:
     antecedents = antecedents or []
     assumptions = assumptions or []
     if depth == 0 and antecedents: # fail

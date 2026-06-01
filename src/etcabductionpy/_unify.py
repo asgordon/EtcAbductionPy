@@ -7,10 +7,10 @@ __all__ = ['unify', 'skolemize']
 
 from . import Literal, Term
 
-def unify(x: Literal, y: Literal) -> 'dict[Term, Term]':
+def unify(x: Literal, y: Literal) -> dict[Term, Term] | None:
     return functionless_unify(x, y)
 
-def functionless_unify(x: Literal, y: Literal) -> 'dict[Term, Term]':
+def functionless_unify(x: Literal, y: Literal) -> dict[Term, Term] | None:
     # returns theta if success, returns None if not
     if x == y:
         return {}
@@ -40,14 +40,14 @@ def functionless_unify(x: Literal, y: Literal) -> 'dict[Term, Term]':
             theta[v] = theta[theta[v]]
     return theta
 
-def countup(prefix = "_"):
+def countup(prefix: str = "_"):
     '''Unique symbol name generator'''
     n = 1
     while True:
         yield prefix + str(n)
         n += 1
 
-def skolemize(solution: list[Literal], prefix: str = "$") -> 'list[Literal]':
+def skolemize(solution: list[Literal], prefix: str = "$") -> list[Literal]:
     # converts any variables in a solution into Skolem constants
     skolem_constants = countup(prefix)
     theta = {} # dict{Term: Term}

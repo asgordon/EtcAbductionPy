@@ -7,7 +7,8 @@ __all__ = ['Sexp', 'Parser']
 class Sexp:
     # a list, a symbol, a number, or a string
     __slots__ = ('type', 'value')
-    def __init__(self, type, value):
+
+    def __init__(self, type: str, value: list['Sexp'] | str | float):
         if type == 'list' and not isinstance(value, list):
             raise TypeError("Sexp of type list must be a python list")
         if type == 'symbol' and not isinstance(value, str):
@@ -20,34 +21,38 @@ class Sexp:
             raise ValueError("Sexp type must be 'list', 'symbol', 'number', or'string'")
         self.type = type
         self.value = value
-    def __str__(self):
+
+    def __str__(self) -> str:
         if self.type=='symbol': return self.value
         elif self.type=='number': return str(self.value)
         elif self.type=='string': return "\"{}\"".format(self.value)
         elif self.type=='list': return "({})".format(" ".join([str(x) for x in self.value]))
-    def to_list(self):
+
+    def to_list(self) -> list | str | float:
         if self.type=='symbol': return self.value
         elif self.type=='number': return self.value
         elif self.type=='string': return "\"{}\"".format(self.value)
         elif self.type=='list': return [x.to_list() for x in self.value]
 
 class Parser:
+
     __slots__ = ('input', 'pos', 'depth')
-    def __init__(self, src):
+
+    def __init__(self, src: str):
         self.input = src
         self.pos = 0
         self.depth = 0
 
-    def parse_first(self):
+    def parse_first(self) -> Sexp:
         self.consume_whitespace_and_comments()
         if self.eof(): raise ValueError("Unexpected end in input line " + str(self.lineno()))
         else:
             return self.parse_sexp()
 
-    def parse_all(self):
+    def parse_all(self) -> Sexp:
         return Sexp('list', self.parse_sexps())
 
-    def parse_sexps(self):
+    def parse_sexps(self) -> list[Sexp]:
         sexps = []
         while True:
             self.consume_whitespace_and_comments()
@@ -58,7 +63,7 @@ class Parser:
         if self.starts_with(')') and self.depth == 0: raise ValueError("Unexpeceted close parenthesis in input line " + str(self.lineno()))
         return sexps
 
-    def parse_sexp(self):
+    def parse_sexp(self) -> Sexp:
         ch = self.next_char()
         if ch in "0123456789-":
             return self.parse_number()
@@ -69,11 +74,11 @@ class Parser:
         else:
             return self.parse_symbol()
 
-    def parse_symbol(self):
+    def parse_symbol(self) -> Sexp:
         symbol = self.consume_while(lambda x: x not in " ;())\n\t")
         return Sexp('symbol', symbol)
 
-    def parse_number(self):
+    def parse_number(self) -> Sexp:
         number = self.consume_while(lambda x: x not in " ;())\n\t")
         try:
             value = float(number)
@@ -81,13 +86,13 @@ class Parser:
             raise ValueError("Malformed number \"{}\" in input line {}".format(number, str(self.lineno())))
         return Sexp('number', value)
 
-    def parse_string(self):
+    def parse_string(self) -> Sexp:
         self.consume_char() # opening "
         span = self.consume_while(lambda x: x not in "\"")
         self.consume_char() # closing "
         return Sexp('string',  span )
 
-    def parse_list(self):
+    def parse_list(self) -> Sexp:
         assert(self.consume_char() == '(')
         self.depth += 1
         elements = self.parse_sexps()
@@ -95,39 +100,39 @@ class Parser:
         self.depth -= 1
         return Sexp('list', elements)
 
-    def consume_whitespace_and_comments(self):
+    def consume_whitespace_and_comments(self) -> None:
         self.consume_whitespace()
         if self.starts_with(';'):
             self.consume_comment()
             self.consume_whitespace_and_comments()
     
-    def consume_comment(self):
+    def consume_comment(self) -> None:
         self.consume_while(lambda x: x != '\n')
 
-    def consume_whitespace(self):
+    def consume_whitespace(self) -> None:
         self.consume_while(lambda x: x.isspace())
 
-    def consume_while(self, test):
+    def consume_while(self, test) -> str:
         result = ""
         while not self.eof() and test(self.next_char()):
             result += self.consume_char()
         return result
 
-    def consume_char(self):
+    def consume_char(self) -> str:
         ch = self.input[self.pos]
         self.pos += 1
         return ch
 
-    def starts_with(self, s):
+    def starts_with(self, s: str) -> bool:
         return self.input[self.pos : self.pos + len(s)] == s
 
-    def next_char(self):
+    def next_char(self) -> str:
         return self.input[self.pos]
 
-    def eof(self):
+    def eof(self) -> bool:
         return self.pos >= len(self.input)
 
-    def lineno(self):
+    def lineno(self) -> int:
         r = 1
         for c in self.input[:self.pos]:
             if c == '\n': r += 1

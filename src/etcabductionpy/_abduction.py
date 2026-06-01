@@ -6,11 +6,12 @@ Andrew S. Gordon
 
 __all__ = ['abduction']
 
+from collections.abc import Iterable
 import itertools
 from . import unify, skolemize
 from . import Literal, KnowledgeBase
 
-def abduction(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, skolemize_solutions: bool = True):
+def abduction(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, skolemize_solutions: bool = True) -> list[list[Literal]]:
     # exhaustive search for sets of leaf assumptions that entail the observations given the kb
     if not obs:
         return [] # no obs, no solutions
@@ -26,7 +27,7 @@ def abduction(obs: list[Literal], kb: KnowledgeBase, maxdepth: int, skolemize_so
     else:
         return solutions
 
-def and_or_leaflists(remaining: list[Literal], kb: KnowledgeBase, depth: int, antecedents: list[Literal], assumptions: list[Literal]) -> 'list[list[Literal]]':
+def and_or_leaflists(remaining: list[Literal], kb: KnowledgeBase, depth: int, antecedents: list[Literal], assumptions: list[Literal]) -> Iterable[list[Literal]]:
     if depth == 0 and antecedents: # fail
         return []
     if not remaining: # done with this level
