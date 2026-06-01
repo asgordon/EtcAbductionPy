@@ -1,18 +1,15 @@
-# templates.py
-# utility for generating template forms for knowledgebase files
-# for use in the generation of narrative text
-
-from __future__ import print_function
+'''
+templates.py
+utility for generating template forms for knowledgebase files 
+for use in the generation of narrative text
+Andrew S. Gordon
+'''
 
 import argparse
 import sys
 
-from context import etcabductionpy
-from etcabductionpy import _parse
 
-# spit out a template for each one
-
-# run
+from etcabductionpy import KnowledgeBase, EtceteraLiteral
 
 argparser = argparse.ArgumentParser(description='Utility for generating text generation templates from a knowledgebase')
 
@@ -32,20 +29,18 @@ args = argparser.parse_args()
 
 # read a knowledgebase
 
-inlines = args.infile.readlines()
-intext = "".join(inlines)
-kb, obs = _parse.parse(intext)
+intext = args.infile.read()
+kb, _ = KnowledgeBase.from_src(intext)
 
 # iterate through axioms to find etc literals in antecednets
 
 outtext = ""
+
 for dc in kb:
-    # find etc literal in antecedent
-    etcliteral = []
-    for literal in _parse.antecedent(dc):
-        if literal[0][:3] == 'etc':
+    for literal in dc.antecedents:
+        if isinstance(literal, EtceteraLiteral):
             # write out new dc template
-            outtext += "(if " + _parse.display(literal) + "\n" + "    (text \"" + literal[0] + " template\"))\n\n"
+            outtext += f"(if {repr(literal)}\n"
+            outtext += f'    (text "{literal.predicate} template"))\n\n'
 
 print(outtext, file=args.outfile)
-sys.exit()

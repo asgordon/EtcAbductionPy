@@ -1,14 +1,14 @@
-# parsecheck.py
-# utility for ensuring that knowledge base axioms are well formulated
-
-from __future__ import print_function
+'''
+parsecheck.py
+utility for ensuring that knowledge base axioms are well formulated
+Andrew S. Gordon
+'''
 
 import datetime
 import argparse
 import sys
 
-from context import etcabductionpy
-from etcabductionpy import _parse, _unify
+from etcabductionpy import KnowledgeBase, DefiniteClause, Literal, EtceteraLiteral, Term
 
 argparser = argparse.ArgumentParser(description='Utility for ensuring well-formulated knowledge base axioms')
 
@@ -28,9 +28,11 @@ argparser.add_argument('-t', '--text',
                        action='store_true',
                        help='treat text literals differently')
 
+def all_literals(dc: DefiniteClause) -> list[Literal]:
+    '''All literals in a definite clause (antecedents + consequent)'''
+    return list(dc.antecedents) + [dc.consequent]
 
-
-def parsecheck(obs, kb):
+def parsecheck(obs: list[Literal], kb: KnowledgeBase) -> str:
     '''Utility for ensuring that knowledge base axioms are well formulated'''
     res = "parsecheck.py report at " + str(datetime.datetime.now()) + "\n\n"
     res += str(len(obs)) + " observations, " + str(len(kb)) + " knowledge base axioms\n\n"
@@ -38,126 +40,118 @@ def parsecheck(obs, kb):
     res += "existential warnings: " + str(existential_warnings(kb)) + "\n\n"
     res += "etcetera warnings: " + str(etcetera_warnings(kb))  + "\n\n"
     res += "missing axiom warnings: " + str(missing_axiom_warnings(kb)) + "\n"
-
     return res
 
-def arity_warnings(obs, kb):
+def arity_warnings(obs: list[Literal], kb: KnowledgeBase):
     '''Checks that predicates and functions have consistent arity throughout observations and knowledge base'''
-    warnings = ""
-    arity = {}
-    ls = []
+    arity: dict[str, int] = {}
+    warnings: list[str] = []
+
+    def check(lit: Literal) -> None:
+        pred = lit.predicate
+        a = len(lit.arguments)
+        if pred in arity:
+            if arity[pred] != a:
+                warnings.append(f"  inconsistent arity for predicate: {pred}")
+            else:
+                arity[pred] = a
+    
+    for lit in obs:
+        check(lit)
     for dc in kb:
-        ls.extend(_parse.literals(dc))
-    ls.extend(obs)
-    all = []
-    for l in ls:
-        all.append(l)
-        all.extend(_parse.functions(l))
-    for i in all:
-        if i[0] in arity:
-            if arity[i[0]] != len(i):
-                warnings += "\n  inconsistent arity for predicate: " + str(i[0])
-        else:
-            arity[i[0]] = len(i)
-    if len(warnings) == 0:
-        return "none"
-    else:
-        return warnings
+        for lit in all_literals(dc):
+            check(lit)
+    return "\n".join(warnings) if warnings else "none"
 
-def existential_warnings(definite_clauses):
+def existential_warnings(kb: KnowledgeBase) -> str:
     '''Definite clauses where there are existential variables in the consequent (not found in antecedent)'''
-    warnings = ""
-    for dc in definite_clauses:
-        va = _parse.all_variables(_parse.antecedent(dc))
-        vc = _parse.all_variables(_parse.consequent(dc))
-        for v in vc:
-            if v not in va:
-                warnings += "\n  existential variables in the consequent: " + _parse.display(dc)
-                break;
-    if len(warnings) == 0:
-        return "none"
-    else:
-        return warnings
+    warnings: list[str] = []
+    for dc in kb:
+        antecedent_vars = set()
+        for ant in dc.antecedents:
+            antecedent_vars.update(ant.all_variables())
+        consequent_vars = dc.consequent.all_variables()
+        for v in consequent_vars:
+            if v not in antecedent_vars:
+                warnings.append(f"  existential variables in the consequent: {repr(dc)}")
+                break
+    return "\n".join(warnings) if warnings else "none"
 
-
-    
-
-def etcetera_warnings(definite_clauses):
+def etcetera_warnings(kb: KnowledgeBase) -> str:
     '''Definite clauses with malformed etcetera literals'''
-    warnings = ""
-    seen_etcs = []
-    for dc in definite_clauses:
-        etcs = [l for l in _parse.literals(dc) if l[0][0:3] == 'etc']
+    warnings: list[str] = []
+    seen_etcs: list[str] = []
+
+    for dc in kb:
+        etcs = [l for l in all_literals(dc) if isinstance(l, EtceteraLiteral)]
         if len(etcs) < 1:
-            warnings += "\n  definite clause without etcetera literal: " + _parse.display(dc)
+            warnings.append(f"  definite clause without etcetera literal: {repr(dc)}")
         elif len(etcs) > 1:
-            warnings += "\n  definite clause with multiple etcetera literals: " + _parse.display(dc)
-        elif etcs[0][0] in seen_etcs:
-            warnings += "\n  etcetera literal previous seen elsewhere: " + _parse.display(dc)
-        elif len(etcs[0]) < 2:
-            warnings += "\n  too few arguments in etcetera literal: " + _parse.display(dc)
-        elif not isinstance(etcs[0][1], float):
-            warnings += "\n  first argument of etcetera literal is not a floating-point number: " + _parse.display(dc)
-        elif etcs[0][1] > 1.0 or etcs[0][1] < 0.0:
-            warnings += "\n  probability of etcetera literal is out of range: " + _parse.display(dc)
-        elif len(_parse.all_variables(etcs[0])) != len(_parse.all_variables(dc)):
-            warnings += "\n  etcetera literal missing variables founds elsewhere in definite clause: " + _parse.display(dc)
-        elif len(_parse.all_variables([l for l in _parse.literals(dc) if l != etcs[0]])) < len(_parse.all_variables(etcs[0])):
-            warnings += "\n  etcetera literal includes variables not found elsewhere in definite clause: " + _parse.display(dc)
+            warnings.append(f"  definite clause with multiple etcetera literals: {repr(dc)}")
         else:
-            seen_etcs.append(etcs[0][0])
-    if len(warnings) == 0:
-        return "none"
-    else:
-        return warnings
+            etc = etcs[0]
+            if etc.predicate in seen_etcs:
+                warnings.append(f"  etcetera literal previously seen elsewhere: {repr(dc)}")
+            elif len(etc.arguments) < 1:
+                warnings.append(f"  too few arguments in etcetera literal: {repr(dc)}")
+            elif etc.probability > 1.0 or etc.probability < 0.0:
+                warnings.append(f"  probability of etcetera literal out of range: {repr(dc)}")
+            else:
+                etc_vars = etc.all_variables()
+                dc_vars = dc.all_variables()
+                non_etc_vars = set()
+                for l in all_literals(dc):
+                    if not isinstance(l, EtceteraLiteral):
+                        non_etc_vars.update(l.all_variables())
+                if len(etc_vars) != len(dc_vars):
+                    warnings.append(f"  etcetera literal missing variables found elsewhere in definite clause: {repr(dc)}")
+                elif len(non_etc_vars) < len(etc_vars):
+                    warnings.append(f"  etcetera literal includes variables not found elsewhere in definite clause: {repr(dc)}")
+                else:
+                    seen_etcs.append(etc.predicate)
+    return "\n".join(warnings) if warnings else "none"
 
 
-def missing_axiom_warnings(definite_clauses):
+def missing_axiom_warnings(kb: KnowledgeBase) -> str:
     '''Predicates that appear in antecedents but not in any consequent'''
-    warnings = ""
-    seen_antecedent_predicates = set()
-    seen_consequent_predicates = set()
-    for dc in definite_clauses:
-        seen_consequent_predicates.add(_parse.consequent(dc)[0])
-        for literal in _parse.antecedent(dc):
-            if literal[0][0:3] != 'etc':
-                seen_antecedent_predicates.add(literal[0])
-    for predicate in seen_consequent_predicates:
-        if predicate in seen_antecedent_predicates:
-            seen_antecedent_predicates.remove(predicate)
-    for predicate in seen_antecedent_predicates:
-        warnings +="\n  no etcetera axiom for literal: " + predicate
-    if len(warnings) == 0:
-        return "none"
-    else:
-        return warnings
+    antecedent_predicates: set[str] = set()
+    consequent_predicates: set[str] = set()
+
+    for dc in kb:
+        consequent_predicates.add(dc.consequent.predicate)
+        for lit in dc.antecedents:
+            if not isinstance(lit, EtceteraLiteral):
+                antecedent_predicates.add(lit.predicate)
+    
+    # predicate used in antecedent but never definite in any consequent
+    undefined = antecedent_predicates - consequent_predicates
+    warnings: list[str] = []
+    for predicate in sorted(undefined):
+        warnings.append(f"  no etcetera axiom for literal: {predicate}")
+    
+    return "\n".join(warnings) if warnings else "none"
     
 
-def is_text_literal(literal):
-    if literal[0] == 'text':
-        return True
-    else:
-        return False
+def is_text_literal(lit: Literal) -> bool:
+    return lit.predicate == 'text'
 
-def is_text_definite_clause(definite_clause):
-    if is_text_literal(definite_clause[2]):
-        return True
-    else:
-        return False
+def is_text_definite_clause(dc: DefiniteClause) -> bool:
+    return is_text_literal(dc.consequent)
         
-# run
+# --- main ---
 
 args = argparser.parse_args()
 
-inlines = args.infile.readlines()
-intext = "".join(inlines)
-kb, obs = _parse.parse(intext)
-obs = _unify.standardize(obs)
+intext = args.infile.read()
+kb, obs = KnowledgeBase.from_src(intext)
+obs = kb.standardize_literals(obs)
 
-if args.text: # text flag is set, so ignore text literals and axioms
-    obs = [o for o in obs if not is_text_literal(o)]
-    kb  = [a for a in kb if not is_text_definite_clause(a)]
+if args.text:
+    obs = [o for o in obs if not is_text_definite_clause(o)]
+    # rebuild kb without text axioms
+    new_clauses = [dc for dc in kb if not is_text_definite_clause(dc)]
+    kb = KnowledgeBase(new_clauses)
 
 report = parsecheck(obs, kb)
 print(report, file=args.outfile)
-sys.exit()
+
