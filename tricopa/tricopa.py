@@ -146,5 +146,10 @@ def scoreall2(kb, depth, timeout=10):
     return(score)
     
 
-# go
-scoreall2(default_kb, 3) # scores 88.5 with default kb and 10-second timeout # score=88.5 correct=77 equal=16 timeouts=7
+if __name__ == "__main__":
+    scoreall2(default_kb, 3) 
+    
+    
+# scores 88.5 with default kb and 10-second timeout 
+# score=88.5 correct=77 equal=16 timeouts=7
+# score=84.0 correct=78 equal=5 timeouts=7
