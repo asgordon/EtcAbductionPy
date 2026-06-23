@@ -1,155 +1,190 @@
-# Use etcetera abduction to solve TriCOPA problems
-# Andrew S. Gordon October 2025
+"""
+tricopa.py
+Evaluates Etcetera Abduction on the Triangle-COPA benchmark.
+"""
 
-from pathlib import Path
-import etcabductionpy as etc
+import argparse
 import signal
+import itertools
+from pathlib import Path
+from typing import Any
 
-# Verify that these required files exist
-script_directory = Path(__file__).parent
-question_file = script_directory / "TriCOPA.txt"
-answer_file = script_directory / "TriCOPA-answers.txt"
-default_kb_file = script_directory / "tricopa-kb.lisp"
+import etcabductionpy as etc
 
-for required in [question_file, answer_file, default_kb_file]:
-    if not required.exists():
-        raise RuntimeError(f"Required file not found: {required}")
+# Constants
+SCRIPT_DIR = Path(__file__).parent
+KB_PATH = SCRIPT_DIR / "tricopa-kb.lisp"
+QUESTIONS_PATH = SCRIPT_DIR / "TriCOPA.txt"
+ANSWERS_PATH = SCRIPT_DIR / "TriCOPA-answers.txt"
+CLOSE_ENOUGH = 1e-6
+
 
 class Question:
-    def __init__(self, number, given_text, question_text, given, alta_text, alta, altb_text, altb, answer):
+    def __init__(self, number: int, given: list[etc.Literal], alta: list[etc.Literal], altb: list[etc.Literal], answer: str) -> None:
         self.number = number
-        self.given_text = given_text
-        self.question_text = question_text
         self.given = given
-        self.alta_text = alta_text
         self.alta = alta
-        self.altb_text = altb_text
         self.altb = altb
         self.answer = answer
 
 
-# Load the answers
-with open(answer_file) as f:
-    answers = []
-    lines = f.readlines()
-    if len(lines) != 100:
-        raise RuntimeError(f"Answer file is not 100 lines!")
-    for line in lines:
-        parts = line.strip().split("\t")
-        if len(parts) != 2:
-            raise RuntimeError(f"Answer in answer not formatted correctly: {line.strip()}")
-        answers.append(parts[1])
+def load_questions() -> list[Question]:
+    """Load TriCOPA questions and answers."""
+    with open(ANSWERS_PATH) as f:
+        answers = [line.strip().split("\t")[1] for line in f]
 
-# Load the questions
-with open(question_file) as f:
-    questions = []
-    lines = f.readlines()
-    if len(lines) < 703:
-        raise RuntimeError(f"Question file is not at least 703 lines long") # 3 header, then 100 * 7
-    for index in range(100):
-        number = index + 1
+    with open(QUESTIONS_PATH) as f:
+        lines = f.readlines()
 
-        blank_line = lines[3 + (index * 7)]
-        if blank_line.strip() != '':
-            raise RuntimeError(f"This line in the question file should be blank: {blank_line}")
-        
-        question_line = lines[3 + (index * 7) + 1]
-        question_line_number = question_line.split(".")[0]
-        if str(number) != question_line_number:
-            raise RuntimeError(f"{str(number)} does not match this line: {question_line}")
-        question_text = question_line.split(".")[-1].strip()
-        given_text = question_line.split(question_text)[0].split('.', 1)[1].strip()
-        
-        given_line = lines[3 + (index * 7) + 2]
-        _, given = etc.KnowledgeBase.from_src(given_line)
-        
-        alta_text_line = lines[3 + (index * 7) + 3]
-        if alta_text_line[:3] != 'a. ':
-            raise RuntimeError(f"This alternative is formatted incorrectly: {alta_text_line}")
-        alta_text = alta_text_line[3:].strip()
-
-        alta_line = lines[3 + (index * 7) + 4]
-        _, alta = etc.KnowledgeBase.from_src(alta_line)
-
-        altb_text_line = lines[3 + (index * 7) + 5]
-        if altb_text_line[:3] != 'b. ':
-            raise RuntimeError(f"This alternative is formatted incorrectly: {altb_text_line}")
-        altb_text = altb_text_line[3:].strip()
-
-        altb_line = lines[3 + (index * 7) + 6]
-        _, altb = etc.KnowledgeBase.from_src(altb_line)
-
-        answer = answers[index]
-
-        questions.append(Question(number, given_text, question_text, given, alta_text, alta, altb_text, altb, answer))
+    questions: list[Question] = []
+    for i in range(100):
+        base = 3 + i * 7
+        _, given = etc.KnowledgeBase.from_src(lines[base + 2])
+        _, alta = etc.KnowledgeBase.from_src(lines[base + 4])
+        _, altb = etc.KnowledgeBase.from_src(lines[base + 6])
+        questions.append(Question(i + 1, given, alta, altb, answers[i]))
+    return questions
 
 
-# Load the default knowledgebase
-with open(default_kb_file) as f:
-    kb_text = f.read()
-    default_kb, _ = etc.KnowledgeBase.from_src(kb_text)
+def load_kb() -> etc.KnowledgeBase:
+    """Load the default knowledge base."""
+    with open(KB_PATH) as f:
+        kb, _ = etc.KnowledgeBase.from_src(f.read())
+    return kb
 
-# score 1 question
-def score1q(number, kb, depth):
-    if number < 1 or number > 100: 
-        raise RuntimeError(f"Question out of range 1-100: {number}")
-    question = questions[number - 1]
-    # Which is more probable, combined_a or combined_b?
-    combined_a = question.given + question.alta
-    combined_a_best = etc.nbest(combined_a, kb, depth, 1)[0]
-    combined_a_probability = etc.joint_log_probability(combined_a_best)
-    combined_b = question.given + question.altb
-    combined_b_best = etc.nbest(combined_b, kb, depth, 1)[0]
-    combined_b_probability = etc.joint_log_probability(combined_b_best)
-    if question.answer == 'a' and combined_a_probability > combined_b_probability:
-        score = 1.0
-    elif question.answer == 'b' and combined_b_probability > combined_a_probability:
-        score = 1.0
-    elif combined_a_probability == combined_b_probability:
-        score = 0.5
-    else:
-        score = 0.0
-    print(f"{number} {question.answer} {combined_a_probability:.15f} {combined_b_probability:.15f} {score}")
-    return score
 
-# score all questions
-def scoreall(kb, depth):
-    score = 0.0
-    for q in range(1, 101):
-        score += score1q(q, kb, depth)
-    return(score)
+def score_prob(q: Question, kb: etc.KnowledgeBase, depth: int) -> tuple[float, str]:
+    """Score using joint log probability of the best solution."""
+    sol_a = etc.nbest(q.given + q.alta, kb, depth, 1)
+    sol_b = etc.nbest(q.given + q.altb, kb, depth, 1)
 
-# score all with timeout
-def timeout_handler(signum, frame):
-    raise TimeoutError("timeout")
+    if not sol_a or not sol_b:
+        return 0.0, "fail"
 
-def scoreall2(kb, depth, timeout=10):
-    score = 0.0
-    correct = 0
-    equal = 0
-    timeouts = 0
-    for q in range(1, 101):
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(timeout)
-        try:
-            value = score1q(q, kb, depth)
-            score += value
-            if value == 1: correct += 1
-            if value == 0.5: equal += 1
-        except TimeoutError as e:
-            print(f"{q} {e} 0.5")
-            score += 0.5
-            timeouts += 1
-        finally:
-            signal.alarm(0)
-    print(f"score={score} correct={correct} equal={equal} timeouts={timeouts}")
-    return(score)
+    pa = etc.joint_log_probability(sol_a[0])
+    pb = etc.joint_log_probability(sol_b[0])
+
+    if abs(pa - pb) < CLOSE_ENOUGH:
+        return 0.5, "tie"
+    elif (q.answer == 'a' and pa > pb) or (q.answer == 'b' and pb > pa):
+        return 1.0, "correct"
+    return 0.0, "wrong"
+
+
+def score_unify(q: Question, kb: etc.KnowledgeBase, depth: int, n: int) -> tuple[float, str]:
+    """Score by finding the rank of the first solution that unifies with the target."""
+    sols = etc.nbest(q.given, kb, depth, n)
+    if not sols:
+        return 0.0, "fail"
+
+    rank_a = find_rank(sols, q.alta, kb)
+    rank_b = find_rank(sols, q.altb, kb)
+
+    if rank_a is None and rank_b is None:
+        return 0.0, "fail"
     
+    if rank_a is None:
+        return (0.0, "wrong") if q.answer == 'a' else (1.0, "correct")
+    if rank_b is None:
+        return (0.0, "wrong") if q.answer == 'b' else (1.0, "correct")
+        
+    if rank_a < rank_b:
+        return (1.0, "correct") if q.answer == 'a' else (0.0, "wrong")
+    elif rank_b < rank_a:
+        return (1.0, "correct") if q.answer == 'b' else (0.0, "wrong")
+    return 0.5, "tie"
+
+
+def find_rank(solutions: list[list[etc.Literal]], targets: list[etc.Literal], kb: etc.KnowledgeBase) -> int | None:
+    """Find the rank (1-indexed) of the first solution that unifies with all targets."""
+    for i, sol in enumerate(solutions):
+        entailed = [e for e, _ in etc.forward(sol, kb)]
+        if len(entailed) < len(targets):
+            continue
+        for combo in itertools.combinations(entailed, len(targets)):
+            theta: dict[etc.Term, etc.Term] = {}
+            match = True
+            for t, e in zip(targets, combo):
+                sub = etc.unify(t, e)
+                if sub is None:
+                    match = False
+                    break
+                for k, v in sub.items():
+                    if k in theta and theta[k] != v:
+                        match = False
+                        break
+                    theta[k] = v
+                if not match:
+                    break
+            if match:
+                return i + 1
+    return None
+
+
+def _timeout_handler(signum: int, frame: Any) -> None:
+    """Signal handler that raises a TimeoutError."""
+    raise TimeoutError("Evaluation timed out")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Triangle-COPA Evaluation")
+    parser.add_argument("--depth", type=int, default=3, help="Max backchaining depth (default=3)")
+    parser.add_argument("--timeout", type=int, default=10, help="Timeout per question in seconds (default=10)")
+    parser.add_argument("--verbose", action="store_true", help="Print per-question results")
+    parser.add_argument("--nbest", type=int, default=None, help="Use unification scoring with N-best beam")
+    args = parser.parse_args()
+
+    kb = load_kb()
+    questions = load_questions()
+
+    total_score: float = 0.0
+    correct: int = 0
+    ties: int = 0
+    wrong: int = 0
+    timeouts: int = 0
+    fails: int = 0
+
+    signal.signal(signal.SIGALRM, _timeout_handler)
+
+    for q in questions:
+        # 1. Set the alarm BEFORE calling the function
+        signal.alarm(args.timeout)
+        
+        try:
+            # 2. Call the pure function directly (no lambdas)
+            if args.nbest is not None:
+                score, status = score_unify(q, kb, args.depth, args.nbest)
+            else:
+                score, status = score_prob(q, kb, args.depth)
+            
+            # 3. Cancel the alarm on success
+            signal.alarm(0)
+            
+        except TimeoutError:
+            # 4. Handle timeout (alarm might still be set, so cancel it)
+            signal.alarm(0)
+            score = 0.0
+            status = "timeout"
+
+        # Aggregate results
+        total_score += score
+        
+        if status == "correct":
+            correct += 1
+        elif status == "tie":
+            ties += 1
+        elif status == "wrong":
+            wrong += 1
+        elif status == "timeout":
+            timeouts += 1
+        else:
+            fails += 1
+
+        if args.verbose:
+            print(f"Q{q.number}: ans={q.answer} status={status} score={score}")
+
+    print(f"score={total_score} correct={correct} ties={ties} wrong={wrong} timeouts={timeouts} fails={fails}")
+
 
 if __name__ == "__main__":
-    scoreall2(default_kb, 3) 
-    
-    
-# scores 88.5 with default kb and 10-second timeout 
-# score=88.5 correct=77 equal=16 timeouts=7
-# score=84.0 correct=78 equal=5 timeouts=7
+    main()
